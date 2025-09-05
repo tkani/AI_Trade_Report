@@ -37,7 +37,7 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "- NON generare dati falsi, non veri o non verificabili.\n"
             "- Etichetta chiaramente tutte le stime o assunzioni come 'Stima' con ragionamento.\n"
             "- NON inventare concorrenti, dimensioni di mercato o dettagli normativi.\n"
-            "- Includi solo dati da fonti pubblicamente disponibili (Eurostat, OECD, Statista, World Bank, ITA, o fonti citate).\n"
+            "- Includi solo dati da fonti pubblicamente disponibili (Eurostat, Comtrade, OECD, Statista, World Bank, UN DATA, WTO, ITA, o fonti citate).\n"
             "- NON allucinare statistiche, percentuali o tendenze.\n"
             "- Mantieni obiettività, professionalità e trasparenza in tutte le affermazioni.\n"
             "- Segnala eventuali aree dove i dati reali non sono disponibili invece di fabbricarli.\n"
@@ -53,7 +53,7 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "- Do NOT generate fake, false, or unverifiable data.\n"
             "- Clearly label all estimates or assumptions as 'Estimate' with reasoning.\n"
             "- Do NOT invent competitors, market sizes, or regulatory details.\n"
-            "- Only include data from publicly available sources (Eurostat, OECD, Statista, World Bank, ITA, or cited sources).\n"
+            "- Only include data from publicly available sources (Eurostat, Comtrade, OECD, Statista, World Bank, UN DATA, WTO, ITA, or cited sources).\n"
             "- Do NOT hallucinate statistics, percentages, or trends.\n"
             "- Maintain objectivity, professionalism, and transparency in all statements.\n"
             "- Flag any areas where real data is unavailable instead of fabricating.\n"
@@ -162,7 +162,7 @@ GUIDELINES:
 - Respond in the same language as the user input, unless explicitly requested otherwise.
 
 8. **Sources and Data Integrity**
-- Prioritize official sources: Eurostat, OECD, Statista, World Bank, ITA, government databases
+- Prioritize official sources: Eurostat, Comtrade, OECD, Statista, World Bank, UN DATA, WTO, ITA, government databases
 - For market data, prefer official industry reports and regulatory publications
 - Always cite sources with publication dates
 - Clearly label estimates vs. verified data

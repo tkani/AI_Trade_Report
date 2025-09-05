@@ -322,9 +322,11 @@ uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ## 📚 FastAPI Documentation
 
 ### Interactive API Documentation
+
 FastAPI automatically generates interactive API documentation:
 
 #### 1. **Swagger UI** (Recommended)
+
 - **URL**: `http://127.0.0.1:8000/docs`
 - **Features**:
   - Interactive API testing
@@ -334,6 +336,7 @@ FastAPI automatically generates interactive API documentation:
   - Authentication testing
 
 #### 2. **ReDoc** (Alternative)
+
 - **URL**: `http://127.0.0.1:8000/redoc`
 - **Features**:
   - Clean, readable documentation
@@ -342,6 +345,7 @@ FastAPI automatically generates interactive API documentation:
   - Print-friendly format
 
 #### 3. **OpenAPI Schema**
+
 - **URL**: `http://127.0.0.1:8000/openapi.json`
 - **Features**:
   - Raw OpenAPI 3.0 specification
@@ -352,15 +356,18 @@ FastAPI automatically generates interactive API documentation:
 ### Using the Interactive Docs
 
 1. **Start the application**:
+
    ```bash
    uvicorn app:app --reload
    ```
 
 2. **Open Swagger UI**:
+
    - Navigate to `http://127.0.0.1:8000/docs`
    - You'll see all available endpoints
 
 3. **Test the API**:
+
    - Click on any endpoint to expand it
    - Click "Try it out" button
    - Fill in the required parameters
@@ -383,6 +390,7 @@ FastAPI automatically generates interactive API documentation:
 ### API Response Examples
 
 #### Successful Report Generation
+
 ```json
 {
   "status": "success",
@@ -391,6 +399,7 @@ FastAPI automatically generates interactive API documentation:
 ```
 
 #### Error Response
+
 ```json
 {
   "status": "error",
