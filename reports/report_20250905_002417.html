@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang=it>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trade Report - Analisi di Mercato Professionale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            table { font-size: 0.9em; }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <div class="brand-icon">📊</div>
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Stampa</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Scarica PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Panoramica del Report</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generato da:</span>
+                    <span class="item-value">Ricerca di Mercato basata su AI</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Data:</span>
+                    <span class="item-value">05 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Tipo di Report:</span>
+                    <span class="item-value">Analisi di Mercato Completa</span>
+                </div>
+            </div>
+        </div>
+        <p>Strategic Market Analysis Report: Opportunità di Espansione per TEA (Brand: La Via del Tè)</p>
+        <p>Analysis Date: 05 September 2025</p>
+        <p>Budget totale disponibile: 40.000 EUR</p>
+        <br>
+        <p>Executive Summary</p>
+        <ul>
+            <li>Obiettivo: Valutare e prioritizzare mercati europei per l’espansione del brand La Via del Tè (premium/specialty tea) con budget limitato (40k EUR) focalizzato su go-to-market leggero: marketplace/ecommerce, wholesale selettivo, e attivazioni trade mirate.</li>
+            <li>Target geografico prioritario (Stima, basata su dimensioni e appetibilità del segmento specialty tea, facilità di ingresso, canali, normativa):</li>
+        <p>1) Germania (DE): mercato tè maturo, alto reddito disponibile, retail specializzato e e-commerce sviluppati, domanda crescente per premium e salutistico.</p>
+        <p>2) Francia (FR): forte cultura del tè premium, presenza di competitor di fascia alta, alto potenziale HORECA e gifting.</p>
+        <p>3) Italia (IT): consolidamento/espansione domestica e turistico-gifting; ponte logistico e reputazionale per export UE.</p>
+            <li>Strategia d’ingresso consigliata:</li>
+            <li>Fase 1 (0-90 gg): ingressi digital-first (Amazon DE/FR, marketplace premium come Galeries Lafayette Marketplace FR, e allegati B2B tipo Faire/Ankorstore), attivazioni PR micro-influencer, sampling trade (concept stores, gastronomie), set-up compliance etichettatura UE multilingua e registri MOCA.</li>
+            <li>Fase 2 (90-180 gg): onboarding con distributori specializzati (fine food, tea/coffee roasters), partnership HORECA boutique (hotel 4/5*, tearoom), gifting stagionale Q4/Q1.</li>
+            <li>KPI principali: GMV e-commerce mensile, n. rivenditori attivati, costo acquisizione cliente (CAC), tasso di riordino B2B, margine lordo per linea.</li>
+        </ul>
+        <p>Nota dati: Per limitazioni di disponibilità pubblica gratuita, i valori esatti del mercato “specialty/premium tea” europeo sono incompleti. Dove non reperibili pubblicamente, forniamo “Stima” con ragionamento e ordine di grandezza, referenziando fonti macro (consumi di tè, spesa alimentare, e-commerce penetration). Si evidenziano le aree di mancanza dati.</p>
+        <br>
+        <p>Market Analysis</p>
+        <p>Dimensionamento (TAM, SAM, SOM)</p>
+        <ul>
+            <li>Definizioni:</li>
+            <li>TAM: spesa totale al consumo per tè (tutte le categorie) nel Paese.</li>
+            <li>SAM: spesa indirizzabile nel segmento premium/specialty confezionato (loose leaf, single-origin, blend premium) distribuito retail/e-commerce (esclude tè commodity in private label low-price, foodservice mass).</li>
+            <li>SOM (12 mesi): quota realistica conseguibile da La Via del Tè entro 12 mesi con budget 40k EUR via canali e-commerce/wholesale selettivo.</li>
+        </ul>
+        <ul>
+            <li>Dati e Stime (tutti i valori sono Stima se non diversamente indicato; ragionamento: proporzione del premium 10-20% del TAM tè in mercati maturi; SOM calcolato su penetrazione iniziale e capacità go-to-market con 40k EUR):</li>
+        <table>
+            <tr>
+                <td>Paese</td>
+                <td>TAM Tè (EUR, Stima)</td>
+                <td>Fonte base</td>
+                <td>Razionale TAM</td>
+                <td>SAM Premium (EUR, Stima)</td>
+                <td>SOM 12 mesi (EUR, Stima)</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---:</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---:</th>
+                <th>---:</th>
+            </tr>
+            <tr>
+                <td>Germania (DE)</td>
+                <td>1,4-1,8 mld</td>
+                <td>Eurostat/OECD consumo alimentare + report categoria tè (riferimenti macro, non cifra univoca disponibile open)</td>
+                <td>Pop. ~84M, alta incidenza tisane, prezzo medio retail 20-40 €/kg per miscela, premium share 15%</td>
+                <td>210-270 mln</td>
+                <td>0,25-0,5 mln</td>
+            </tr>
+            <tr>
+                <td>Francia (FR)</td>
+                <td>1,0-1,3 mld</td>
+                <td>Idem</td>
+                <td>Pop. ~68M, cultura premium forte (Mariage Frères, Kusmi), premium share 18%</td>
+                <td>180-230 mln</td>
+                <td>0,2-0,45 mln</td>
+            </tr>
+            <tr>
+                <td>Italia (IT)</td>
+                <td>0,45-0,65 mld</td>
+                <td>Idem, consumi tè inferiori al caffè</td>
+                <td>Pop. ~59M, crescita tisane/benessere, premium share 12-15%</td>
+                <td>55-90 mln</td>
+                <td>0,15-0,3 mln</td>
+            </tr>
+        </table>
+        <p>Avvertenza sui dati:</p>
+            <li>Non sono disponibili valori ufficiali univoci gratuiti 2023-2025 per “spesa tè al consumo” per Paese. Le cifre sopra sono Stima basate su:</li>
+            <li>World Bank/Eurostat: popolazione e spesa alimentare pro-capite (2023-2024).</li>
+            <li>Osservazione di prezzi medi retail e share premium in mercati maturi (range 10-20%).</li>
+            <li>Raccomandazione: validare TAM/SAM con un acquisto mirato di report di categoria (es. Euromonitor, Statista Dossier, IRI/NielsenIQ). Non includiamo tali dati a pagamento.</li>
+        </ul>
+        <p>Trend di domanda e comportamenti d’acquisto</p>
+        <ul>
+            <li>Crescita segmenti: tisane funzionali (sleep, digestione), green e matcha, single-origin, biologico e sostenibile; gifting premium e cofanetti stagionali.</li>
+            <li>Canali d’acquisto: e-commerce in espansione post-2020; marketplace generalisti (Amazon) e B2B wholesale (Faire/Ankorstore) efficaci per piccoli rivenditori; concept stores gourmet in Germania e Francia influenti.</li>
+            <li>Driver di scelta: origine e trasparenza, certificazioni (bio, fairtrade), packaging premium e sostenibile, recensioni online, assortimento di blend esclusivi.</li>
+        <p>Fonti indicativa trend: OECD Retail e-commerce updates (2023-2024), Eurostat e-commerce adoption in EU households (2024), report pubblici ITA/ICE settore food &amp; beverage premium (2023-2024). Note: documenti macro, non forniscono numeri specifici di tè; utilizzo qualitativo.</p>
+        </ul>
+        <p>Regolatorio e conformità (UE + Paesi target)</p>
+        <ul>
+            <li>Sicurezza alimentare: Reg. (CE) 178/2002 (Food Law), Reg. (CE) 852/2004 (igiene), controlli import (se materie prime extra-UE). Necessario HACCP documentato.</li>
+            <li>Residui pesticidi: Reg. (CE) 396/2005 sui limiti massimi residui (MRL) per il tè (Camellia sinensis). Controlli analitici batch consigliati.</li>
+            <li>Contaminanti: Reg. (UE) 2023/915 (sostituisce 1881/2006) su contaminanti; attenzione a metalli pesanti nel tè.</li>
+            <li>Etichettatura: Reg. (UE) 1169/2011 (informazioni al consumatore) – denominazione, ingredienti, allergeni (es. aromi), quantità netta, data, lotto, origine quando pertinente; lingua del mercato (DE/FR/IT).</li>
+            <li>MOCA: Reg. (CE) 1935/2004 per materiali a contatto con alimenti (sacchetti, barattoli).</li>
+            <li>Biologico: Reg. (UE) 2018/848 per prodotti bio; certificazione e logo UE.</li>
+            <li>Claim salutistici: Reg. (CE) 1924/2006; evitare claim non autorizzati (es. “brucia grassi”).</li>
+        <p>Fonti: EUR-Lex (testi regolatori consolidati, 2023-2025).</p>
+        </ul>
+        <p>Canali di distribuzione e barriere</p>
+        <ul>
+            <li>E-commerce D2C: sito proprio + SEO/SEM. Vantaggi: controllo brand, margini; barriere: CAC, logistica multilingua.</li>
+            <li>Marketplace: Amazon (DE/FR), eBay, Kaufland.de; rapida visibilità, fee ~8-15% + FBA. Barriere: competizione pricing, review moat.</li>
+            <li>Wholesale B2B: Faire/Ankorstore per concept stores; ordini medi 200-500 EUR, riordino trimestrale.</li>
+            <li>Retail specializzato: gastronomie (KaDeWe, Edeka regionale buyers), tearoom, department stores (Galeries Lafayette). Barriere: onboarding, slotting/ listing fees, prove sell-through.</li>
+            <li>HORECA premium: hotel/boutique; richiede listini on-premise, training e formato infusioni.</li>
+        </ul>
+        <p>Pricing e struttura costi (Stima)</p>
+        <ul>
+            <li>Fascia premium UE: 80-180 EUR/kg per loose leaf confezionato; cofanetti gifting con premium per unità.</li>
+            <li>Struttura costi tipica (pack 100g): costo materia prima/blend 2-5 EUR; packaging 0,6-1,2 EUR; logistica 0,5-1,5 EUR; fee marketplace 10-15%; marketing 10-20% del prezzo retail. Margine lordo target &gt;55% retail; &gt;30-40% wholesale.</li>
+            <li>Politica prezzi suggerita: posizionamento “heritage italiano + qualità sensoriale”, allineato ai leader premium (non low-cost). Sconti B2B 40-50% off RRP per riordino.</li>
+        </ul>
+        <p>Tendenze tecnologiche e innovazione</p>
+        <ul>
+            <li>Tracciabilità lotti e sustainability storytelling (QR code a schede origine).</li>
+            <li>Bundling data-driven su marketplace (kit degustazione, abbonamenti mensili).</li>
+            <li>Generazione contenuti UGC/micro-influencer TikTok/IG per ricette iced tea/matcha.</li>
+            <li>Automazione ad tech: Amazon Ads con campagne Sponsored Brands, DSP light, retail media su Criteo con piccola spesa test.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <ul>
+            <li>Attori chiave per Paese (non esaustivo; indicati dove informazioni pubbliche e brand notori):</li>
+            <li>Germania: Teekanne (mainstream), Alnatura (bio private label), Ronnefeldt (HORECA premium), TeeGschwendner (specialty).</li>
+            <li>Francia: Mariage Frères (luxury), Kusmi Tea (premium mainstream), Palais des Thés (specialty).</li>
+            <li>Italia: Twinings (import premium mainstream), Neavita/Erbamea (tisane), Dammann Frères presenza retail, specialty shop indipendenti.</li>
+        <p>Note: Non riportiamo quote di mercato per mancanza di fonti gratuite recenti 2023-2025.</p>
+        </ul>
+        <p>Competitive Landscape Matrix</p>
+        <table>
+            <tr>
+                <td>Brand</td>
+                <td>Posizionamento</td>
+                <td>Canali</td>
+                <td>Punti di forza</td>
+                <td>Punti di debolezza (opportunità)</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Mariage Frères (FR)</td>
+                <td>Luxury heritage</td>
+                <td>Flagship, dept. stores, e-comm</td>
+                <td>Brand equity, assortimento</td>
+                <td>Prezzo alto, accessibilità limitata</td>
+            </tr>
+            <tr>
+                <td>Kusmi Tea (FR)</td>
+                <td>Premium mainstream</td>
+                <td>Retail diretto, GDO selettiva, e-comm</td>
+                <td>Awareness, marketing</td>
+                <td>Meno artigianalità percepita</td>
+            </tr>
+            <tr>
+                <td>Palais des Thés (FR)</td>
+                <td>Specialty premium</td>
+                <td>Boutiques, e-comm, B2B</td>
+                <td>Selezione origine, educazione</td>
+                <td>Prezzi elevati</td>
+            </tr>
+            <tr>
+                <td>Ronnefeldt (DE)</td>
+                <td>Premium HORECA</td>
+                <td>HORECA, specialty</td>
+                <td>Penetrazione hotel</td>
+                <td>Minor equity consumer retail</td>
+            </tr>
+            <tr>
+                <td>TeeGschwendner (DE)</td>
+                <td>Specialty chain</td>
+                <td>Negozi franchising, e-comm</td>
+                <td>Copertura capillare</td>
+                <td>Curva onboarding fornitori</td>
+            </tr>
+            <tr>
+                <td>Teekanne (DE)</td>
+                <td>Mainstream</td>
+                <td>GDO ampia</td>
+                <td>Prezzo, scala</td>
+                <td>Non premium</td>
+            </tr>
+            <tr>
+                <td>Twinings (multi)</td>
+                <td>Premium mainstream</td>
+                <td>GDO, e-comm</td>
+                <td>Awareness</td>
+                <td>Meno “craft”</td>
+            </tr>
+            <tr>
+                <td>La Via del Tè</td>
+                <td>Premium artigianale italiano</td>
+                <td>E-comm, wholesale specialty</td>
+                <td>Heritage, design, gifting</td>
+                <td>Awareness internazionale da costruire</td>
+            </tr>
+        </table>
+        <p>Strategic Recommendations</p>
+        <p>Priorità geografiche e canali</p>
+        <ul>
+            <li>Germania (Priorità 1): lanciare Amazon.de + Faire/Ankorstore; test assortimento 12-18 SKU (best-seller neri/ verdi, tisane funzionali, cofanetti). Obiettivo: 50-80 rivenditori B2B entro 12 mesi.</li>
+            <li>Francia (Priorità 2): partnership con department stores marketplace (Galeries Lafayette Marketplace) e targeting tearoom/epiceries fines via agenti showroom; PR con micro-influencer foodies FR.</li>
+            <li>Italia (Priorità 3): rafforzare gifting turistico e HORECA boutique, cross-selling ai retailer gourmet; sfruttare logistica domestica per export.</li>
+        </ul>
+        <p>Assortimento e prezzo</p>
+        <ul>
+            <li>Price corridor retail 100g: 9,90-14,90 EUR (tisane 50-80g a 8,90-12,90 EUR); cofanetti 3x50g 24-29 EUR. Allineare listini B2B con sconto 45-50% e MOQs bassi per onboarding.</li>
+        </ul>
+        <p>Brand e comunicazione</p>
+        <ul>
+            <li>Value proposition: “Artigianalità fiorentina, selezione di origine, gusto e design per momenti di ospitalità italiana”.</li>
+            <li>Asset: storytelling territorio/maestria, certificazioni quando disponibili, limited editions stagionali (Natale, Mamma, San Valentino).</li>
+        </ul>
+        <p>Operativo e supply chain</p>
+        <ul>
+            <li>Etichetta multilingua (IT/DE/FR) per ridurre SKU/regulatory complexity.</li>
+            <li>Audit pesticidi/metalli su lotti chiave pre-peak Q4.</li>
+            <li>Packaging: materiali riciclabili, QR di tracciabilità e schede infusioni.</li>
+        </ul>
+        <p>Partnership e wholesale</p>
+        <ul>
+            <li>Portali B2B (Faire/Ankorstore) per onboarding rapido in DE/FR.</li>
+            <li>Prospecting mirato: 300-400 boutique gourmet/tearoom in DE/FR con outreach sequenziale (email kit + campioni).</li>
+            <li>HORECA: selezione hotel boutique e spa con linee tisane funzionali.</li>
+        </ul>
+        <p>Budget Allocation Recommendations (40.000 EUR)</p>
+        <table>
+            <tr>
+                <td>Voce</td>
+                <td>Importo EUR</td>
+                <td>%</td>
+                <td>Note</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---:</th>
+                <th>---:</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Marketplace set-up + fee + Amazon Ads test (DE/FR)</td>
+                <td>8.000</td>
+                <td>20%</td>
+                <td>Registrazioni, FBA iniziale, campagne SB/SP</td>
+            </tr>
+            <tr>
+                <td>Logistica stock iniziale + packaging multilingua</td>
+                <td>7.000</td>
+                <td>17,5%</td>
+                <td>12-18 SKU, piccoli lotti</td>
+            </tr>
+            <tr>
+                <td>Analisi laboratorio (residui/contaminanti)</td>
+                <td>2.500</td>
+                <td>6,25%</td>
+                <td>Lotti export DE/FR</td>
+            </tr>
+            <tr>
+                <td>PR/influencer micro (DE/FR/IT)</td>
+                <td>6.000</td>
+                <td>15%</td>
+                <td>20-30 creators micro, prodotto + fee</td>
+            </tr>
+            <tr>
+                <td>Campioni trade e kit vendita</td>
+                <td>3.500</td>
+                <td>8,75%</td>
+                <td>400-600 campioni</td>
+            </tr>
+            <tr>
+                <td>Fiere/micro-eventi locali (popup/ showrooms)</td>
+                <td>3.000</td>
+                <td>7,5%</td>
+                <td>2-3 eventi</td>
+            </tr>
+            <tr>
+                <td>Consulenza legale/label review UE</td>
+                <td>2.000</td>
+                <td>5%</td>
+                <td>Verifica 1169/2011, claim</td>
+            </tr>
+            <tr>
+                <td>Outreach B2B (tooling, liste, traduzioni)</td>
+                <td>2.500</td>
+                <td>6,25%</td>
+                <td>SDR part-time/agency</td>
+            </tr>
+            <tr>
+                <td>Sconti promozionali di lancio (coupon)</td>
+                <td>2.000</td>
+                <td>5%</td>
+                <td>Amazon/marketplace</td>
+            </tr>
+            <tr>
+                <td>Contingenza</td>
+                <td>3.500</td>
+                <td>8,75%</td>
+                <td>Buffer</td>
+            </tr>
+        <p>Totale: 40.000</p>
+        </table>
+        <p>Risk Assessment</p>
+        <p>Principali rischi e mitigazioni</p>
+        <table>
+            <tr>
+                <td>Rischio</td>
+                <td>Impatto</td>
+                <td>Probabilità</td>
+                <td>Mitigazione</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Non conformità residui/etichetta</td>
+                <td>Alto</td>
+                <td>Basso-Medio</td>
+                <td>Test laboratorio, label review legale, QA fornitori</td>
+            </tr>
+            <tr>
+                <td>CAC elevato su marketplace</td>
+                <td>Medio-Alto</td>
+                <td>Medio</td>
+                <td>Ottimizzazione listing, bundle, targeting long-tail, micro-influencer</td>
+            </tr>
+            <tr>
+                <td>Stock-out o overstock</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Piccoli lotti, monitor vendite settimanale, FBA replenishment agile</td>
+            </tr>
+            <tr>
+                <td>Reazioni competitor locali</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Differenziazione gusto/pack, focus gifting e origine italiana</td>
+            </tr>
+            <tr>
+                <td>Barriere listing retail</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Entrare via wholesale B2B marketplace, prova sell-in con campioni</td>
+            </tr>
+            <tr>
+                <td>Fluttuazioni costi logistica</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Contratti corriere flessibili, FBA solo per top SKU</td>
+            </tr>
+            <tr>
+                <td>Rischio di cambio (se acquisti extra-UE)</td>
+                <td>Basso-Medio</td>
+                <td>Variabile</td>
+                <td>Coperture base, prezzi aggiornabili trimestralmente</td>
+            </tr>
+            <tr>
+                <td>Review negative</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Policy qualità, customer care rapido, sostituzioni</td>
+            </tr>
+        </table>
+        <p>90-Day Action Plan</p>
+        <table>
+            <tr>
+                <td>Settimana</td>
+                <td>Attività</td>
+                <td>Responsabile</td>
+                <td>Output/KPI</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>1-2</td>
+                <td>Audit regolatorio, etichette multilingua, selezione SKU</td>
+                <td>QA/Regulatory + PM</td>
+                <td>File etichette conformi; 12-18 SKU</td>
+            </tr>
+            <tr>
+                <td>2-4</td>
+                <td>Campioni a laboratorio, preparazione stock iniziale</td>
+                <td>QA + Produzione</td>
+                <td>Certificati analitici; 500-800 unità</td>
+            </tr>
+            <tr>
+                <td>3-5</td>
+                <td>Apertura account Amazon DE/FR, Faire/Ankorstore</td>
+                <td>E-commerce Manager</td>
+                <td>Store live; 10 listing ottimizzati</td>
+            </tr>
+            <tr>
+                <td>4-6</td>
+                <td>Creativi, foto, A+ content, SEO keyword</td>
+                <td>Marketing</td>
+                <td>CTR&gt;1,5%, 20 keyword top</td>
+            </tr>
+            <tr>
+                <td>5-8</td>
+                <td>Lancio Amazon Ads e promo di avvio</td>
+                <td>Performance Mktg</td>
+                <td>ACOS target &lt;35% entro W8</td>
+            </tr>
+            <tr>
+                <td>5-9</td>
+                <td>Outreach B2B a 300 prospect (DE/FR) + invio campioni</td>
+                <td>Sales</td>
+                <td>40 meeting, 20 ordini pilota</td>
+            </tr>
+            <tr>
+                <td>6-10</td>
+                <td>PR/micro-influencer (20-30 creators)</td>
+                <td>PR Manager</td>
+                <td>40+ contenuti UGC; reach 200k+</td>
+            </tr>
+            <tr>
+                <td>8-12</td>
+                <td>Onboarding distributori locali test</td>
+                <td>Sales Director</td>
+                <td>1-2 distributori attivi</td>
+            </tr>
+            <tr>
+                <td>10-12</td>
+                <td>Review KPI e riallocazione budget</td>
+                <td>CFO/PM</td>
+                <td>Piano M2 ottimizzato</td>
+            </tr>
+        </table>
+        <p>Regulatory Checklist (Sintesi)</p>
+        <ul>
+            <li>HACCP documentato; tracciabilità lotti</li>
+            <li>Etichette conformi Reg. 1169/2011 in DE/FR/IT</li>
+            <li>Test MRL pesticidi per Camellia sinensis; metalli pesanti</li>
+            <li>MOCA conformi Reg. 1935/2004</li>
+            <li>Se BIO: certificazioni e logo UE</li>
+            <li>Evitare health claims non autorizzati (Reg. 1924/2006)</li>
+        </ul>
+        <p>Key KPIs suggeriti (primi 90-180 gg)</p>
+        <ul>
+            <li>GMV mensile e-commerce: target 10-25k EUR entro M6 (Stima)</li>
+            <li>Numero rivenditori attivati: 50+ entro M12 (Stima)</li>
+            <li>Tasso riordino B2B: &gt;40% a 90 giorni (Stima)</li>
+            <li>Margine lordo medio: &gt;55% retail; &gt;35% wholesale (Stima)</li>
+            <li>ACOS Amazon: &lt;30% entro M3 (Stima)</li>
+        </ul>
+        <p>Sources &amp; Appendix</p>
+        <p>Nota: Non includiamo dati a pagamento. Le fonti sotto sono riferimenti regolatori e macro per validare contesto e requisiti. I valori numerici specifici del mercato tè nazionale non sono disponibili in modo gratuito e univoco; pertanto le cifre TAM/SAM/SOM sono etichettate come Stima.</p>
+        <br>
+        <ul>
+            <li>EUR-Lex:</li>
+            <li>Reg. (CE) 178/2002 – Principi e requisiti della legislazione alimentare (consolidato, accesso 2024-2025).</li>
+            <li>Reg. (CE) 852/2004 – Igiene dei prodotti alimentari (consolidato, accesso 2024-2025).</li>
+            <li>Reg. (CE) 396/2005 – Limiti massimi di residui di pesticidi (consolidato 2024).</li>
+            <li>Reg. (UE) 2023/915 – Tenori massimi di contaminanti nei prodotti alimentari (in vigore 2023).</li>
+            <li>Reg. (UE) 1169/2011 – Informazioni al consumatore (consolidato 2024).</li>
+            <li>Reg. (CE) 1935/2004 – Materiali e oggetti a contatto con alimenti (MOCA).</li>
+            <li>Reg. (UE) 2018/848 – Produzione biologica e etichettatura.</li>
+            <li>Reg. (CE) 1924/2006 – Indicazioni nutrizionali e sulla salute.</li>
+            <li>Eurostat/OECD/World Bank:</li>
+            <li>Eurostat: e-commerce by individuals, 2024 release.</li>
+            <li>Eurostat: Household consumption expenditure by purpose (COICOP), 2023-2024.</li>
+            <li>OECD: Ecommerce in the time of COVID-19 updates (2023).</li>
+            <li>World Bank: Population data 2023-2024.</li>
+            <li>ITA/ICE:</li>
+            <li>Schede Paese Food &amp; Beverage premium (2023-2024) – insight qualitativi sull’accesso ai mercati (link istituzionali, contenuto generale).</li>
+        </ul>
+        <p>Aree senza dati pubblici recenti e gratuiti</p>
+        <ul>
+            <li>Quote di mercato per brand competitor in DE/FR/IT (2023-2025).</li>
+            <li>Valori ufficiali e univoci di TAM/SAM del tè per singolo Paese 2023-2025.</li>
+            <li>Prezzi medi/kg per sottocategorie specialty su base comparabile.</li>
+        </ul>
+        <p>Appendice: Metodologia Stime</p>
+        <ul>
+            <li>TAM: triangolazione di consumi alimentari pro-capite e incidenza categoria tè da report storici pubblici e osservazione prezzi retail; intervallo per riflettere incertezza.</li>
+            <li>SAM: 12-20% del TAM nei mercati maturi per segmento premium/specialty (literatura settoriale generica; validazione consigliata con report di categoria).</li>
+            <li>SOM: 0,1-0,25% del SAM in 12 mesi in ingresso light con 40k EUR, basato su benchmark D2C/marketplace FMCG premium.</li>
+        </ul>
+        <p>JSON (per integrazione)</p>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DE&quot;, &quot;FR&quot;, &quot;IT&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;marketplace_setup_ads&quot;: 8000,</p>
+        <p>&quot;logistics_packaging&quot;: 7000,</p>
+        <p>&quot;lab_tests&quot;: 2500,</p>
+        <p>&quot;pr_influencer&quot;: 6000,</p>
+        <p>&quot;trade_samples&quot;: 3500,</p>
+        <p>&quot;events_popups&quot;: 3000,</p>
+        <p>&quot;legal_label_review&quot;: 2000,</p>
+        <p>&quot;b2b_outreach_tools&quot;: 2500,</p>
+        <p>&quot;launch_promotions&quot;: 2000,</p>
+        <p>&quot;contingency&quot;: 3500</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DE&quot;: &quot;Stima: 1.4-1.8 miliardi EUR&quot;,</p>
+        <p>&quot;FR&quot;: &quot;Stima: 1.0-1.3 miliardi EUR&quot;,</p>
+        <p>&quot;IT&quot;: &quot;Stima: 0.45-0.65 miliardi EUR&quot;</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Stima: Il segmento premium/specialty rappresenta 12-20% del TAM tè nei mercati maturi.&quot;,</p>
+        <p>&quot;Stima: Con un budget di 40k EUR, il SOM realizzabile entro 12 mesi è 0,1-0,25% del SAM tramite canali e-commerce/wholesale.&quot;,</p>
+        <p>&quot;Stima: Fascia prezzo retail 100g premium 9,90-14,90 EUR basata su osservazione di scaffale UE e posizionamenti competitor.&quot;,</p>
+        <p>&quot;I valori esatti di TAM/SAM/SOM per il tè per Paese 2023-2025 non sono disponibili gratuitamente; necessaria validazione con report di settore a pagamento.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>Questo report è stato generato utilizzando tecnologia di ricerca di mercato basata su AI.</p>
+            <p>Per domande o analisi aggiuntive, contatta il tuo team di ricerca.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

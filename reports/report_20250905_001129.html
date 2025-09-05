@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang=it>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Trade Report - Analisi di Mercato Professionale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            table { font-size: 0.9em; }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <div class="brand-icon">📊</div>
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Stampa</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Scarica PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Panoramica del Report</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generato da:</span>
+                    <span class="item-value">Ricerca di Mercato basata su AI</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Data:</span>
+                    <span class="item-value">05 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Tipo di Report:</span>
+                    <span class="item-value">Analisi di Mercato Completa</span>
+                </div>
+            </div>
+        </div>
+        <p>Report: Espansione di Mercato per TOMATO PUREE (Passata di Pomodoro) – Brand “MIGLIARESE CONSERVE”</p>
+        <p>Analysis Date: 05 September 2025</p>
+        <p>Budget totale: €40.000</p>
+        <br>
+        <p>Nota fondamentale su integrità dei dati</p>
+        <ul>
+            <li>Per rispettare le istruzioni (“NON generare dati falsi”), questo report utilizza solo fonti pubbliche e verificabili. Dove i dati 2023–2025 specifici per “passata di pomodoro” non sono disponibili in modo ufficiale e granularizzato, forniamo:</li>
+            <li>Citazioni di fonti ufficiali disponibili (Eurostat, OECD, ITA/ICE, Statista, World Bank, regolatori UE) con data di pubblicazione.</li>
+            <li>Stime chiaramente etichettate come “Stima” con metodo e ragionamento.</li>
+            <li>Aree “Dati non disponibili pubblicamente” quando non sono reperibili serie robuste.</li>
+            <li>Richiediamo conferma per eventuale accesso a banche dati a pagamento (es. Statista dettagli merceologici HS 2002.90/2003.90) se desiderate maggiore profondità quantitativa.</li>
+        </ul>
+        <p>Executive Summary</p>
+        <ul>
+            <li>Tesi: L’ingresso in 2–3 mercati UE con alta penetrazione retail GDO per conserve e alta quota private label ma crescente interesse per brand premium regionali è consigliabile: Germania (DE), Francia (FR), Paesi Bassi (NL). Questi mercati offrono ampia base di domanda, canali modern trade sviluppati, e barriere gestibili per import UE.</li>
+            <li>Focus di posizionamento: “Passata di pomodoro italiana premium da filiera tracciata, clean label, sostenibile”, formati 500–700 g e 1 kg; linee classica e biologica.</li>
+            <li>Go-to-Market: combinazione marketplace B2B (RangeMe/Ankorstore; Stima) + broker/agent GDO locali + eCommerce DTC mirato per validazione. Attacco iniziale su catene regionali e specialty (EDEKA regional, Rewe Region, Intermarché/Leclerc regioni, Jumbo/PLUS) e wholesale etnico/italiano.</li>
+            <li>KPI 90 giorni: 10–15 incontri con buyer; 2–3 listaggi pilota (20–50 pdv); velocità media 10–15 u/vendite/pdv/settimana in test; NPS &gt; 50 nelle review DTC.</li>
+            <li>Budget €40k: allocazione snella su sviluppo business (broker, fiere mirate), compliance/etichette multilingua, marketing trade e logistica pilota. Vedi tabella “Budget”.</li>
+        </ul>
+        <p>Market Analysis</p>
+        <p>Ambito e definizioni</p>
+        <ul>
+            <li>Prodotto: “Tomato puree / passata di pomodoro” a marchio proprio (MIGLIARESE CONSERVE).</li>
+            <li>Codici doganali più vicini: HS 2002 (Tomatoes prepared or preserved otherwise than by vinegar or acetic acid). Nota: alcune statistiche aggregano pelati, polpa, concentrato, salse di pomodoro. I dati puramente “passata” spesso non sono isolati a livello HS-6. Dove necessario, si usa 2002 come proxy con avvertenze.</li>
+            <li>Mercati target valutati: Germania (DE), Francia (FR), Paesi Bassi (NL), Belgio (BE), Svezia (SE), Austria (AT). Priorità proposta: DE, FR, NL.</li>
+        </ul>
+        <p>Dimensionamento mercato (TAM/SAM/SOM)</p>
+        <p>Avvertenza dati: Non esistono in dominio pubblico dati 2023–2025 granulari sulla sola “passata” per Paese UE in forma liberamente consultabile. Usiamo proxy HS 2002 (conserve di pomodoro) e consumi di conserve/salse. Le cifre specifiche sono fornite come Stima con metodo.</p>
+        <br>
+        <p>Metodo di stima (TAM):</p>
+        <ul>
+            <li>Fonte di base: commercio internazionale HS 2002 e produzione UE (Eurostat PRODCOM), abitudini di spesa alimentare (Eurostat, COICOP), rapporti ITA/ICE su conserve italiane, indicazioni Statista/SymphonyIRI su categorie “canned tomatoes/tomato products” dove disponibili. Quando non reperibile numero unificato gratuito, si applica triangolazione:</li>
+            <li>Consumo annuo pro capite stimato di prodotti a base pomodoro (salse/passate/polpa) in kg/persona/anno (Stima, range 5–8 kg in mercati UE Nord-Ovest basato su letteratura di consumo pasta/sughi; da validare con dati di panel a pagamento).</li>
+            <li>Prezzo medio retail passata premium 1–1.8 €/kg ex-factory 0.6–1.0 €/kg; prezzo retail 1.2–2.2 €/bottiglia 700 g (Stima; rilievi scaffale indicativi).</li>
+            <li>SAM: quota del TAM rivolta a passata “premium italiana” canali GDO + specialty (escluso HoReCa nella fase 1).</li>
+            <li>SOM (12 mesi): quota raggiungibile con €40k usando test-listing limitati e DTC; ipotesi conservativa 20–50 pdv per mercato in anno 1.</li>
+        </ul>
+        <p>Tabella: Comparative Market Analysis (TAM, SAM, SOM) – Stime</p>
+        <table>
+            <tr>
+                <td>Mercato</td>
+                <td>TAM prodotti a base pomodoro (Stima, €M)</td>
+                <td>Note metodo</td>
+                <td>SAM Passata premium retail (Stima, €M)</td>
+                <td>SOM anno 1 (Stima, €)</td>
+                <td>Razionale SOM</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---:</th>
+                <th>---</th>
+                <th>---:</th>
+                <th>---:</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>DE</td>
+                <td>900–1,200</td>
+                <td>Proxy HS2002 + consumo pro capite; prevalenza GDO</td>
+                <td>90–150</td>
+                <td>120k–250k</td>
+                <td>30–50 pdv, 10–15 u/settimana, 1.6 €/u margine lordo trade incluso; 9–12 mesi vendite</td>
+            </tr>
+            <tr>
+                <td>FR</td>
+                <td>700–1,000</td>
+                <td>Forte base sughi/conserve; private label dominante</td>
+                <td>70–130</td>
+                <td>90k–200k</td>
+                <td>20–40 pdv test in regioni; rotazioni simili a DE</td>
+            </tr>
+            <tr>
+                <td>NL</td>
+                <td>150–220</td>
+                <td>Alto peso private label, alto consumo pasta</td>
+                <td>15–30</td>
+                <td>40k–80k</td>
+                <td>15–25 pdv; specialty e catene regionali</td>
+            </tr>
+            <tr>
+                <td>AT</td>
+                <td>120–170</td>
+                <td>Prossimità culturale a Italia</td>
+                <td>12–25</td>
+                <td>30k–60k</td>
+                <td>10–20 pdv</td>
+            </tr>
+            <tr>
+                <td>BE</td>
+                <td>140–200</td>
+                <td>Mercato concentrato (Colruyt/Delhaize)</td>
+                <td>14–25</td>
+                <td>25k–50k</td>
+                <td>10–15 pdv</td>
+            </tr>
+            <tr>
+                <td>SE</td>
+                <td>110–160</td>
+                <td>Premiumizzazione food import</td>
+                <td>11–22</td>
+                <td>20k–45k</td>
+                <td>8–12 pdv, eCommerce forte</td>
+            </tr>
+        </table>
+        <p>Avvertenza: tutte le cifre della tabella sono Stime basate su proxy e assunzioni ragionate. Raccomandiamo validazione con dataset a pagamento (IRI, NielsenIQ, Statista category deep dive) prima di approvazione obiettivi finanziari.</p>
+        <br>
+        <p>Regolatorio e compliance (UE)</p>
+        <ul>
+            <li>Normativa base:</li>
+            <li>Reg. (UE) 1169/2011 su informazione alimentare ai consumatori (etichettatura, allergeni, lingua del mercato di vendita).</li>
+            <li>Reg. (UE) 2018/775 origine ingrediente primario se indicata l’origine del prodotto/marchio; attenzione a claim “100% italiano”.</li>
+            <li>Reg. (CE) 852/2004 igiene alimenti; Reg. (CE) 178/2002 rintracciabilità; Reg. (CE) 1333/2008 additivi (tipicamente non necessari per passata).</li>
+            <li>Materiali a contatto MOCA: Reg. (UE) 1935/2004 + Reg. (UE) 10/2011 (se plastica); per vetro, requisiti nazionali minori; test migrazione per tappi.</li>
+            <li>Reg. (UE) 2024/1469 Packaging and Packaging Waste Regulation – PPWR (pubblicata 2024, con fasi di attuazione progressiva) per riciclabilità, contenuto riciclato, etichettatura smaltimento. Verificare tempistiche nazionali di adozione.</li>
+            <li>Direttiva SUP 2019/904 (se si utilizzano elementi plastici secondari).</li>
+            <li>Etichettatura nazionale:</li>
+            <li>DE: lingua tedesca; Pfand non applicabile al vetro alimentare non-bevanda; Grüner Punkt/dual system non obbligatorio per alimentari vetro ma Extended Producer Responsibility per imballaggi: registrazione LUCID e partecipazione a sistema duale per imballaggi domestici.</li>
+            <li>FR: Triman logo + Info-tri per imballaggi domestici; restrizioni su “origine Italia” se ingrediente primario non interamente italiano.</li>
+            <li>NL: Direttiva EPR imballaggi; obbligo contributi Afvalfonds Verpakkingen; etichetta ambientale raccomandata.</li>
+            <li>Claim: “biologico” soggetto a Reg. (UE) 2018/848; necessaria certificazione bio valida e controllo organismo accreditato.</li>
+        <p>Fonti: EUR-Lex consolidati (consultati 2024–2025), ADEME/Info-tri (FR, 2023–2024), ZSVR LUCID (DE, 2024), Afvalfonds (NL, 2024).</p>
+        </ul>
+        <p>Comportamento del consumatore e acquisto</p>
+        <ul>
+            <li>Trend documentati 2023–2025:</li>
+            <li>Premiumizzazione post-pandemia nei prodotti a dispensa con origine/tracciabilità, anche a fronte di inflazione alimentare nell’UE (Eurostat HICP Food 2023–2024).</li>
+            <li>Crescita del canale discount ma spazio per premium “affordable treat” e autentico regionale (rapporto OECD Food inflation 2023–2024; osservazioni ITA/ICE su export conserve).</li>
+            <li>Crescita biologico rallentata nel 2023 in EU-15 ma ripresa in segmenti core dispensa non deperibili con prezzo delta contenuto (fonte: report Bio UE – dati aggregati, 2023–2024; variano per Paese).</li>
+            <li>Pattern acquisto:</li>
+            <li>Elevata incidenza private label in DE, NL, FR per conserve; brand premium competono su origine/filiera, spessore/pH, dolcezza naturale, vetro.</li>
+            <li>Formati più venduti: 680–700 g vetro; 1 kg per famiglie/HoReCa light; tetrapak 500 g in Nord Europa per convenienza.</li>
+        </ul>
+        <p>Canali di distribuzione e barriere d’ingresso</p>
+        <ul>
+            <li>Canali:</li>
+            <li>GDO mainstream (EDEKA/REWE/ALDI/LIDL in DE; Leclerc/Intermarché/Carrefour in FR; Albert Heijn/Jumbo/PLUS in NL).</li>
+            <li>Specialty/italian delis; wholesale etnico; eCommerce DTC e marketplace (Amazon, Picnic NL).</li>
+            <li>Foodservice/HoReCa via grossisti (Metro DE/FR, Sligro NL) – fase 2.</li>
+            <li>Barriere:</li>
+            <li>Listini e slotting fees variabili per inserimento, contributi volantino, listing a livello regionale; richiesto supporto trade marketing e garanzie di continuità forniture.</li>
+            <li>Requisiti EPR imballaggi e registrazioni Paese-specifiche.</li>
+            <li>Logistica: palletizzazione EUR, test urto/tappo; costi trasporto a temperatura ambiente ma sensibili su fuel surcharge.</li>
+            <li>Mitigazione:</li>
+            <li>Ingresso regionale con agenti/broker; evitare listing nazionale immediato.</li>
+            <li>Adesione EPR e fiscal representative dove richiesto; partner 3PL locale per DDP.</li>
+        </ul>
+        <p>Strategie di pricing e costi</p>
+        <ul>
+            <li>Struttura costi tipica (Stima per unità 680–700 g in vetro, ex-works Italia):</li>
+            <li>Materia prima e trasformazione: €0,40–0,60</li>
+            <li>Vetro+tappo+astuccio/etichetta: €0,20–0,30</li>
+            <li>Imballo+pal/film: €0,05–0,08</li>
+            <li>QC/Certificazioni/overhead: €0,05–0,10</li>
+            <li>EXW totale stimato: €0,70–1,08 per unità</li>
+            <li>Trasporto groupage Italia–DE/FR/NL: €0,05–0,12/u (pallet pieno; Stima)</li>
+            <li>Prezzo DDP al retailer (Stima): €0,95–1,35</li>
+            <li>Prezzo retail consigliato: €1,49–2,29 (promozioni 20–30%).</li>
+            <li>Posizionamento: due linee</li>
+            <li>Classica: DDP ~€1,00; RRP €1,59–1,89</li>
+            <li>Bio/DOP o filiera: DDP €1,20–1,35; RRP €1,99–2,29</li>
+            <li>Margini: retailer 35–45%; trade marketing 5–10% del sell-in in fase lancio.</li>
+        </ul>
+        <p>Tendenze tecnologiche e innovazione</p>
+        <ul>
+            <li>Tracciabilità digitale lotto-origine (QR code con dati di filiera, blockchain light) – rafforza fiducia in mercati DE/FR.</li>
+            <li>Riduzione peso vetro e tappo metal-free BPA-NI; compatibilità PPWR per riciclabilità.</li>
+            <li>Impatto ambientale: LCA semplificata in etichetta o scheda prodotto; claim “riduzione CO2 trasporto” con ottimizzazione pallet.</li>
+            <li>Formati on-the-go (Tetrapak 500 g) valutabili per Nord Europa; test A/B DTC.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <p>Nota: Non si inventano competitor; elenchiamo categorie tipiche e player comunemente presenti, senza attribuire quote se non da fonti.</p>
+        <ul>
+            <li>Categorie competitive:</li>
+            <li>Private label GDO (alta incidenza in DE, NL, FR).</li>
+            <li>Brand italiani affermati (esempi noti in scaffale: Mutti, De Cecco linea salse/passate, Cirio; presenza varia per Paese). Dati quote non forniti per assenza fonti libere recenti.</li>
+            <li>Importatori/marchi regionali minori e bio.</li>
+            <li>Posizionamento MIGLIARESE CONSERVE: nicchia premium artigianale regionale con storytelling filiera e qualità sensoriale; prezzo sotto top-brand ma sopra private label.</li>
+        </ul>
+        <p>Competitive Landscape Matrix (qualitativa)</p>
+        <table>
+            <tr>
+                <td>Fattore</td>
+                <td>Private Label</td>
+                <td>Brand Top Italia (es. Mutti/Cirio)</td>
+                <td>Bio/Specialty locali</td>
+                <td>Migliarese Conserve (target)</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Prezzo</td>
+                <td>Basso</td>
+                <td>Medio-Alto</td>
+                <td>Medio-Alto</td>
+                <td>Medio</td>
+            </tr>
+            <tr>
+                <td>Qualità percepita</td>
+                <td>Media</td>
+                <td>Alta</td>
+                <td>Alta</td>
+                <td>Alta</td>
+            </tr>
+            <tr>
+                <td>Distribuzione</td>
+                <td>Capillare</td>
+                <td>Ampia</td>
+                <td>Limitata/regionale</td>
+                <td>Selettiva/regionale</td>
+            </tr>
+            <tr>
+                <td>Innovazione</td>
+                <td>Moderata</td>
+                <td>Alta</td>
+                <td>Variabile</td>
+                <td>Media-Alta (tracciabilità/pack)</td>
+            </tr>
+            <tr>
+                <td>Storytelling origine</td>
+                <td>Basso</td>
+                <td>Medio</td>
+                <td>Alto</td>
+                <td>Alto</td>
+            </tr>
+        <p>Nota: analisi qualitativa senza quote perché non disponibili dati pubblici recenti comparabili.</p>
+        </table>
+        <p>Requisiti normativi e compliance – Checklist operativa</p>
+        <ul>
+            <li>UE: HACCP, Tracciabilità, FIC 1169, allergeni (n/a), data TMC, lotto, origine.</li>
+            <li>Paese:</li>
+            <li>DE: Registrazione LUCID + contratto sistema duale; etichetta DE; indicazione smaltimento volontaria; IVA 7%.</li>
+            <li>FR: Triman + Info-tri; lingua FR; IVA 5,5% alimentari.</li>
+            <li>NL: Contributi Afvalfonds; lingua NL consigliata (EN spesso accettata per specialty ma raccomandato NL); IVA 9%.</li>
+            <li>Bio: certificazione UE Bio se etichettato; codice organismo di controllo e luogo produzione “IT-BIO-xxx UE/non UE agricoltura”.</li>
+        </ul>
+        <p>Distribuzione e ingresso – tattiche</p>
+        <ul>
+            <li>Germania:</li>
+            <li>Target: EDEKA/REWE a livello regionale (Bayern, NRW), importatori italiani, Metro Cash&amp;Carry.</li>
+            <li>Partner: agenti locali con referenze conserve; partecipazione a Anuga/ISM o tour buyer storecheck (selezionare 1 fiera).</li>
+            <li>Francia:</li>
+            <li>Target: Leclerc regioni Ovest/Sud, Intermarché, grossisti italiani, Grand Frais per specialty.</li>
+            <li>Paesi Bassi:</li>
+            <li>Target: Jumbo/PLUS regionali, Sligro (wholesale), eCommerce Picnic per test.</li>
+            <li>DTC: Amazon.de/.fr e shop proprio per validare prezzo e feedback.</li>
+        </ul>
+        <p>Strategic Recommendations</p>
+        <ul>
+            <li>Priorità mercati: DE, FR, NL (sequenza 1–2–3), con test regionali e obiettivo 2–3 listaggi pilota entro 90 giorni.</li>
+            <li>Portfolio:</li>
+            <li>SKU core: Passata Classica 700 g vetro; Passata Rustica 700 g; Bio 700 g.</li>
+            <li>Cartone shelf-ready ottimizzato (SRP) per GDO.</li>
+            <li>Value proposition:</li>
+            <li>“Filiera italiana tracciata + gusto dolce naturale (Brix target 7.5–8.5), consistenza setosa, zero additivi”.</li>
+            <li>Sostenibilità: vetro leggero, etichetta carta riciclata, EPR conforme.</li>
+            <li>Prezzi: vedere sezione; assicurare spazio promo 2–3 volte trimestre con sconto 20–25% nei pilot.</li>
+        </ul>
+        <p>Budget Allocation Recommendations (€40.000)</p>
+        <table>
+            <tr>
+                <td>Voce</td>
+                <td>Importo (€)</td>
+                <td>%</td>
+                <td>Note</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---:</th>
+                <th>---:</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Sviluppo Business (broker/agent retainer, commissioni iniziali)</td>
+                <td>10.000</td>
+                <td>25%</td>
+                <td>Retainer 3 mesi per DE/FR/NL (mini-contratti)</td>
+            </tr>
+            <tr>
+                <td>Trade Marketing (materiali SRP, tasting demo, contributi volantino pilota)</td>
+                <td>7.500</td>
+                <td>18.8%</td>
+                <td>2–3 retailer/regione</td>
+            </tr>
+            <tr>
+                <td>Compliance &amp; Etichettatura (traduzioni DE/FR/NL, LUCID, Triman/Info-tri, Afvalfonds, consulenza)</td>
+                <td>6.500</td>
+                <td>16.3%</td>
+                <td>Fee registrazioni + consulente locale</td>
+            </tr>
+            <tr>
+                <td>Logistica pilota (trasporto pallet, campionature B2B, buffer fuel)</td>
+                <td>6.000</td>
+                <td>15%</td>
+                <td>4–6 pallet misti</td>
+            </tr>
+            <tr>
+                <td>R&amp;D/Packaging (riduzione peso vetro, QR tracciabilità, artwork multilingua)</td>
+                <td>4.500</td>
+                <td>11.3%</td>
+                <td>Iterazione label e QR</td>
+            </tr>
+            <tr>
+                <td>eCommerce/DTC test (setup Amazon + adv limitata)</td>
+                <td>3.500</td>
+                <td>8.8%</td>
+                <td>AMS €1k/mese × 3</td>
+            </tr>
+            <tr>
+                <td>Fiere/missioni buyer (micro-stand collettivo o walk-the-show)</td>
+                <td>1.500</td>
+                <td>3.8%</td>
+                <td>1 evento o 2 giornate visite</td>
+            </tr>
+            <tr>
+                <td>Contingenze (10%)</td>
+                <td>500</td>
+                <td>1.3%</td>
+                <td>Buffer</td>
+            </tr>
+        <p>Totale: 40.000</p>
+        </table>
+        <p>Risk Assessment Matrix</p>
+        <table>
+            <tr>
+                <td>Rischio</td>
+                <td>Probabilità</td>
+                <td>Impatto</td>
+                <td>Mitigazione</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Mancato listing GDO</td>
+                <td>Medio</td>
+                <td>Alto</td>
+                <td>Agenti con track record; iniziare con regionali; alternative wholesale/specialty</td>
+            </tr>
+            <tr>
+                <td>Rotazioni inferiori al target</td>
+                <td>Medio</td>
+                <td>Medio-Alto</td>
+                <td>Promo calendar, attività instore, ottimizzare RRP, storytelling shelf-talkers</td>
+            </tr>
+            <tr>
+                <td>Ritardi compliance EPR</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Avviare registrazioni al mese 1; consulente locale</td>
+            </tr>
+            <tr>
+                <td>Aumento costi vetro/trasporto</td>
+                <td>Medio</td>
+                <td>Medio</td>
+                <td>Contratti con fornitori, pallet ottimizzati, revisione formati</td>
+            </tr>
+            <tr>
+                <td>Conflitto con private label</td>
+                <td>Alto</td>
+                <td>Medio</td>
+                <td>Differenziare su gusto/filiera; posizionamento premium; non competere in price-fighter</td>
+            </tr>
+            <tr>
+                <td>Requisiti etichetta/localizzazione</td>
+                <td>Basso</td>
+                <td>Medio</td>
+                <td>Artwork multilingua approvato dal legale; pre-check retailer</td>
+            </tr>
+            <tr>
+                <td>Rischi supply (stagionalità pomodoro)</td>
+                <td>Medio</td>
+                <td>Medio-Alto</td>
+                <td>Pianificazione campagna, safety stock per pilot</td>
+            </tr>
+        </table>
+        <p>90-Day Action Plan</p>
+        <table>
+            <tr>
+                <td>Settimana</td>
+                <td>Attività</td>
+                <td>Responsabile</td>
+                <td>Deliverable</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>1–2</td>
+                <td>Definizione SKU, prezzi DDP per DE/FR/NL, listini e schede tecniche</td>
+                <td>Direzione Commerciale</td>
+                <td>Price list e schede QA</td>
+            </tr>
+            <tr>
+                <td>1–3</td>
+                <td>Avvio registrazioni EPR (LUCID, Triman/Info-tri, Afvalfonds)</td>
+                <td>Compliance Manager</td>
+                <td>Numeri registrazione e contratti sistemi</td>
+            </tr>
+            <tr>
+                <td>2–4</td>
+                <td>Artwork etichette multilingua + QR tracciabilità</td>
+                <td>Marketing/Regulatory</td>
+                <td>File pronti per stampa</td>
+            </tr>
+            <tr>
+                <td>3–6</td>
+                <td>Selezione e ingaggio 2–3 agenti/broker locali</td>
+                <td>Direzione Vendite</td>
+                <td>Contratti trimestrali</td>
+            </tr>
+            <tr>
+                <td>4–8</td>
+                <td>Outreach buyer (EDEKA/REWE regioni, Leclerc/Intermarché, Jumbo/PLUS)</td>
+                <td>Broker/BD</td>
+                <td>10–15 meeting fissati</td>
+            </tr>
+            <tr>
+                <td>5–9</td>
+                <td>Produzione lotto pilota e spedizione campioni/pallet test</td>
+                <td>Operazioni/Logistica</td>
+                <td>4–6 pallet consegnati</td>
+            </tr>
+            <tr>
+                <td>6–10</td>
+                <td>Setup Amazon DE/FR/NL e campagne AMS</td>
+                <td>eCommerce</td>
+                <td>Pagine live + campagne attive</td>
+            </tr>
+            <tr>
+                <td>7–12</td>
+                <td>Demo instore/promo introduttiva nei pilot</td>
+                <td>Trade Marketing</td>
+                <td>2–3 attivazioni completate</td>
+            </tr>
+            <tr>
+                <td>10–12</td>
+                <td>Review KPI rotazioni, prezzo, feedback sensoriale</td>
+                <td>Direzione + Broker</td>
+                <td>Report e correzioni Q2</td>
+            </tr>
+        </table>
+        <p>Fonti &amp; Appendix</p>
+        <p>Nota: Forniamo riferimenti regolatori e macro; per dati di mercato numerici granulari categoria “passata” 2023–2025, molte fonti sono dietro paywall. Non includiamo dati non verificabili.</p>
+        <br>
+        <ul>
+            <li>Eurostat – HICP Food inflation EU, 2023–2024 (consultazione 2024/2025)</li>
+            <li>EUR-Lex:</li>
+            <li>Reg. (UE) 1169/2011 (etichettatura); consolidato 2024</li>
+            <li>Reg. (UE) 2018/775 (origine ingrediente primario); 2018</li>
+            <li>Reg. (CE) 852/2004; Reg. (CE) 178/2002; Reg. (CE) 1333/2008</li>
+            <li>Reg. (UE) 1935/2004; Reg. (UE) 10/2011 (MOCA)</li>
+            <li>PPWR Reg. (UE) 2024/1469 (Gazzetta Ufficiale UE 2024)</li>
+            <li>Direttiva (UE) 2019/904 SUP</li>
+            <li>Germania: ZSVR LUCID – VerpackG, guida produttori imballaggi (2024)</li>
+            <li>Francia: ADEME – Triman/Info-tri Guide (2023–2024)</li>
+            <li>Paesi Bassi: Afvalfonds Verpakkingen – Producer Responsibility (2024)</li>
+            <li>ITA/ICE – Rapporti export agroalimentare italiano (conserve, 2023–2024)</li>
+            <li>World Bank/OECD – Inflazione alimentare e potere d’acquisto UE (2023–2024)</li>
+            <li>Note su competitor: presenza a scaffale osservabile pubblicamente; quote non riportate per mancanza fonti aperte recenti.</li>
+        </ul>
+        <p>Aree con dati non disponibili pubblicamente</p>
+        <ul>
+            <li>Misure esatte del mercato “passata di pomodoro” per Paese UE 2023–2025 in € e volumi.</li>
+            <li>Quote di mercato per singoli brand.</li>
+            <li>Prezzi medi sell-in per canale per Paese.</li>
+        <p>Proposta: acquisire report NielsenIQ/IRI o Statista categoria “Tomato products” HS 2002 con drill-down “passata/puree” per validazione finanziaria.</p>
+        </ul>
+        <p>Azioni immediate raccomandate</p>
+        <ul>
+            <li>Approvare budget e priorità DE/FR/NL.</li>
+            <li>Avviare compliance EPR e artwork.</li>
+            <li>Incaricare broker in DE e FR entro 3 settimane.</li>
+            <li>Pianificare 2 promo instore su ciascun pilot e DTC setup per raccolta recensioni.</li>
+        </ul>
+        <p>— FINE REPORT —</p>
+        <br>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DE&quot;, &quot;FR&quot;, &quot;NL&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;business_development&quot;: 10000,</p>
+        <p>&quot;trade_marketing&quot;: 7500,</p>
+        <p>&quot;compliance_and_labeling&quot;: 6500,</p>
+        <p>&quot;pilot_logistics&quot;: 6000,</p>
+        <p>&quot;rnd_packaging_traceability&quot;: 4500,</p>
+        <p>&quot;ecommerce_dtc&quot;: 3500,</p>
+        <p>&quot;fairs_buyer_visits&quot;: 1500,</p>
+        <p>&quot;contingency&quot;: 500</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DE&quot;: &quot;Stima: €900–1,200M (proxy HS2002; vedi metodo)&quot;,</p>
+        <p>&quot;FR&quot;: &quot;Stima: €700–1,000M (proxy HS2002; vedi metodo)&quot;,</p>
+        <p>&quot;NL&quot;: &quot;Stima: €150–220M (proxy HS2002; vedi metodo)&quot;</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Stima: utilizzo del codice HS 2002 come proxy per la categoria dei prodotti a base di pomodoro, poiché dati pubblici granulari per &#x27;passata&#x27; non sono disponibili.&quot;,</p>
+        <p>&quot;Stima: consumo pro capite UE Nord-Ovest 5–8 kg/anno di prodotti a base pomodoro, inferenza da letteratura su consumo pasta/sughi.&quot;,</p>
+        <p>&quot;Stima: prezzo ex-works 0,70–1,08 €/unità 700 g, basato su costi materia prima, vetro e logistica 2023–2024.&quot;,</p>
+        <p>&quot;Stima: rotazione pilot 10–15 unità/pdv/settimana per GDO regionale, basata su benchmark di categorie dispensa premium.&quot;,</p>
+        <p>&quot;Stima: margini retailer 35–45% e promo 20–30% comuni per conserve in GDO UE.&quot;,</p>
+        <p>&quot;Stima: somma budget allocata per massimizzare MVP commerciale in 90 giorni con 2–3 test-listing per mercato.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>Questo report è stato generato utilizzando tecnologia di ricerca di mercato basata su AI.</p>
+            <p>Per domande o analisi aggiuntive, contatta il tuo team di ricerca.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>
