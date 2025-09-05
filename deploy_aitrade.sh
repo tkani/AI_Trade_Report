@@ -1,16 +1,14 @@
 #!/bin/bash
 
-# AI Trade Report - Apache/WSGI Deployment Script
-# For deployment alongside existing Flask application
+# AI Trade Report - Quick Deployment Script for aitrade.ai-being.com
+# Assumes repository is already cloned to /var/www/AI_Trade_Report/
 
 set -e
 
-APP_NAME="AI_Trade_Report"
-APP_DIR="/var/www/$APP_NAME"
-SITE_NAME="aitrade"
+APP_DIR="/var/www/AI_Trade_Report"
 DOMAIN="aitrade.ai-being.com"
 
-echo "🚀 Starting Apache deployment for AI Trade Report..."
+echo "🚀 Deploying AI Trade Report to $DOMAIN..."
 
 # Check if running as root
 if [[ $EUID -eq 0 ]]; then
@@ -24,40 +22,19 @@ if ! sudo -n true 2>/dev/null; then
     exit 1
 fi
 
-echo "📋 Pre-deployment checks..."
-
-# Check if Apache is installed
-if ! command -v apache2 &> /dev/null; then
-    echo "❌ Apache2 is not installed. Please install Apache2 first."
+# Check if directory exists
+if [ ! -d "$APP_DIR" ]; then
+    echo "❌ Directory $APP_DIR does not exist. Please clone the repository first:"
+    echo "   sudo mkdir -p $APP_DIR"
+    echo "   sudo chown -R $USER:$USER $APP_DIR"
+    echo "   git clone https://github.com/tkani/AI_Trade_Report.git $APP_DIR"
     exit 1
 fi
 
-# Check if Python 3.11+ is installed
-if ! command -v python3.11 &> /dev/null; then
-    echo "📦 Installing Python 3.11..."
-    sudo add-apt-repository ppa:deadsnakes/ppa -y
-    sudo apt update
-    sudo apt install -y python3.11 python3.11-venv python3.11-dev python3-pip apache2-dev
-fi
+echo "📋 Setting up Python environment..."
 
-echo "🔧 Setting up application directory..."
-
-# Create application directory
-sudo mkdir -p $APP_DIR
-sudo chown -R www-data:www-data $APP_DIR
-
-# Clone or update repository
-if [ -d "$APP_DIR/.git" ]; then
-    echo "📥 Updating existing repository..."
-    cd $APP_DIR
-    sudo -u www-data git pull origin main
-else
-    echo "📥 Cloning repository..."
-    sudo -u www-data git clone https://github.com/tkani/AI_Trade_Report.git $APP_DIR
-    cd $APP_DIR
-fi
-
-echo "🐍 Setting up Python environment..."
+# Navigate to project directory
+cd $APP_DIR
 
 # Create virtual environment
 sudo -u www-data python3.11 -m venv venv
@@ -78,7 +55,7 @@ if [ ! -f ".env" ]; then
     read -p "Press Enter after updating .env file..."
 fi
 
-echo "🔧 Creating WSGI application file..."
+echo "🔧 Creating WSGI application files..."
 
 # Create WSGI adapter
 sudo -u www-data tee wsgi_app.py > /dev/null <<EOF
@@ -86,13 +63,13 @@ from app import app
 import os
 
 # Set environment variables
-os.environ.setdefault('PYTHONPATH', '$APP_DIR')
+os.environ.setdefault('PYTHONPATH', '$APP_DIR/')
 
 # WSGI application
 application = app
 EOF
 
-# Create WSGI file
+# Create main WSGI file
 sudo -u www-data tee ai_trade_report.wsgi > /dev/null <<EOF
 #!/usr/bin/python3.11
 import sys
@@ -116,7 +93,7 @@ EOF
 echo "🌐 Configuring Apache virtual host..."
 
 # Create Apache virtual host configuration
-sudo tee /etc/apache2/sites-available/$SITE_NAME.conf > /dev/null <<EOF
+sudo tee /etc/apache2/sites-available/aitrade.conf > /dev/null <<EOF
 <VirtualHost *:80>
     ServerName $DOMAIN
     ServerAdmin support@aibeing.com
@@ -134,8 +111,8 @@ sudo tee /etc/apache2/sites-available/$SITE_NAME.conf > /dev/null <<EOF
     DocumentRoot $APP_DIR
 
     # WSGI Configuration
-    WSGIDaemonProcess $APP_NAME threads=50 inactivity-timeout=60 python-home=$APP_DIR/venv
-    WSGIProcessGroup $APP_NAME
+    WSGIDaemonProcess aitrade threads=50 inactivity-timeout=60 python-home=$APP_DIR/venv
+    WSGIProcessGroup aitrade
     WSGIScriptAlias / $APP_DIR/ai_trade_report.wsgi
     
     # Static files
@@ -173,8 +150,8 @@ sudo tee /etc/apache2/sites-available/$SITE_NAME.conf > /dev/null <<EOF
     Header always set Referrer-Policy "no-referrer-when-downgrade"
     
     # Logging
-    ErrorLog \${APACHE_LOG_DIR}/${APP_NAME}_error.log
-    CustomLog \${APACHE_LOG_DIR}/${APP_NAME}_access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/aitrade_error.log
+    CustomLog \${APACHE_LOG_DIR}/aitrade_access.log combined
 </VirtualHost>
 EOF
 
@@ -195,7 +172,7 @@ sudo a2enmod rewrite
 sudo a2enmod headers
 
 # Enable the site
-sudo a2ensite $SITE_NAME.conf
+sudo a2ensite aitrade.conf
 
 # Test Apache configuration
 sudo apache2ctl configtest
@@ -230,8 +207,8 @@ echo ""
 echo "🔧 Useful commands:"
 echo "   sudo systemctl status apache2"
 echo "   sudo systemctl restart apache2"
-echo "   sudo tail -f /var/log/apache2/${APP_NAME}_error.log"
-echo "   sudo tail -f /var/log/apache2/${APP_NAME}_access.log"
+echo "   sudo tail -f /var/log/apache2/aitrade_error.log"
+echo "   sudo tail -f /var/log/apache2/aitrade_access.log"
 echo ""
 echo "⚠️  Don't forget to:"
 echo "   1. Update your DNS to point $DOMAIN to this server"
