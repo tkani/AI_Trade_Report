@@ -21,15 +21,7 @@ const translations = {
         loading_description: "Our AI is analyzing market data, competitive landscape, and strategic opportunities for your business expansion.",
         step_1: "🔍 Market Research",
         step_2: "📊 Data Analysis",
-        step_3: "📝 Report Generation",
-        demo_title: "Demo Report",
-        demo_description: "This is a demonstration of the AI Trade Report Generator. To use the full functionality with OpenAI integration, please run the application locally.",
-        feature_1: "AI-Powered Analysis",
-        feature_2: "Mobile Responsive",
-        feature_3: "Multilingual Support",
-        feature_4: "PDF Export",
-        view_github: "View on GitHub",
-        get_started: "Get Started"
+        step_3: "📝 Report Generation"
     },
     it: {
         brand_name: "AI Trade Report",
@@ -52,15 +44,7 @@ const translations = {
         loading_description: "La nostra AI sta analizzando i dati di mercato, il panorama competitivo e le opportunità strategiche per l'espansione della tua azienda.",
         step_1: "🔍 Ricerca di Mercato",
         step_2: "📊 Analisi dei Dati",
-        step_3: "📝 Generazione Report",
-        demo_title: "Report Demo",
-        demo_description: "Questa è una dimostrazione del Generatore di Report Commerciali AI. Per utilizzare la funzionalità completa con integrazione OpenAI, esegui l'applicazione localmente.",
-        feature_1: "Analisi basata su AI",
-        feature_2: "Responsive Mobile",
-        feature_3: "Supporto Multilingue",
-        feature_4: "Esportazione PDF",
-        view_github: "Visualizza su GitHub",
-        get_started: "Inizia"
+        step_3: "📝 Generazione Report"
     }
 };
 
@@ -87,60 +71,49 @@ $(document).ready(function () {
         $('#html-lang').attr('lang', currentLanguage);
     });
 
-        // Enhanced form submission with loading steps
-        $('#report-form').submit(function (e) {
-            e.preventDefault();
-            
-            // Show splash screen
-            $('#splash-screen').css('display', 'flex');
-            
-            // Animate loading steps
-            animateLoadingSteps();
+    // Enhanced form submission with loading steps
+    $('#report-form').submit(function (e) {
+        e.preventDefault();
+        
+        // Show splash screen
+        $('#splash-screen').css('display', 'flex');
+        
+        // Animate loading steps
+        animateLoadingSteps();
 
-            var formData = $(this).serialize();
-            var selectedModel = $('#ai_model').val();
-            
-            // Add the AI model selection to form data
-            formData += '&ai_model=' + encodeURIComponent(selectedModel);
+        var formData = $(this).serialize();
+        var selectedModel = $('#ai_model').val();
+        
+        // Add the AI model selection to form data
+        formData += '&ai_model=' + encodeURIComponent(selectedModel);
 
-            // Check if running on GitHub Pages (demo mode)
-            if (window.location.hostname === 'tkani.github.io' || window.location.hostname.includes('github.io')) {
-                // Demo mode - show demo message
+        $.ajax({
+            url: '/generate',
+            type: 'POST',
+            data: formData,
+            success: function (res) {
+                // Complete all steps
+                completeAllSteps();
+                
+                // Small delay before redirect for better UX
                 setTimeout(function() {
-                    completeAllSteps();
                     $('#splash-screen').css('display', 'none');
-                    alert('This is a demo version. To use the full AI functionality, please run the application locally with your OpenAI API key. See the GitHub repository for installation instructions.');
-                }, 3000);
-                return;
-            }
-
-            $.ajax({
-                url: '/generate',
-                type: 'POST',
-                data: formData,
-                success: function (res) {
-                    // Complete all steps
-                    completeAllSteps();
                     
-                    // Small delay before redirect for better UX
-                    setTimeout(function() {
-                        $('#splash-screen').css('display', 'none');
-                        
-                        if (res.status === "success") {
-                            // Redirect to the report page
-                            window.location.href = res.redirect_url;
-                        } else {
-                            alert("Error: " + res.message);
-                        }
-                    }, 1000);
-                },
-                error: function () {
-                    // Hide splash screen
-                    $('#splash-screen').css('display', 'none');
-                    alert("An error occurred while generating the report.");
-                }
-            });
+                    if (res.status === "success") {
+                        // Redirect to the report page
+                        window.location.href = res.redirect_url;
+                    } else {
+                        alert("Error: " + res.message);
+                    }
+                }, 1000);
+            },
+            error: function () {
+                // Hide splash screen
+                $('#splash-screen').css('display', 'none');
+                alert("An error occurred while generating the report.");
+            }
         });
+    });
     
     // Loading steps animation
     function animateLoadingSteps() {

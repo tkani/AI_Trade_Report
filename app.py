@@ -930,6 +930,10 @@ def create_html_document(content: str, language: str = "en") -> str:
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "version": "1.0.0", "service": "AI Trade Report"}
+
 @app.post("/generate", response_class=JSONResponse)
 async def generate_report(
     brand: str = Form(...),
