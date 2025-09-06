@@ -64,3 +64,16 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Test files
+test_*.py
+*_test.py
+debug_*.py
+
+# Deployment files
+deploy.sh
+deploy.bat
