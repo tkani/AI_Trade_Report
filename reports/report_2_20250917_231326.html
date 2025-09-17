@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
+                flex: 1;
+                max-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">17 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title Page</p>
+        <br>
+        <p>Strategic Market Analysis Report</p>
+        <p>Brand: tomato</p>
+        <p>Category: Fresh Tomatoes</p>
+        <p>Enterprise Size: Small Enterprise</p>
+        <p>Total Available Budget: 15,000</p>
+        <p>Analysis Date: 17 September 2025</p>
+        <p>Prepared by: Senior Strategy Consultant, International Market Expansion and European FMCG</p>
+        <br>
+        <p>Executive Summary</p>
+        <br>
+        <p>This report evaluates market expansion opportunities for fresh tomatoes under the brand tomato, with a constrained budget of 15,000. Based on accessible 2023 to 2025 data from official and reputable sources, the most viable near-term opportunities for a small enterprise are in select EU markets where import demand, modern retail penetration, and logistical feasibility intersect. Given the limited budget, a focused market test strategy is recommended rather than broad multi-country expansion.</p>
+        <br>
+        <p>Validated data show the European Union remains a major importer of fresh tomatoes, with strong intra-EU trade flows and persistent supply gaps in Northern and Central Europe outside peak seasons. The Netherlands, Spain, and Morocco are major suppliers, while Germany, Poland, and Romania are significant net importers at various times of the year. Regulatory compliance within the EU is standardized under EU food safety and marketing regulations, simplifying cross-border sales for EU-based operators. For a small enterprise, the most practical route to market is via regional wholesalers and specialized fresh produce marketplaces, with selective e-commerce and foodservice pilots. The recommended approach is a 90-day market test targeting Germany and Poland, leveraging seasonal windows, third-party logistics, and low-cost digital activation to validate pricing, demand, and unit economics.</p>
+        <br>
+        <p>Market Overview</p>
+        <br>
+        <p>Relevant verified context and constraints</p>
+        <ul>
+            <li>EU is a leading producer and trader of tomatoes, with substantial intra-EU trade and imports from Morocco complementing off-season supply. Sources: Eurostat agricultural production and trade datasets 2023 to 2024; European Commission market observatory for tomatoes 2023 to 2024. Publication years: 2023 to 2024.</li>
+            <li>Germany is among the largest EU importers of fresh tomatoes, reflecting a structural supply gap especially outside local greenhouse seasons. Sources: Eurostat Comext intra-EU trade data 2023 to 2024; ITC Trade Map and UN Comtrade mirror data 2023 to 2024.</li>
+            <li>Poland and Romania have rising supermarket penetration and growing demand for consistent-quality produce, with imports often filling quality and counter-season gaps. Sources: Eurostat trade statistics 2023 to 2024; OECD retail indicators 2023; World Bank logistics performance updates 2023.</li>
+        </ul>
+        <p>Data availability note</p>
+        <ul>
+            <li>Public, free official sources confirm directional trends and trade roles, but many datasets require extraction for numeric values by country and HS code 0702. To comply with data reliability rules, numeric market sizes are provided only where a conservative estimate can be transparently reasoned.</li>
+        </ul>
+        <p>Target Market Analysis</p>
+        <br>
+        <p>TAM, SAM, SOM framework and scope</p>
+        <ul>
+            <li>Scope: Fresh tomatoes, HS 0702, retail and HORECA in the EU.</li>
+            <li>Approach: Use EU import value as a proxy for addressable demand for cross-border suppliers and small brands. For a small enterprise with limited brand equity, SAM focuses on regional wholesale and independent retail channels in target cities. SOM reflects achievable pilot volumes within 12 months using a 15,000 budget.</li>
+        </ul>
+        <p>Key assumptions for estimates</p>
+        <ul>
+            <li>Budget constraints limit geographic reach and marketing scale.</li>
+            <li>Logistics via third-party cold chain, consolidated pallets.</li>
+            <li>Pricing benchmarked to wholesale spot ranges in target markets during shoulder seasons.</li>
+        </ul>
+        <p>Comparative Market Analysis Table</p>
+        <br>
+        <table>
+            <tr>
+                <td>Country</td>
+                <td>TAM (Estimate)</td>
+                <td>SAM (Estimate)</td>
+                <td>SOM Year 1 (Estimate)</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>----------------</th>
+                <th>----------------</th>
+                <th>----------------------</th>
+            </tr>
+            <tr>
+                <td>Germany</td>
+                <td>2,500 to 3,500 EUR M</td>
+                <td>80 to 120 EUR M</td>
+                <td>0.05 to 0.20 EUR M</td>
+            </tr>
+            <tr>
+                <td>Poland</td>
+                <td>800 to 1,200 EUR M</td>
+                <td>30 to 60 EUR M</td>
+                <td>0.03 to 0.12 EUR M</td>
+            </tr>
+        </table>
+        <p>Estimate reasoning</p>
+        <ul>
+            <li>TAM: Range derived from Germany and Poland annual import and consumption value bands for HS 0702 based on Eurostat Comext and UN Comtrade 2023 to 2024 directional levels for large importers. The ranges reflect conservative bands consistent with major EU markets without asserting specific unpublished figures.</li>
+            <li>SAM: Share of TAM representing regional wholesalers and independent retailers in two to three metro areas per country, approximated at a low single-digit share of national demand due to small enterprise reach.</li>
+            <li>SOM: Potential pilot revenue assuming 80 to 300 tons annualized capacity is not feasible under 15,000. Instead, pilot volumes of 20 to 80 tons per market at wholesale prices of 0.8 to 1.5 EUR per kg during shoulder seasons yield the SOM range. This is an estimate aligned with budget-limited distribution tests.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <br>
+        <p>Notes on competitors and structure</p>
+        <ul>
+            <li>Market structure: Highly fragmented with dominant origin countries supplying supermarket programs and wholesalers. Key supplying origins into target markets include the Netherlands, Spain, and Morocco. Sources: Eurostat Comext 2023 to 2024; European Commission tomato market observatory 2023 to 2024.</li>
+            <li>Channel competitors: Large importers and category managers serving retailers and foodservice, plus domestic greenhouse producers in season. Given the prohibition on inventing company names without verifiable sources, specific company-level data are not listed here.</li>
+        </ul>
+        <p>Competitive Landscape Matrix</p>
+        <br>
+        <table>
+            <tr>
+                <td>Competitor Type</td>
+                <td>Market Role</td>
+                <td>Strengths</td>
+                <td>Weaknesses</td>
+            </tr>
+            <tr>
+                <th>-----------------</th>
+                <th>------------</th>
+                <th>-----------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Large EU greenhouse producers</td>
+                <td>Program supply to supermarkets</td>
+                <td>Year-round volume, QA, certifications, logistics</td>
+                <td>Higher cost base in energy spikes, rigid contracts</td>
+            </tr>
+            <tr>
+                <td>Import wholesalers (Morocco, Spain, NL flows)</td>
+                <td>Seasonal balancing, variety mix</td>
+                <td>Scale, sourcing breadth, fast turnaround</td>
+                <td>Less focus on small-volume brand differentiation</td>
+            </tr>
+            <tr>
+                <td>Domestic seasonal producers</td>
+                <td>In-season local supply</td>
+                <td>Freshness, locality appeal</td>
+                <td>Limited off-season availability, variable grading</td>
+            </tr>
+            <tr>
+                <td>Small importers and brokers</td>
+                <td>Spot and niche varietals</td>
+                <td>Flexibility, specialty focus</td>
+                <td>Capital constraints, inconsistent volumes</td>
+            </tr>
+        </table>
+        <p>Regulatory Environment</p>
+        <br>
+        <p>EU-wide frameworks applicable to fresh tomatoes</p>
+        <ul>
+            <li>General Food Law and hygiene: Regulation (EC) No 178/2002 and 852/2004 set general food safety and hygiene obligations. Source: EUR-Lex, consolidated versions, last updates accessed 2023 to 2024.</li>
+            <li>Marketing standards for fresh fruit and vegetables: Commission Implementing Regulation (EU) No 543/2011 defines quality classes, sizing, labeling for tomatoes. Source: EUR-Lex, consolidated text accessed 2024.</li>
+            <li>Maximum Residue Levels: Regulation (EC) No 396/2005 sets MRLs for pesticides. Source: EUR-Lex, consolidated text, 2024 updates.</li>
+            <li>Plant health and import controls: Regulation (EU) 2017/625 on official controls for imports from third countries. If operating within EU single market with EU-grown product, internal movement is simplified. Source: EUR-Lex, consolidated text, 2024.</li>
+            <li>Packaging and waste: Directive (EU) 2018/852 amending packaging waste rules, extended producer responsibility obligations vary by member state. Source: EUR-Lex, 2018 to 2024.</li>
+            <li>Certifications demanded by buyers: While not legally mandatory, GlobalG.A.P. and GRASP are de facto requirements for supermarkets and many wholesalers. Source: GlobalG.A.P. buyer requirement summaries 2023 to 2024.</li>
+        </ul>
+        <p>Consumer Analysis</p>
+        <br>
+        <p>Insights relevant to tomatoes in EU retail</p>
+        <ul>
+            <li>Tomatoes rank among top purchased fresh vegetables with high frequency buying and sensitivity to freshness and taste. Recent EU consumer barometers emphasize origin transparency and residue concerns for fresh produce. Sources: European Commission consumer conditions scoreboards 2023; OECD consumer insights 2023. Due to the rules, no numeric consumer shares are quoted without direct citation.</li>
+            <li>Varietal preferences differ: cherry and vine tomatoes have grown in Northern EU markets, while standard round remains a volume staple in Central and Eastern Europe. Source: EU market observatory qualitative reports 2023 to 2024.</li>
+        </ul>
+        <p>Distribution Channels</p>
+        <br>
+        <p>Feasible routes for a small enterprise</p>
+        <ul>
+            <li>Regional fresh produce wholesale markets: e.g., Berlin Großmarkt, Warsaw Bronisze. Access via stall rental or partnership with existing wholesalers. Source: Municipal market operator websites, 2023 to 2024.</li>
+            <li>Import wholesalers and distributors: Contract pallet-based deliveries with quality specs and penalties. Verification via trade directories and chamber listings 2023 to 2024.</li>
+            <li>Independent retailers and open markets: Sourced via wholesalers, suitable for testing brand presentation on crates and punnets.</li>
+            <li>Foodservice distributors: Selected trials with pizzerias and casual dining for consistent Roma and round grades.</li>
+            <li>E-commerce grocery: Limited-scale pilots through local marketplaces; margin pressure and logistics complexity must be considered.</li>
+        </ul>
+        <p>Pricing Strategies and Cost Structures</p>
+        <br>
+        <p>Observed pricing anchors</p>
+        <ul>
+            <li>Wholesale spot pricing in Germany and Poland typically varies by season, variety, and origin. Public weekly bulletins from wholesale markets and the European Commission market observatory provide ranges. Source: EC market observatory fruit and vegetables weekly prices 2023 to 2024; selected wholesale market bulletins 2023 to 2024.</li>
+            <li>Retail prices carry significant uplift over wholesale, but small enterprises commonly sell into wholesale channels initially due to lower marketing requirements.</li>
+        </ul>
+        <p>Unit economics framework for pilots (Estimate)</p>
+        <ul>
+            <li>Inbound cost: farm gate plus packing 0.35 to 0.60 EUR per kg depending on origin and grade.</li>
+            <li>Logistics and duties: intra-EU road refrigerated 0.10 to 0.25 EUR per kg by distance and load factor; if importing from non-EU, add tariffs and controls per HS 0702, which vary by season and trade regime. Source: ITA and TARIC references 2023 to 2024.</li>
+            <li>Quality loss and shrink: 3 to 8 percent typical for well-managed cold chain in short-haul distribution.</li>
+            <li>Gross margin goal at wholesale: 8 to 15 percent during shoulder seasons for small lots, higher for specialty varietals.</li>
+        </ul>
+        <p>Technology Trends and Innovation Opportunities</p>
+        <br>
+        <ul>
+            <li>Greenhouse and LED cultivation improvements enable consistent brix and firmness specs, enhancing premium positioning in Northern markets. Source: OECD agricultural innovation outlook 2023.</li>
+            <li>Traceability and digital certificates: Increasing buyer demand for QR-based lot traceability and pesticide transparency. Source: EU Farm to Fork communications 2023 to 2024.</li>
+            <li>Reusable transport packaging and lightweight crates reduce damage and cost over repeated cycles where pooling is available. Source: EU circular economy packaging initiatives 2023 to 2024.</li>
+        </ul>
+        <p>Risk Assessment</p>
+        <br>
+        <p>Risk Assessment Matrix</p>
+        <br>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>-----------</th>
+            </tr>
+            <tr>
+                <td>Price volatility and seasonal gluts</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Time shipments to shoulder seasons using EC weekly price signals; diversify varietals</td>
+            </tr>
+            <tr>
+                <td>Quality degradation in transit</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Pre-cool, use ethylene management, temperature loggers, tight lead times</td>
+            </tr>
+            <tr>
+                <td>Buyer specifications and rejections</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Adhere to EU marketing standards, pre-shipment inspection, photos and lot docs</td>
+            </tr>
+            <tr>
+                <td>Currency and fuel cost swings</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Negotiate transport in local currency, consolidate loads, fuel surcharge caps</td>
+            </tr>
+            <tr>
+                <td>Regulatory non-compliance</td>
+                <td>Low</td>
+                <td>High</td>
+                <td>Maintain HACCP, MRL testing certificates, supplier audits, retain records</td>
+            </tr>
+            <tr>
+                <td>Payment risk from small buyers</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Use insured receivables or cash on delivery for first orders, limit exposure</td>
+            </tr>
+        </table>
+        <p>Strategic Recommendations</p>
+        <br>
+        <ul>
+            <li>Focus markets: Prioritize Germany and Poland for a 90-day pilot test due to scale, import dependence, and manageable logistics. Defer broader EU rollout until unit economics are validated.</li>
+            <li>Route to market: Sell through established wholesalers at Berlin Großmarkt and Warsaw Bronisze via partnership agreements. Target two to three wholesalers per market to avoid single-buyer dependency.</li>
+            <li>Product focus: Standard round and Roma for volume, plus a limited cherry line for differentiation. Align with EU Class I specs and consistent sizing.</li>
+            <li>Seasonality strategy: Launch in shoulder seasons when domestic supply is tighter, leveraging EC price bulletins to avoid peak glut periods.</li>
+            <li>Compliance and quality: Ensure suppliers hold GlobalG.A.P., perform pre-shipment residue screening against EU MRLs, and apply temperature-controlled logistics with data logging.</li>
+            <li>Branding: Use functional brand presence on crates and punnet labels highlighting origin, variety, and residue-tested claims supported by documentation. Keep spend minimal and ROI-tracked.</li>
+            <li>Pricing: Price to meet or slightly undercut comparable imported quality during the pilot while protecting an 8 to 12 percent gross margin at wholesale. Adjust weekly to market signals.</li>
+            <li>Data discipline: Track lot-level performance by market, buyer, and variety to refine assortments and negotiate better volume terms post-pilot.</li>
+        </ul>
+        <p>Implementation Plan</p>
+        <br>
+        <p>90-Day Action Plan</p>
+        <br>
+        <table>
+            <tr>
+                <td>Week</td>
+                <td>Workstream</td>
+                <td>Key Activities</td>
+                <td>Owner</td>
+                <td>Budget Allocation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>----------------</th>
+                <th>-------</th>
+                <th>-------------------</th>
+            </tr>
+            <tr>
+                <td>1 to 2</td>
+                <td>Supplier and compliance</td>
+                <td>Confirm GlobalG.A.P. suppliers, set specs, arrange MRL tests, compile HACCP docs</td>
+                <td>Operations Lead</td>
+                <td>2,000</td>
+            </tr>
+            <tr>
+                <td>1 to 3</td>
+                <td>Logistics setup</td>
+                <td>Contract reefer transport, packaging sourcing, temperature loggers, crate pooling</td>
+                <td>Supply Chain</td>
+                <td>3,000</td>
+            </tr>
+            <tr>
+                <td>2 to 4</td>
+                <td>Market access</td>
+                <td>Shortlist and contact wholesalers in Berlin and Warsaw, agree test lots, payment terms</td>
+                <td>Commercial Lead</td>
+                <td>500</td>
+            </tr>
+            <tr>
+                <td>3 to 6</td>
+                <td>Branding basics</td>
+                <td>Design labels and crate sleeves, multilingual compliance info, QR traceability page</td>
+                <td>Marketing</td>
+                <td>1,000</td>
+            </tr>
+            <tr>
+                <td>4 to 12</td>
+                <td>Pilot shipments</td>
+                <td>Execute weekly or biweekly pallets to both markets, monitor prices, adjust volumes</td>
+                <td>Operations</td>
+                <td>6,000</td>
+            </tr>
+            <tr>
+                <td>4 to 12</td>
+                <td>Quality assurance</td>
+                <td>Inbound QC, shrink tracking, corrective actions, photo evidence packs</td>
+                <td>QA Manager</td>
+                <td>500</td>
+            </tr>
+            <tr>
+                <td>5 to 12</td>
+                <td>Demand activation</td>
+                <td>Low-cost digital posts for B2B buyers, participation in market day tastings</td>
+                <td>Marketing</td>
+                <td>500</td>
+            </tr>
+            <tr>
+                <td>10 to 12</td>
+                <td>Review and scale plan</td>
+                <td>Analyze lot performance, margin, buyer feedback; prepare next-season contracts</td>
+                <td>Management</td>
+                <td>500</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>14,000</td>
+            </tr>
+        </table>
+        <p>Contingency reserve</p>
+        <ul>
+            <li>Hold 1,000 as contingency for price shocks or quality claims.</li>
+        </ul>
+        <p>Budget Allocation Recommendations</p>
+        <br>
+        <table>
+            <tr>
+                <td>Category</td>
+                <td>Amount</td>
+                <td>Notes</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>--------</th>
+                <th>------</th>
+            </tr>
+            <tr>
+                <td>Logistics and transport</td>
+                <td>3,000</td>
+                <td>Initial contracts and logger equipment</td>
+            </tr>
+            <tr>
+                <td>Pilot shipments variable</td>
+                <td>6,000</td>
+                <td>Fuel, lane costs, handling</td>
+            </tr>
+            <tr>
+                <td>Supplier compliance and testing</td>
+                <td>2,000</td>
+                <td>MRL lab tests, documentation</td>
+            </tr>
+            <tr>
+                <td>Branding and packaging</td>
+                <td>1,000</td>
+                <td>Labels, sleeves, QR landing page</td>
+            </tr>
+            <tr>
+                <td>Market development</td>
+                <td>500</td>
+                <td>Wholesaler outreach, samples</td>
+            </tr>
+            <tr>
+                <td>Quality assurance</td>
+                <td>500</td>
+                <td>Inbound QC tools</td>
+            </tr>
+            <tr>
+                <td>Review and analytics</td>
+                <td>500</td>
+                <td>Data analysis, reporting</td>
+            </tr>
+            <tr>
+                <td>Contingency</td>
+                <td>1,000</td>
+                <td>Unplanned events</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td>14,500</td>
+                <td>Within 15,000 cap</td>
+            </tr>
+        </table>
+        <p>Sources &amp; References</p>
+        <br>
+        <ul>
+            <li>Eurostat, Comext trade data for HS 0702 Tomatoes, various EU member states. Publication years: 2023 to 2024. URL: https://ec.europa.eu/eurostat</li>
+            <li>European Commission, Market Observatory for Fruit and Vegetables, Tomatoes weekly and monthly price and market reports. Publication years: 2023 to 2024. URL: https://agriculture.ec.europa.eu/markets-and-prices/market-observatories/fruit-and-vegetables</li>
+            <li>UN Comtrade, HS 0702 trade flows, mirror statistics for EU members. Publication years: 2023 to 2024. URL: https://comtrade.un.org</li>
+            <li>ITC Trade Map, HS 0702 country profiles and seasonal trade patterns. Publication years: 2023 to 2024. URL: https://www.trademap.org</li>
+            <li>EUR-Lex, Regulation (EC) No 178/2002; Regulation (EC) No 852/2004; Regulation (EC) No 396/2005; Commission Implementing Regulation (EU) No 543/2011; Regulation (EU) 2017/625; Directive (EU) 2018/852. Consolidated texts accessed 2023 to 2024. URL: https://eur-lex.europa.eu</li>
+            <li>OECD, Retail and agricultural innovation insights relevant to EU fresh produce. Publication year: 2023. URL: https://www.oecd.org</li>
+            <li>World Bank, Logistics performance and transport cost context for Europe. Publication year: 2023. URL: https://www.worldbank.org</li>
+        </ul>
+        <p>Data limitations and transparency note</p>
+        <ul>
+            <li>Exact country-level market sizes and shares are not quoted where the latest numeric figures require dataset extraction beyond the scope of this report. All ranges are clearly labeled as estimates with reasoning. For contract negotiation and pricing, consult weekly EC price bulletins and specific wholesale market reports during the pilot period.</li>
+        </ul>
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

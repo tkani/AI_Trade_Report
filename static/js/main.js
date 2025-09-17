@@ -331,7 +331,7 @@ function initializeSelect2Input() {
         },
         placeholder: placeholder,
         allowClear: true,
-        multiple: true,
+        multiple: false,
         minimumInputLength: 2,
         tags: true, // Enable custom entries
         tokenSeparators: [',', ';'], // Allow comma and semicolon as separators
