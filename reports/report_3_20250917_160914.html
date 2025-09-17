@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
+                flex: 1;
+                max-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <div class="brand-icon">📊</div>
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">17 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Strategic Market Analysis Report</p>
+        <p>Test Brand – Dairy (Milk &amp; Cream, Cheese, Butter)</p>
+        <p>Analysis date: 17 September 2025 | Budget: 100,000 | Enterprise size: Small</p>
+        <br>
+        <p>Executive Summary</p>
+        <ul>
+            <li>Scope: Assess EU/UK market expansion opportunities for Test Brand across three dairy categories: milk &amp; cream, cheese, and butter.</li>
+            <li>Recommendation (priority markets): Germany (DE), France (FR), Netherlands (NL). Rationale: large, high-value dairy consumption; dense modern trade and e-grocery; strong private label but room for niche/value-added imports; logistics gateways.</li>
+            <li>Go-to-market model: Importer/distributor-led entry + online marketplace pilots + targeted regional retail listings. Focus on value-added SKUs (e.g., lactose-free/UHT, specialty cheese formats, premium butter) where private-label pressure is lower.</li>
+            <li>Budget split (Estimate): Trade and market activation 45%, regulatory/compliance 12%, channel development 23%, consumer research and digital 12%, contingency 8%.</li>
+            <li>TAM/SAM/SOM (Estimate, method disclosed): Use verified 2023–2024 apparent consumption and retail sales where available; translate into category retail value; SAM = relevant subsegments Test Brand can serve; SOM = conservative first-12-month share based on comparable small-importer launches.</li>
+        </ul>
+        <p>Market Analysis</p>
+        <p>Data availability note</p>
+        <ul>
+            <li>Official sources provide robust production/consumption and trade statistics by HS codes (milk/cream HS04; cheese HS0406; butter HS0405). Retail value breakdowns are less standardized in public sources. Where retail value or segment detail is not directly available, we provide clearly labeled estimates and reasoning.</li>
+        </ul>
+        <p>Macromarket context (EU-27 and UK)</p>
+        <ul>
+            <li>EU-27 dairy: EU is world’s largest dairy producer and exporter; high per-capita consumption of cheese and butter; fresh milk volumes declining slowly, UHT and lactose-free segments resilient. Sources: European Commission, Short-Term Outlook (2024); Eurostat (2023–2024).</li>
+            <li>Inflation and private label: Grocery inflation in 2022–2023 accelerated private label share across dairy categories; brand entry must emphasize differentiation/value. Sources: Eurostat HICP; national retail associations (2023–2024).</li>
+            <li>Trade: Intra-EU trade friction low; UK requires border checks and certifications (SPS) since 2024–2025. Sources: European Commission DG SANTE, UK Defra BTOM guidance (2024–2025).</li>
+        </ul>
+        <p>Target Market Identification and Sizing</p>
+        <p>Method summary (Estimates unless cited):</p>
+        <ul>
+            <li>TAM: Country retail market value for each category (milk &amp; cream, cheese, butter). Where retail value is not published, we estimate using apparent consumption x average retail price benchmarks triangulated from Eurostat consumer price indices and industry reports (clearly marked).</li>
+            <li>SAM: Subset Test Brand can realistically serve in 12–24 months (e.g., UHT milk, specialty hard/semihard cheeses, premium butter; excluding fresh pasteurized short-shelf-life SKUs if cross-border).</li>
+            <li>SOM (12-month): Penetration achievable through selected channels (importer + 50–200 stores + e-grocery + specialty), benchmarked to small-brand launches.</li>
+        </ul>
+        <p>Comparative Market Analysis (TAM/SAM/SOM) – Estimates with reasoning</p>
+        <table>
+            <tr>
+                <td>Market</td>
+                <td>Category</td>
+                <td>TAM (Retail, €M)</td>
+                <td>SAM (Retail, €M)</td>
+                <td>SOM Yr1 (€M)</td>
+                <td>Rationale (estimate basis)</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---:</th>
+                <th>---:</th>
+                <th>---:</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Germany (DE)</td>
+                <td>Milk &amp; cream</td>
+                <td>Estimate: 7,500</td>
+                <td>1,500</td>
+                <td>0.45</td>
+                <td>Large UHT and lactose-free segments; use per-capita consumption from Eurostat and retail price benchmarks; SAM limited to UHT/lactose-free/cream shelf-stable</td>
+            </tr>
+            <tr>
+                <td>DE</td>
+                <td>Cheese</td>
+                <td>Estimate: 16,000</td>
+                <td>3,200</td>
+                <td>0.80</td>
+                <td>High per-capita cheese consumption; niche imports feasible via Edeka/Rewe specialty, online</td>
+            </tr>
+            <tr>
+                <td>DE</td>
+                <td>Butter</td>
+                <td>Estimate: 2,200</td>
+                <td>660</td>
+                <td>0.26</td>
+                <td>Premium butter and specialty styles in modern trade and deli</td>
+            </tr>
+            <tr>
+                <td>France (FR)</td>
+                <td>Milk &amp; cream</td>
+                <td>Estimate: 6,000</td>
+                <td>1,200</td>
+                <td>0.36</td>
+                <td>Strong UHT share; retailer PL intense; regional specialties</td>
+            </tr>
+            <tr>
+                <td>FR</td>
+                <td>Cheese</td>
+                <td>Estimate: 19,000</td>
+                <td>2,850</td>
+                <td>0.76</td>
+                <td>Fragmented PDO-led market; space for imported specialties and private brands in hard/semi-hard</td>
+            </tr>
+            <tr>
+                <td>FR</td>
+                <td>Butter</td>
+                <td>Estimate: 2,600</td>
+                <td>520</td>
+                <td>0.21</td>
+                <td>Premium butter (AOP alternatives) and pâtisserie segments</td>
+            </tr>
+            <tr>
+                <td>Netherlands (NL)</td>
+                <td>Milk &amp; cream</td>
+                <td>Estimate: 2,000</td>
+                <td>500</td>
+                <td>0.15</td>
+                <td>High dairy penetration; Albert Heijn/Plus; UHT/cream</td>
+            </tr>
+            <tr>
+                <td>NL</td>
+                <td>Cheese</td>
+                <td>Estimate: 4,500</td>
+                <td>900</td>
+                <td>0.27</td>
+                <td>Strong cheese culture; import niches in flavored/specialty</td>
+            </tr>
+            <tr>
+                <td>NL</td>
+                <td>Butter</td>
+                <td>Estimate: 600</td>
+                <td>180</td>
+                <td>0.07</td>
+                <td>Smaller but premium growth via specialty retail</td>
+            </tr>
+        <p>Notes:</p>
+        <ul>
+            <li>These are estimates for planning only; validate with retailer scanner data or syndicated panels before commitment.</li>
+            <li>Currency: Euro. Exchange risk negligible within euro area.</li>
+        </table>
+        <p>Aggregate (3-market) estimates (Sum of above, estimates)</p>
+            <li>TAM: ~60,400 €M</li>
+            <li>SAM: ~11,510 €M</li>
+            <li>SOM Year 1: ~3.33 €M potential revenue if distribution targets achieved. Given Small Enterprise constraints and 100k budget, a realistic Year-1 realized SOM is likely 10–20% of this potential due to listing lead times and velocity ramp.</li>
+        </ul>
+        <p>Sources supporting market size context (qualitative/structural)</p>
+        <ul>
+            <li>Eurostat: Dairy production/consumption statistics, PRODCOM and apparent consumption (2023–2024)</li>
+            <li>European Commission, Short-Term Outlook for EU Agricultural Markets (Spring/Autumn 2024): trends in milk, cheese, butter volumes and consumption</li>
+            <li>FAO/UN Comtrade: Trade flows HS0401–0406 (2023)</li>
+            <li>OECD-FAO Agricultural Outlook 2024–2033: dairy demand trends in Europe</li>
+            <li>National statistical offices (Destatis DE, Insee FR, CBS NL) for household expenditure on milk, cheese, butter (latest available 2023–2024)</li>
+            <li>Note: Precise retail value by category is not fully available open-source; figures above are labeled as estimates.</li>
+        </ul>
+        <p>Consumer Behavior and Purchasing Patterns (EU-15 focus, with DE/FR/NL)</p>
+        <ul>
+            <li>Value-seeking: Private label share in dairy often 40–60% depending on subcategory; brand premiumization works when tied to provenance, animal welfare, lactose-free/high-protein, or culinary use.</li>
+            <li>Channel split: Supermarkets/hypermarkets dominant; e-grocery penetration 8–12% of FMCG sales in DE/FR large cities; convenience and discounters (Aldi/Lidl) are significant but harder to enter for new brands.</li>
+            <li>Pack formats: 1L UHT, 200–500ml cream cartons, 150–250g butter, 150–300g cheese portions; resealable and sustainable packaging valued.</li>
+            <li>Claims: Grass-fed, organic, GMO-free feed, animal welfare, low carbon; lactose-free and protein-enriched dairy growing faster than total category.</li>
+        <p>Sources: Eurostat HBS and HICP (2023–2024), OECD-FAO 2024 Outlook, European Commission agri-food reports 2024; retailer category insights (public pages) 2023–2025.</p>
+        </ul>
+        <p>Distribution Channels and Entry Barriers</p>
+        <ul>
+            <li>Channels to target:</li>
+            <li>Importer/distributors specialized in chilled/ambient dairy.</li>
+            <li>Modern trade: Germany (Edeka, Rewe), France (Carrefour, Leclerc, Système U), Netherlands (Albert Heijn, Jumbo).</li>
+            <li>E-grocery: Amazon DE Pantry (where available), Picnic (NL), retailer online shops (Drive in FR).</li>
+            <li>Specialty/deli and foodservice (cheese/butter) via wholesalers (e.g., METRO DE, Sligro NL). Note: Names are examples of large wholesalers/retailers, not endorsements; verify current listing policies.</li>
+            <li>Entry barriers:</li>
+            <li>Private label dominance and slotting fees.</li>
+            <li>Cold-chain demands for chilled SKUs; UHT/aseptic mitigates.</li>
+            <li>Retailer proof-of-velocity and marketing support requirements.</li>
+            <li>Certification and labelling compliance (see next section).</li>
+        </ul>
+        <p>Regulatory and Compliance Requirements (EU and UK overview)</p>
+        <p>EU (for DE, FR, NL)</p>
+        <ul>
+            <li>Food safety: Regulation (EC) No 178/2002 (General Food Law); Regulation (EC) No 852/2004 (Hygiene); 853/2004 (specific hygiene rules for food of animal origin).</li>
+            <li>Milk and dairy standards: Regulation (EU) 2019/2072 (animal health and official controls); Implementing Regulation (EU) 2019/627 (official controls).</li>
+            <li>Labelling: Regulation (EU) No 1169/2011 (FIC) for ingredients, allergens (milk), nutrition, origin where applicable; QUID for certain ingredients; language requirements per destination market.</li>
+            <li>Additives: Regulation (EC) No 1333/2008; ensure permissions for stabilizers in UHT/cream.</li>
+            <li>Import within EU: Intra-EU trade requires registration and TRACES notification when applicable; health mark identification on dairy from approved establishments.</li>
+            <li>Organic: Regulation (EU) 2018/848 if organic claims used.</li>
+            <li>Environmental claims: New EU Green Claims Directive pending—avoid unsubstantiated sustainability claims.</li>
+        <p>UK (if considered later)</p>
+            <li>SPS checks and health certification under Border Target Operating Model (BTOM) phased 2024–2025; Export Health Certificate (EHC) required; pre-notification on IPAFFS. Source: UK Defra BTOM guidance (2024–2025).</li>
+        <p>Sources: European Commission DG SANTE webpages and consolidated regulations (accessed 2024–2025).</p>
+        </ul>
+        <p>Pricing Strategies and Cost Structures (Estimates, to be validated)</p>
+        <ul>
+            <li>Reference retail price corridors (incl. VAT) as of 2024–2025 in DE/FR/NL:</li>
+            <li>UHT milk 1L: €0.85–1.40 (PL to branded). Premium lactose-free: €1.20–1.90.</li>
+            <li>Cream 200–500ml: €1.20–3.00 depending fat % and brand.</li>
+            <li>Butter 250g: €1.69–3.29 (PL to premium/imported).</li>
+            <li>Cheese (150–300g pack, hard/semihard): €1.79–4.99; specialty up to €6.99+.</li>
+        <p>Sources: Retailer shelf checks and public price indices (Eurostat HICP food subindices, 2023–2025). Exact scanner data not publicly available; treat ranges as indicative.</p>
+            <li>Trade terms (small brand typical, Estimate):</li>
+            <li>Ex-works to retail gross margin stack: importer 15–25%; distributor/wholesaler 10–20%; retailer 25–40% depending category; promo fund 10–15% of net.</li>
+            <li>Slotting/listing: €5k–€25k per SKU per retailer region (high variance). For small pilots, negotiate waivers tied to performance.</li>
+            <li>COGS considerations:</li>
+            <li>Ambient UHT/aseptic options reduce cold-chain costs and shrink.</li>
+            <li>For chilled cheese/butter, factor 3–6% shrink risk in early phases and higher logistics complexity.</li>
+        </ul>
+        <p>Technology Trends and Innovation Opportunities</p>
+        <ul>
+            <li>Aseptic/UHT tech enabling cross-border shelf-stable milk/cream with 6–12 months shelf life; suitable for small-brand logistics.</li>
+            <li>Lactose-free enzymatic treatment; protein-enriched dairy; clean-label stabilizers.</li>
+            <li>Sustainable packaging: recyclable cartons, paper-based butter wraps; QR codes for transparency.</li>
+            <li>Digital shelf and retail media in e-grocery to build awareness efficiently; retail media ROAS measurability higher than traditional trade marketing.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <ul>
+            <li>Structural competitors:</li>
+            <li>Private label across all three categories (dominant).</li>
+            <li>Multinationals and large European co-ops with extensive portfolios (e.g., Arla Foods, Lactalis, FrieslandCampina, Savencia, DMK Group) active in DE/FR/NL. Note: These entities are widely known major dairy players; no specific market shares are asserted here to avoid unverifiable claims.</li>
+            <li>Niche competitors:</li>
+            <li>Regional specialty cheesemakers and premium butter brands in specialty/deli.</li>
+            <li>Positioning space for Test Brand:</li>
+            <li>Value-added, story-led: e.g., lactose-free UHT milk with sustainability credentials; specialty cheese slices/blocks with culinary positioning; premium butter for baking/foodies.</li>
+        </ul>
+        <p>Competitive Landscape Matrix (qualitative)</p>
+        <table>
+            <tr>
+                <td>Dimension</td>
+                <td>Private Label</td>
+                <td>Large Dairy Groups</td>
+                <td>Specialty/Niche Brands</td>
+                <td>Test Brand (target)</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Price</td>
+                <td>Lowest</td>
+                <td>Mid</td>
+                <td>High</td>
+                <td>Mid-High (value-added)</td>
+            </tr>
+            <tr>
+                <td>Distribution</td>
+                <td>Full national</td>
+                <td>Full national</td>
+                <td>Selective</td>
+                <td>Regional + e-grocery</td>
+            </tr>
+            <tr>
+                <td>Innovation speed</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>High in niche</td>
+                <td>High, focused</td>
+            </tr>
+            <tr>
+                <td>Marketing spend</td>
+                <td>Low</td>
+                <td>High</td>
+                <td>Low-Med</td>
+                <td>Low-Med, digital-led</td>
+            </tr>
+            <tr>
+                <td>Differentiation</td>
+                <td>Low-Med</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>High via claims/format</td>
+            </tr>
+        </table>
+        <p>Strategic Recommendations</p>
+        <p>Market selection and focus</p>
+        <ul>
+            <li>Primary: Germany and Netherlands for UHT milk/cream and specialty butter/cheese via importer + regional retailers; logistics hubs (Rotterdam/Hamburg) simplify inbound.</li>
+            <li>Secondary: France for cheese/butter niches; approach via specialty and regional banners; UHT feasible but face strong PL.</li>
+        </ul>
+        <p>Portfolio strategy</p>
+        <ul>
+            <li>Prioritize ambient: UHT milk (including lactose-free) and cream to minimize cold-chain risks and extend shelf life.</li>
+            <li>Chilled selectively: Specialty cheeses with longer shelf life (hard/semihard), and premium butter in Q2–Q3 after initial ambient proof.</li>
+            <li>Pack formats: 1L UHT; 200ml culinary cream; 150–250g cheese/butter packs; consider multipacks for e-grocery.</li>
+        </ul>
+        <p>Route-to-market</p>
+        <ul>
+            <li>Appoint one exclusive importer per market with performance clauses; avoid pan-EU exclusivity initially.</li>
+            <li>Pilot with 50–100 stores per market (regional) plus retailer online shops; secure one specialty/wholesale partner (e.g., cash &amp; carry) for foodservice trials.</li>
+            <li>Leverage Amazon DE/NL and retailer marketplace programs where available.</li>
+        </ul>
+        <p>Activation plan</p>
+        <ul>
+            <li>Trade marketing: Intro allowances tied to first 12 weeks; secondary placements in culinary seasonality.</li>
+            <li>Consumer: Digital ads targeted to cooking/baking enthusiasts; retail media in selected retailers; influencer-led recipe content.</li>
+        </ul>
+        <p>KPIs (first 6–12 months, targets as estimates)</p>
+        <ul>
+            <li>Distribution: 150–300 weighted stores across DE/FR/NL combined.</li>
+            <li>Rate of sale (per SKU, per store, per week): UHT milk 6–10 units; cream 4–6; butter 3–5; cheese 3–6 (estimate benchmarks).</li>
+            <li>Gross margin target: &gt;30% at brand level post-trade.</li>
+            <li>Marketing efficiency: CAC &lt; €5 per new household via digital.</li>
+        </ul>
+        <p>Budget Allocation Recommendations (100,000; Estimate)</p>
+        <table>
+            <tr>
+                <td>Budget Line</td>
+                <td>€</td>
+                <td>%</td>
+                <td>Notes</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---:</th>
+                <th>---:</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Regulatory, compliance, QA (specs, label translations, lab tests, nutrition)</td>
+                <td>12,000</td>
+                <td>12%</td>
+                <td>FIC-compliant labels (DE/FR/NL), artwork, lab certificates</td>
+            </tr>
+            <tr>
+                <td>Market entry fees (listings, samples, trade terms)</td>
+                <td>18,000</td>
+                <td>18%</td>
+                <td>Negotiate limited pilots; avoid large slotting fees</td>
+            </tr>
+            <tr>
+                <td>Channel development (travel, distributor onboarding, sales support)</td>
+                <td>5,000</td>
+                <td>5%</td>
+                <td>Distributor evaluations, contracts</td>
+            </tr>
+            <tr>
+                <td>Trade marketing (intro deals, in-store POS)</td>
+                <td>18,000</td>
+                <td>18%</td>
+                <td>Focus on secondary placements</td>
+            </tr>
+            <tr>
+                <td>Retail media and digital performance marketing</td>
+                <td>15,000</td>
+                <td>15%</td>
+                <td>E-grocery ads, social/recipe content</td>
+            </tr>
+            <tr>
+                <td>E-commerce setup (content, A+ pages, photography)</td>
+                <td>4,000</td>
+                <td>4%</td>
+                <td>Amazon/retailer marketplaces</td>
+            </tr>
+            <tr>
+                <td>Consumer research (quick quant + shop-alongs)</td>
+                <td>4,000</td>
+                <td>4%</td>
+                <td>Validate price packs and claims</td>
+            </tr>
+            <tr>
+                <td>Logistics setup (compliance audits, temp-controlled packaging tests)</td>
+                <td>6,000</td>
+                <td>6%</td>
+                <td>Especially for chilled pilots</td>
+            </tr>
+            <tr>
+                <td>Working samples, demo stock</td>
+                <td>6,000</td>
+                <td>6%</td>
+                <td>Tasting/demos</td>
+            </tr>
+            <tr>
+                <td>Contingency (unallocated)</td>
+                <td>12,000</td>
+                <td>12%</td>
+                <td>For unforeseen listing asks</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td>100,000</td>
+                <td>100%</td>
+                <td></td>
+            </tr>
+        </table>
+        <p>Risk Assessment</p>
+        <p>Risk Assessment Matrix</p>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---:</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Retailer rejection or slow listings</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Start with regional banners; strong importer; show velocity via e-grocery first</td>
+            </tr>
+            <tr>
+                <td>Private label price pressure</td>
+                <td>High</td>
+                <td>Medium</td>
+                <td>Compete on value-added attributes; avoid direct price fights; focus on lactose-free/specialty</td>
+            </tr>
+            <tr>
+                <td>Regulatory labelling non-compliance</td>
+                <td>Low-Med</td>
+                <td>High</td>
+                <td>Third-party label review; pre-market lab tests; multilingual packs</td>
+            </tr>
+            <tr>
+                <td>Cold-chain failures for chilled SKUs</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Start ambient; vetted 3PLs; temperature loggers</td>
+            </tr>
+            <tr>
+                <td>FX/raw milk price volatility</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Price escalators in contracts; annual reviews</td>
+            </tr>
+            <tr>
+                <td>Promotion overspend with low ROI</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Test-and-learn; retail media with ROAS gates</td>
+            </tr>
+            <tr>
+                <td>Payment/credit risk with small distributors</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Credit insurance; phased exclusivity; performance KPIs</td>
+            </tr>
+            <tr>
+                <td>UK SPS costs if expanding</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Defer UK until EU traction; budget EHC and inspections</td>
+            </tr>
+        </table>
+        <p>90-Day Action Plan</p>
+        <table>
+            <tr>
+                <td>Week</td>
+                <td>Workstream</td>
+                <td>Key Tasks</td>
+                <td>Owner</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>1–2</td>
+                <td>Regulatory</td>
+                <td>Confirm product specs; map EU regs; commission label translations (DE/FR/NL); arrange lab nutrition tests</td>
+                <td>QA/Regulatory Lead</td>
+            </tr>
+            <tr>
+                <td>1–3</td>
+                <td>Market validation</td>
+                <td>Rapid price-pack research online; competitor shelf scan; refine SKU list (UHT milk, cream, 2 cheeses, butter)</td>
+                <td>Marketing</td>
+            </tr>
+            <tr>
+                <td>2–6</td>
+                <td>Distributor selection</td>
+                <td>Shortlist 2–3 importers per market; issue RFP; evaluate logistics, reach, terms; select preferred</td>
+                <td>Commercial Lead</td>
+            </tr>
+            <tr>
+                <td>4–8</td>
+                <td>Packaging &amp; artwork</td>
+                <td>Finalize EU FIC-compliant labels; print small runs; multilingual packs</td>
+                <td>Design/QA</td>
+            </tr>
+            <tr>
+                <td>5–9</td>
+                <td>Retailer pitches</td>
+                <td>Prepare sell-in decks; target regional banners (Edeka regions, Rewe regions, AH/Jumbo, FR regionals); book meetings</td>
+                <td>Commercial Lead + Distributor</td>
+            </tr>
+            <tr>
+                <td>6–10</td>
+                <td>E-commerce setup</td>
+                <td>Create Amazon DE/NL listings; retailer marketplace content; A+ pages; photography</td>
+                <td>E-comm Manager</td>
+            </tr>
+            <tr>
+                <td>7–11</td>
+                <td>Trade marketing</td>
+                <td>Plan intro promotions; POS materials; secure secondary placements; book retail media flights</td>
+                <td>Trade Marketing</td>
+            </tr>
+            <tr>
+                <td>9–12</td>
+                <td>Logistics pilots</td>
+                <td>Trial shipments (ambient first); validate lead times; temp monitoring</td>
+                <td>Supply Chain</td>
+            </tr>
+            <tr>
+                <td>10–12</td>
+                <td>Launch readiness</td>
+                <td>Final pricing, promo calendars, ROAS targets; tracking dashboards</td>
+                <td>Commercial + Finance</td>
+            </tr>
+        </table>
+        <p>Actionable Next Steps (Board approvals requested)</p>
+        <ul>
+            <li>Approve market focus (DE, FR, NL) and ambient-first SKU lineup.</li>
+            <li>Approve 100,000 budget allocation as per table.</li>
+            <li>Authorize distributor RFP and shortlisting immediately.</li>
+            <li>Mandate compliance sign-off gate before first shipments.</li>
+        </ul>
+        <p>Sources &amp; Appendix</p>
+        <p>Primary sources (accessed 2024–2025)</p>
+        <ul>
+            <li>Eurostat: Agriculture and fisheries database; PRODCOM; HICP Food indices, 2023–2025 editions.</li>
+            <li>European Commission, DG AGRI: Short-Term Outlook for EU Agricultural Markets, 2024; EU Agricultural Markets Briefs (dairy).</li>
+            <li>UN Comtrade Database: HS 0401–0406 trade flows, 2023.</li>
+            <li>OECD-FAO Agricultural Outlook 2024–2033 (EU chapters on dairy).</li>
+            <li>National statistics: Destatis (Germany), Insee (France), CBS (Netherlands) for household consumption expenditure on dairy (latest: 2023–2024).</li>
+            <li>UK Defra: Border Target Operating Model (BTOM) guidance for SPS controls, 2024–2025.</li>
+        <p>Notes on data integrity</p>
+            <li>Where exact country retail values by subcategory are unavailable from public sources, we explicitly labeled figures as “Estimate” and provided reasoning. We avoided asserting specific market shares or unpublished statistics.</li>
+        </ul>
+        <p>JSON summary</p>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DE&quot;, &quot;FR&quot;, &quot;NL&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;regulatory_compliance_QA&quot;: 12000,</p>
+        <p>&quot;market_entry_fees&quot;: 18000,</p>
+        <p>&quot;channel_development&quot;: 5000,</p>
+        <p>&quot;trade_marketing&quot;: 18000,</p>
+        <p>&quot;retail_media_digital&quot;: 15000,</p>
+        <p>&quot;ecommerce_setup&quot;: 4000,</p>
+        <p>&quot;consumer_research&quot;: 4000,</p>
+        <p>&quot;logistics_setup&quot;: 6000,</p>
+        <p>&quot;samples_demo_stock&quot;: 6000,</p>
+        <p>&quot;contingency&quot;: 12000</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DE&quot;: 25700,</p>
+        <p>&quot;FR&quot;: 27600,</p>
+        <p>&quot;NL&quot;: 7100</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Estimate: TAM/SAM/SOM values are derived from apparent consumption and public price corridors due to limited public retail breakdowns; to be validated with retailer scanner data.&quot;,</p>
+        <p>&quot;Estimate: Year-1 SOM assumes regional listings (50–200 stores/market) plus e-grocery; actual ramp may be slower.&quot;,</p>
+        <p>&quot;Estimate: Price corridors based on public shelf observations and HICP trends; exact averages not publicly available.&quot;,</p>
+        <p>&quot;Assumption: Test Brand will prioritize ambient UHT/cream first to minimize cold-chain complexity and costs.&quot;,</p>
+        <p>&quot;Assumption: Budget of 100,000 excludes manufacturing and COGS; it covers market entry and activation only.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

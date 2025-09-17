@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - AI Trade Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      .profile-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+      }
+      .profile-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 3rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .profile-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .profile-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+      .profile-subtitle {
+        color: #6b7280;
+        font-size: 1rem;
+      }
+      .profile-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+      .info-group {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+      }
+      .info-label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+      .info-value {
+        color: #1f2937;
+        font-size: 1.125rem;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: white;
+      }
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .brand-icon {
+        font-size: 2rem;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .brand-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="profile-container">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="brand-logo">
+            <img
+              src="/static/logo_trade_on_chain.png"
+              alt="AI Trade Report"
+              class="brand-logo-img"
+            />
+            <span class="brand-text">AI Trade Report</span>
+          </div>
+          <h1 class="profile-title">User Profile</h1>
+          <p class="profile-subtitle">Manage your account information</p>
+
+          {% if message %}
+          <div
+            class="success-message"
+            style="
+              background: #d1fae5;
+              color: #065f46;
+              padding: 1rem;
+              border-radius: 0.5rem;
+              margin-top: 1rem;
+              border: 1px solid #a7f3d0;
+            "
+          >
+            ✅ {{ message }}
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="profile-info">
+          <div class="info-group">
+            <div class="info-label">Full Name</div>
+            <div class="info-value">{{ user.name }} {{ user.surname }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Email Address</div>
+            <div class="info-value">{{ user.email }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Company</div>
+            <div class="info-value">{{ user.company_name }}</div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Member Since</div>
+            <div class="info-value">
+              {{ user.created_at.strftime('%B %d, %Y') }}
+            </div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Account Status</div>
+            <div class="info-value">
+              <span style="color: #16a34a; font-weight: 600">✓ Active</span>
+            </div>
+          </div>
+
+          <div class="info-group">
+            <div class="info-label">Last Updated</div>
+            <div class="info-value">
+              {{ user.updated_at.strftime('%B %d, %Y at %I:%M %p') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <a href="/profile/edit" class="btn btn-primary"> ✏️ Edit Profile </a>
+          <a href="/" class="btn btn-secondary"> 🏠 Dashboard </a>
+          <a href="/" class="btn btn-secondary"> 📊 Generate Report </a>
+          <a href="/logout" class="btn btn-danger"> 🚪 Logout </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

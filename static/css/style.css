@@ -268,6 +268,520 @@ body {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
+.welcome-message {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  padding: 1rem 2rem;
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Company Logo Styling */
+.brand-logo-img {
+  height: 2.5rem;
+  width: auto;
+  object-fit: contain;
+  margin-right: 0.5rem;
+}
+
+.nav-brand .brand-logo-img {
+  height: 2rem;
+  margin-right: 0.75rem;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.nav-brand .brand-text {
+  font-size: 1.25rem;
+  color: white;
+}
+
+/* Responsive Logo Styling */
+@media (max-width: 768px) {
+  .brand-logo-img {
+    height: 2rem;
+  }
+  
+  .nav-brand .brand-logo-img {
+    height: 1.5rem;
+  }
+  
+  .brand-text {
+    font-size: 1.25rem;
+  }
+  
+  .nav-brand .brand-text {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-logo-img {
+    height: 1.75rem;
+  }
+  
+  .nav-brand .brand-logo-img {
+    height: 1.25rem;
+  }
+  
+  .brand-text {
+    font-size: 1rem;
+  }
+  
+.nav-brand .brand-text {
+  font-size: 0.875rem;
+}
+
+/* Select2 Custom Styling */
+.select2-container {
+  width: 100% !important;
+  display: block !important;
+  min-height: 60px !important;
+}
+
+/* Ensure the form group doesn't constrain Select2 width */
+.form-group .select2-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Force full width on the select element itself */
+#product-select + .select2-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Ensure the selection area takes full width */
+.select2-container--default .select2-selection {
+  width: 100% !important;
+}
+
+/* Make sure the search field expands properly */
+.select2-container--default .select2-search--inline {
+  flex: 1;
+  min-width: 200px;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 200px !important;
+  max-width: none !important;
+}
+
+/* Ensure Select2 is properly initialized */
+.select2-container--default {
+  display: block !important;
+}
+
+/* Hide the original select element only after Select2 is initialized */
+#product-select.select2-hidden-accessible {
+  display: none !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+  min-height: 60px;
+  height: 60px;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+  padding: 12px 16px;
+  transition: all 0.2s ease;
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  border-radius: 1rem;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  color: white;
+  font-weight: 500;
+  margin: 2px;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+  color: white;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  transition: all 0.2s ease;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fef2f2;
+  transform: scale(1.1);
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+  min-width: 200px !important;
+  width: 100% !important;
+  padding: 4px 8px;
+  flex: 1;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Ensure proper width when no selections are made */
+.select2-container--default .select2-selection--multiple:empty .select2-search--inline {
+  width: 100% !important;
+}
+
+.select2-container--default .select2-selection--multiple:empty .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* Force width fix for all Select2 search fields */
+.select2-search__field {
+  width: 100% !important;
+  min-width: 300px !important;
+  max-width: none !important;
+  flex: 1 !important;
+  box-sizing: border-box !important;
+}
+
+/* Additional width fixes */
+.select2-container .select2-selection--multiple .select2-search--inline {
+  width: 100% !important;
+  flex: 1 !important;
+  min-width: 300px !important;
+}
+
+.select2-container .select2-selection--multiple {
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  min-width: 100% !important;
+}
+
+/* Override Select2's default width constraints */
+.select2-container--default .select2-selection--multiple .select2-search--inline {
+  width: 100% !important;
+  min-width: 300px !important;
+  flex: 1 1 auto !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 300px !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+}
+
+/* Force the entire Select2 container to be full width */
+.select2-container--default {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Ensure the selection area is full width */
+.select2-container--default .select2-selection {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Override any inline styles that might be set by Select2 */
+.select2-container .select2-selection--multiple .select2-search--inline .select2-search__field[style] {
+  width: 100% !important;
+  min-width: 300px !important;
+  max-width: none !important;
+}
+
+/* Nuclear option - override all possible Select2 width constraints */
+.select2-container--default .select2-selection--multiple,
+.select2-container--default .select2-selection--multiple .select2-search--inline,
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field,
+.select2-container .select2-selection--multiple,
+.select2-container .select2-selection--multiple .select2-search--inline,
+.select2-container .select2-selection--multiple .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 300px !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure search input has adequate space even with selected tags */
+.select2-container--default .select2-selection--multiple .select2-search--inline {
+  flex: 1 1 200px !important;
+  min-width: 200px !important;
+  max-width: none !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 200px !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+}
+
+/* Force the container to be full width regardless of content */
+.select2-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+}
+
+/* Prevent text overflow and ensure proper spacing */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  margin: 2px 4px 2px 0 !important;
+  max-width: 300px !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: inline-block !important;
+  vertical-align: top !important;
+}
+
+/* Ensure search input doesn't get squeezed */
+.select2-container--default .select2-selection--multiple .select2-search--inline {
+  order: 999 !important;
+  flex: 1 1 200px !important;
+  min-width: 200px !important;
+  margin-left: 4px !important;
+}
+
+/* Make sure the search field can expand */
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+  width: 100% !important;
+  min-width: 200px !important;
+  max-width: none !important;
+  flex: 1 1 auto !important;
+  overflow: visible !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Additional tag overflow fixes */
+.select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+  max-width: 250px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  display: inline-block !important;
+}
+
+/* Ensure tags don't break the layout */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  flex: 0 0 auto !important;
+  max-width: 300px !important;
+  min-width: 0 !important;
+}
+
+/* Force proper wrapping */
+.select2-container--default .select2-selection--multiple {
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Brand input styling to match Select2 */
+.brand-input {
+  min-height: 60px !important;
+  height: 60px !important;
+  border: 2px solid #e5e7eb !important;
+  border-radius: 0.75rem !important;
+  background: #f9fafb !important;
+  padding: 18px 20px !important;
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  display: block !important;
+}
+
+.brand-input:focus {
+  border-color: #3b82f6 !important;
+  background: white !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+  transform: translateY(-1px) !important;
+  outline: none !important;
+}
+
+.brand-input::placeholder {
+  color: #9ca3af !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+}
+
+/* Custom entry styling */
+.select2-container--default .select2-selection--multiple .select2-selection__choice[data-select2-tag] {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice[data-select2-tag] .select2-selection__choice__remove {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice[data-select2-tag] .select2-selection__choice__remove:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: #fef2f2 !important;
+}
+
+/* Custom entry in dropdown */
+.select2-results__option[data-select2-tag] {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7) !important;
+  color: #166534 !important;
+  border-left: 3px solid #10b981 !important;
+}
+
+.select2-results__option[data-select2-tag]:hover {
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0) !important;
+}
+
+.select2-dropdown {
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  margin-top: 4px;
+}
+
+.select2-container--default .select2-results__option {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  position: relative;
+}
+
+.select2-container--default .select2-results__option:hover {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.select2-container--default .select2-results__option--highlighted {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #1e40af;
+  border-left: 3px solid #3b82f6;
+  padding-left: 9px;
+}
+
+.select2-container--default .select2-results__option--selected {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  color: #0c4a6e;
+  font-weight: 600;
+}
+
+.select2-results__option .select2-result-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.select2-results__option .select2-result-term {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.select2-results__option .select2-result-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+.select2-results__option .select2-result-category {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  color: #0c4a6e;
+  font-weight: 600;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true]:hover {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+}
+
+/* Loading state */
+.select2-container--default .select2-results__option.loading {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* No results state */
+.select2-container--default .select2-results__option.no-results {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+}
+}
+
 /* Form Section */
 .form-section {
   position: relative;
@@ -331,6 +845,19 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--space-xl);
   margin-bottom: var(--space-3xl);
+  align-items: start;
+}
+
+/* Ensure form groups have consistent height */
+.form-grid .form-group {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.form-grid .form-group .form-label {
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
 }
 
 .form-group {

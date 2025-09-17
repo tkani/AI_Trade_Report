@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
+                flex: 1;
+                max-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <div class="brand-icon">📊</div>
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">16 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Strategic Market Analysis Report: Tea Market Expansion for brand “tea”</p>
+        <p>Analysis Date: 16 September 2025</p>
+        <p>Total Available Budget: 40,000 (currency not specified; assumed EUR for EU-focused analysis — Estimate)</p>
+        <br>
+        <p>Executive Summary</p>
+        <ul>
+            <li>Objective: Identify and prioritize European market-entry opportunities for packaged tea under the brand “tea,” and define a low-capex, test-and-learn go-to-market plan using a 40,000 budget.</li>
+            <li>Top Candidate Markets (Estimate; prioritized based on market size, growth, ease of entry, online penetration, and cost-to-test):</li>
+        <p>1) DE (Germany) – largest EU tea market, high specialty and herbal demand, strong e-commerce grocery.</p>
+        <p>2) FR (France) – premium/specialty segment growth, strong gifting culture, established organic/health segments.</p>
+        <p>3) NL (Netherlands) – high online grocery adoption, English-friendly operations, gateway logistics to EU.</p>
+            <li>Entry Strategy: Digital-first launch (Amazon DE/FR/NL + own DTC), selective marketplace partners, and targeted retail pilots in specialty/organic stores. Emphasis on herbal/fruit and functional teas aligned to EU health trends. Leverage 3PL in NL/DE for low-cost EU-wide fulfillment.</li>
+            <li>Budget Focus: 65–70% on demand generation (performance ads + retail media), 15–20% on channel setup and compliance, 10–15% on market tests (in-store pilots, sampling).</li>
+            <li>Key Risks: Novel Food/health claims compliance, price competition vs. private label, logistics cost inflation, retail slotting fees. Mitigations include compliant claims, targeted differentiation, tight SKU focus, and staged market tests.</li>
+        </ul>
+        <p>Market Analysis</p>
+        <p>Note on Data Integrity: No proprietary databases used. Where verified, sources and dates are provided. Where exact figures are unavailable, ranges are labeled as Estimate with reasoning.</p>
+        <br>
+        <p>1) Market Size and Growth</p>
+        <ul>
+            <li>Global and EU context:</li>
+            <li>WTO indicates tea is among top-traded beverages; global tea production &gt;6 million tonnes in early 2020s; Europe is an import-reliant region (WTO trade profiles; UN Comtrade HS 0902).</li>
+        <p>Sources: WTO Trade Profiles (HS 09), accessed 2023–2025; UN Comtrade, HS 0902 “Tea,” reporter EU.</p>
+            <li>EU-27 tea imports (HS 0902) are significant and stable; intra-EU value chain dominated by importers/blenders in NL, DE, PL. Source: UN Comtrade, HS 0902, 2023–2024 data (reporters: DE, NL, FR).</li>
+            <li>Country snapshots (import value as proxy for size; verified import totals vary by year and product form):</li>
+            <li>Germany: EU leader in tea imports/processing; Hamburg is a major tea hub. Source: German trade and port statistics; UN Comtrade HS 0902 (2023–2024).</li>
+            <li>Netherlands: Major re-export hub; high import per capita; logistics advantages. Source: UN Comtrade HS 0902; Eurostat International Trade in Goods (SITC Rev.4/CPA sections for beverages).</li>
+            <li>France: Strong premium retail; organic and specialty chains widespread. Source: Eurostat Structural Business Statistics; national retail association reports (availability varies).</li>
+            <li>TAM/SAM/SOM Framework (packaged tea retail, EU focus):</li>
+            <li>Approach: Use HS 0902 (tea) import value and retail indicators to triangulate retail market value. Note HS 0902 covers raw and semi-processed tea; conversion to retail value via value-add factor is required — Estimate.</li>
+            <li>Assumptions (Estimate):</li>
+            <li>Import-to-retail multiplier: 1.8–2.5x (processing, packaging, distribution, retail margins).</li>
+            <li>Target initial categories: black, green, herbal/fruit, functional infusions (non-Novel Food ingredients).</li>
+            <li>Sales mix skew: 40% herbal/fruit, 35% black/green, 25% specialty/functional — Estimate aligned with EU retail trend reports (organic/health growth).</li>
+            <li>Country TAM estimates (Retail Packaged Tea; 2024–2025, Estimate):</li>
+            <li>Germany (DE): TAM 1.1–1.4 billion EUR (Estimate), rationale: leading EU imports, developed retail and e-grocery; large specialty segment.</li>
+            <li>France (FR): TAM 0.8–1.0 billion EUR (Estimate), rationale: premiumization and gifting; strong organic retail.</li>
+            <li>Netherlands (NL): TAM 0.25–0.35 billion EUR (Estimate), rationale: smaller population but high per-capita consumption and e-commerce penetration.</li>
+        <p>Note: Precise retail TAM figures by country should be validated against paid market reports (e.g., Euromonitor, NielsenIQ). We do not fabricate such values; ranges are clearly marked as Estimate.</p>
+        </ul>
+        <p>2) Consumer Behavior and Purchasing Patterns (EU-15 focus)</p>
+        <ul>
+            <li>Health and wellness: Rising demand for caffeine-free herbal/fruit infusions and functional blends (sleep, digestion). Organic and natural positioning valued in DE/FR/NL. Source: OECD/Eurostat household expenditure functions (COICOP 01.2) trends; national retail associations (2019–2024).</li>
+            <li>Channels: Strong supermarket share; robust online growth via Amazon, Ocado-equivalents (DE/FR), and quick-commerce waning but present for trial packs. Source: Eurostat ICT usage in households (e-commerce penetration 2023–2024).</li>
+            <li>Packaging formats: Tea bags dominate; premium loose-leaf increasing in specialty stores and online. Sustainable packaging preference (recyclable, plastic-free). Source: EU consumer sentiment studies on packaging sustainability (European Commission reports 2020–2024).</li>
+            <li>Price tiers (Estimate, retail shelf for 20–25 bags):</li>
+            <li>Value/private label: 0.99–1.99 EUR</li>
+            <li>Mid: 2.50–3.99 EUR</li>
+            <li>Premium/specialty/organic: 4.50–8.99 EUR</li>
+        <p>Ranges are based on observable EU retail listings as of 2023–2025 (Amazon DE/FR/NL price checks; major grocers online). Verification recommended prior to final pricing.</p>
+        </ul>
+        <p>3) Distribution Channels and Entry Barriers</p>
+        <ul>
+            <li>Grocery multiples (REWE, EDEKA, Carrefour, Leclerc, Albert Heijn): High volume, but listing fees, long cycles, and private label competition are barriers. Source: Public retailer supplier guides and trade press.</li>
+            <li>Specialty/organic chains (Alnatura DE, Bio c’Bon FR, Ekoplaza NL) and independents: Better fit for differentiated SKUs; moderate listing costs; acceptance of storytelling/functional propositions. Source: Chain websites and trade media (2023–2025).</li>
+            <li>Marketplaces and DTC: Amazon DE/FR/NL and bol.com (NL/BE) enable fast market testing; retail media supports targeted acquisition. Source: Amazon Seller Central public documentation, 2024–2025.</li>
+            <li>3PL and fulfillment: NL and DE provide competitive pan-EU fulfillment with VAT OSS; low lead time via Rotterdam/Hamburg. Source: EU VAT One-Stop Shop guidance (European Commission, 2021–2025).</li>
+        </ul>
+        <p>4) Pricing Strategies and Cost Structures (Estimate)</p>
+        <ul>
+            <li>COGS drivers: Tea grades and origins, flavorings, organic certification costs, packaging, freight to EU, 3PL pick/pack.</li>
+            <li>Illustrative unit economics (Estimate, per 20–25 bag carton):</li>
+            <li>Ex-works tea + flavor + filter + carton: 0.55–0.85 EUR</li>
+            <li>Packaging conversion + QA: 0.10–0.20 EUR</li>
+            <li>Freight-in + duty (if applicable) + EU 3PL: 0.10–0.25 EUR</li>
+            <li>Landed COGS: 0.75–1.30 EUR</li>
+            <li>Wholesale price target: 1.60–2.20 EUR (gross margin 35–55%)</li>
+            <li>DTC/Marketplace price: 4.50–7.50 EUR (supports marketing and fulfillment fees)</li>
+        <p>Validate with suppliers and up-to-date freight quotes.</p>
+        </ul>
+        <p>5) Technology Trends and Innovation Opportunities</p>
+        <ul>
+            <li>Functional botanicals and permissible on-pack claims aligned to EU nutrition/health claims regulation (only authorized claims permitted). Source: EU Regulation (EC) No 1924/2006; EU Register of Nutrition and Health Claims (accessed 2024–2025).</li>
+            <li>Sustainability: Compostable bags, plastic-free packaging, and traceability QR codes; corporate due diligence for supply chains. Source: EU Green Deal, Packaging and Packaging Waste Regulation (PPWR draft texts 2023–2024), Corporate Sustainability Due Diligence Directive (CSDDD; political agreement 2024).</li>
+            <li>Digital commerce: Retail media (Amazon Sponsored Products/Brands), A/B testing of PDPs, subscription models.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <p>Note: We do not invent competitor data; below is a category structure and verified positioning where public.</p>
+        <br>
+        <ul>
+            <li>Market structure:</li>
+            <li>Multinationals and large European brands dominate shelf (e.g., Twinings, Unilever’s Lipton/Pukka, Teekanne, Yogi Tea, Celestial Seasonings), plus strong private labels. Public brand ownership is verifiable via corporate sites.</li>
+            <li>Private Label share is material across EU groceries (varies by market); private label pressure on value segments. Source: OECD/Eurostat retail studies on private label trends; retailer financial reports.</li>
+        </ul>
+        <p>Competitive Landscape Matrix (qualitative)</p>
+        <table>
+            <tr>
+                <td>Competitor (publicly known)</td>
+                <td>Core Strengths</td>
+                <td>Price Tier</td>
+                <td>Channels</td>
+                <td>Notes</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Lipton (Unilever)</td>
+                <td>Scale, distribution, brand awareness</td>
+                <td>Value–Mid</td>
+                <td>Mass grocery EU-wide</td>
+                <td>Broad black/green range</td>
+            </tr>
+            <tr>
+                <td>Pukka (Unilever)</td>
+                <td>Organic, functional herbal focus</td>
+                <td>Premium</td>
+                <td>Grocery + specialty + online</td>
+                <td>Strong in wellness</td>
+            </tr>
+            <tr>
+                <td>Twinings</td>
+                <td>Heritage, specialty flavors</td>
+                <td>Mid–Premium</td>
+                <td>Grocery + online</td>
+                <td>Gifting formats</td>
+            </tr>
+            <tr>
+                <td>Teekanne</td>
+                <td>Strong DACH presence</td>
+                <td>Value–Mid</td>
+                <td>Grocery</td>
+                <td>Popular in DE/AT</td>
+            </tr>
+            <tr>
+                <td>Yogi Tea</td>
+                <td>Organic, Ayurveda-inspired</td>
+                <td>Premium</td>
+                <td>Specialty + grocery + online</td>
+                <td>Wellness positioning</td>
+            </tr>
+            <tr>
+                <td>Private Label (e.g., REWE, Carrefour)</td>
+                <td>Low price, shelf presence</td>
+                <td>Value</td>
+                <td>Grocery</td>
+                <td>High share, tough price anchor</td>
+            </tr>
+        </table>
+        <p>Sources: Corporate websites; retailer listings (Amazon DE/FR/NL; 2024–2025). No market shares provided to avoid unsupported quantification.</p>
+        <br>
+        <p>Regulatory and Compliance Requirements (EU)</p>
+        <ul>
+            <li>Food safety: General Food Law (EC) No 178/2002; hygiene package (EC) 852/2004. HACCP required.</li>
+            <li>Contaminants/residues: Pesticide MRLs under Regulation (EC) No 396/2005; contaminants per Regulation (EC) No 1881/2006 (as amended).</li>
+            <li>Additives/aromas: Regulation (EC) No 1333/2008 and 1334/2008 for flavorings.</li>
+            <li>Labelling: Regulation (EU) No 1169/2011 (FIC) for ingredient list, allergens, nutrition table (if claims), origin where applicable, net quantity, storage, best-before, business operator details.</li>
+            <li>Organic: Regulation (EU) 2018/848 if claiming organic; certification via recognized control bodies.</li>
+            <li>Health/Nutrition claims: Regulation (EC) No 1924/2006; only authorized claims in EU Register. Botanical claims are under “on-hold” lists—marketing must be carefully reviewed.</li>
+            <li>Packaging/sustainability: PPWR (in legislative process 2023–2025) likely to tighten recyclability standards; national EPR schemes require registration and eco-fees in DE (LUCID), FR (CITEO), NL (Afvalfonds Verpakkingen).</li>
+            <li>Market-specific:</li>
+            <li>DE: VerpackG registration (LUCID) mandatory; DE food contact materials rules.</li>
+            <li>FR: Triman logo/Info-Tri for waste sorting; language requirements (French).</li>
+            <li>NL: Packaging waste reporting; Dutch language compliance on mandatory info advisable.</li>
+        <p>Sources: EUR-Lex (regulations cited; consolidated texts 2023–2025); national EPR scheme websites.</p>
+        </ul>
+        <p>Comparative Market Analysis (TAM, SAM, SOM) — Estimates</p>
+        <p>Methodology (Estimate):</p>
+        <ul>
+            <li>TAM: Retail packaged tea market value per country (range estimate as above).</li>
+            <li>SAM: Accessible via selected channels in Year 1 (marketplaces + specialty/organic + limited grocery pilots). Assumed 35–45% of TAM — Estimate.</li>
+            <li>SOM: Achievable 12-month revenue with 40,000 budget and digital-first approach. Benchmarked CPA 8–15 EUR/order; AOV 12–18 EUR; with 25–35% repeat in 90 days — Estimate.</li>
+        </ul>
+        <table>
+            <tr>
+                <td>Market</td>
+                <td>TAM (EUR, Estimate)</td>
+                <td>SAM (EUR, Estimate)</td>
+                <td>SOM Year 1 (EUR, Estimate)</td>
+                <td>Rationale</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>DE</td>
+                <td>1.1–1.4B</td>
+                <td>400–600M</td>
+                <td>80–150k</td>
+                <td>Largest EU tea market, strong e-comm; leverage Amazon DE + specialty</td>
+            </tr>
+            <tr>
+                <td>FR</td>
+                <td>0.8–1.0B</td>
+                <td>300–450M</td>
+                <td>60–120k</td>
+                <td>Premium/organic skew supports new brand</td>
+            </tr>
+            <tr>
+                <td>NL</td>
+                <td>0.25–0.35B</td>
+                <td>90–140M</td>
+                <td>30–60k</td>
+                <td>High online penetration, bol.com access</td>
+            </tr>
+        </table>
+        <p>Notes:</p>
+        <ul>
+            <li>SOM estimates are conservative and contingent on CAC, retail media efficiency, and review velocity. They are not guarantees and must be validated with live tests.</li>
+        </ul>
+        <p>Strategic Recommendations</p>
+        <p>Positioning</p>
+        <ul>
+            <li>Lead with herbal/fruit and permissible functional positioning (caffeine-free evening blends, digestion comfort) without unauthorized health claims.</li>
+            <li>Emphasize sustainability: plastic-free tea bags, recyclable cartons, QR-based sourcing transparency.</li>
+        </ul>
+        <p>Portfolio and Packaging</p>
+        <ul>
+            <li>Initial 6 SKUs (Estimate): 3 herbal/fruit (sleep, digestion, vitality themes), 2 classic (Earl Grey, Green), 1 limited seasonal. All in 20–25 bag formats; optional loose-leaf for Amazon variety pack.</li>
+            <li>Multilingual packs (DE/FR/NL) to simplify inventory; ensure country-specific legal elements (e.g., FR language) are satisfied on-pack or via localized labels.</li>
+        </ul>
+        <p>Route-to-Market</p>
+        <ul>
+            <li>Phase 1 (0–6 months): Marketplaces (Amazon DE/FR/NL, bol.com) + DTC mini-site with EU OSS VAT + NL/DE 3PL. Product detail page optimization, retail media campaigns, and review generation compliant with platform rules.</li>
+            <li>Phase 2 (3–12 months): Specialty/organic retail pilots (50–100 stores cumulatively) and selective national distributors.</li>
+            <li>Optional: Corporate gifting Q4 (FR/DE) with premium tins.</li>
+        </ul>
+        <p>Pricing</p>
+        <ul>
+            <li>Target retail price band 4.99–6.49 EUR for core SKUs; value proposition anchored on quality and sustainability. Offer multi-pack value online (3x/6x) to optimize shipping economics.</li>
+        </ul>
+        <p>Channel Partners (non-exhaustive; for approach, not endorsement)</p>
+        <ul>
+            <li>3PL: NL/DE-based EU-fulfillment providers supporting Amazon FBA/FBM and DTC.</li>
+            <li>Specialty distributors: Organic/specialty wholesalers per market. Validate certifications and reach.</li>
+        </ul>
+        <p>Budget Allocation Recommendations (40,000 total)</p>
+        <table>
+            <tr>
+                <td>Category</td>
+                <td>Amount (EUR)</td>
+                <td>%</td>
+                <td>Notes</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Retail media + performance (Amazon/Meta/Google)</td>
+                <td>26,000</td>
+                <td>65%</td>
+                <td>Launch/always-on, review acceleration, keyword conquesting</td>
+            </tr>
+            <tr>
+                <td>Content &amp; localization</td>
+                <td>3,000</td>
+                <td>7.5%</td>
+                <td>Photography, A+ content, translations DE/FR/NL</td>
+            </tr>
+            <tr>
+                <td>Compliance &amp; certifications</td>
+                <td>4,000</td>
+                <td>10%</td>
+                <td>Label review, EPR registrations (DE LUCID, FR Triman), organic audit (if applicable)</td>
+            </tr>
+            <tr>
+                <td>Channel setup fees</td>
+                <td>2,500</td>
+                <td>6.25%</td>
+                <td>Amazon/bol.com fees, barcodes, VAT OSS setup</td>
+            </tr>
+            <tr>
+                <td>3PL setup + initial inventory logistics</td>
+                <td>2,500</td>
+                <td>6.25%</td>
+                <td>Onboarding, inbound, packaging adjustments</td>
+            </tr>
+            <tr>
+                <td>Retail pilot activations/sampling</td>
+                <td>2,000</td>
+                <td>5%</td>
+                <td>Demos, shelf talkers in 50–100 stores</td>
+            </tr>
+        </table>
+        <p>Competitive Positioning and Differentiation</p>
+        <ul>
+            <li>Avoid head-to-head with private label on price; compete on quality, organic credentials, sustainability, and clear permissible benefit cues.</li>
+            <li>Use bundles and discovery packs to drive trial and reviews online.</li>
+        </ul>
+        <p>Risk Assessment</p>
+        <p>Risk Assessment Matrix</p>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>Non-compliant health/botanical claims</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Legal review vs. EU Register; avoid disease claims; use permissible wording</td>
+            </tr>
+            <tr>
+                <td>Pesticide residue exceedances</td>
+                <td>Low–Medium</td>
+                <td>High</td>
+                <td>Supplier COAs; EU MRL testing before release</td>
+            </tr>
+            <tr>
+                <td>Price pressure from private label</td>
+                <td>High</td>
+                <td>Medium</td>
+                <td>Premium positioning; limited editions; DTC bundles</td>
+            </tr>
+            <tr>
+                <td>Retail listing costs exceed budget</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Focus on specialty pilots; defer mass grocery until traction</td>
+            </tr>
+            <tr>
+                <td>Logistics cost inflation</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>NL/DE 3PL contracts with rate caps; optimize carton weights</td>
+            </tr>
+            <tr>
+                <td>Slow review velocity on marketplaces</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Early reviewer programs (within platform policies); targeted ads</td>
+            </tr>
+            <tr>
+                <td>Packaging regulation changes (PPWR)</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Choose recyclable/compostable materials; monitor PPWR timeline</td>
+            </tr>
+            <tr>
+                <td>Inventory obsolescence</td>
+                <td>Low–Medium</td>
+                <td>Medium</td>
+                <td>Small initial runs; rolling forecasts; multi-market allocation</td>
+            </tr>
+        </table>
+        <p>90-Day Action Plan</p>
+        <table>
+            <tr>
+                <td>Week</td>
+                <td>Milestone</td>
+                <td>Owner</td>
+                <td>Deliverable</td>
+            </tr>
+            <tr>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+                <th>---</th>
+            </tr>
+            <tr>
+                <td>1–2</td>
+                <td>Finalize SKUs, specs, claims review</td>
+                <td>Product/Regulatory</td>
+                <td>Confirmed formulas; compliant copy</td>
+            </tr>
+            <tr>
+                <td>1–3</td>
+                <td>Packaging artwork DE/FR/NL + EPR registrations</td>
+                <td>Marketing/Legal</td>
+                <td>Print-ready files; LUCID/Triman/Afvalfonds IDs</td>
+            </tr>
+            <tr>
+                <td>2–4</td>
+                <td>Select NL/DE 3PL; sign MSA</td>
+                <td>Ops</td>
+                <td>3PL contract; SLAs</td>
+            </tr>
+            <tr>
+                <td>3–6</td>
+                <td>Produce pilot batch; QC &amp; MRL tests</td>
+                <td>Ops/QA</td>
+                <td>COAs; test reports</td>
+            </tr>
+            <tr>
+                <td>4–6</td>
+                <td>Amazon/bol.com/DTC setup</td>
+                <td>E-commerce</td>
+                <td>Stores live; tax/VAT OSS setup</td>
+            </tr>
+            <tr>
+                <td>6–8</td>
+                <td>Content production (photo/video/A+)</td>
+                <td>Marketing</td>
+                <td>PDPs, brand store, ads creative</td>
+            </tr>
+            <tr>
+                <td>8–12</td>
+                <td>Launch ads and review programs</td>
+                <td>E-commerce/Marketing</td>
+                <td>Retail media live; initial 100+ verified reviews across SKUs (target)</td>
+            </tr>
+            <tr>
+                <td>9–12</td>
+                <td>Specialty retail outreach (DE/FR/NL)</td>
+                <td>Sales</td>
+                <td>50-store pilot commitments</td>
+            </tr>
+            <tr>
+                <td>10–12</td>
+                <td>KPI review and optimize</td>
+                <td>Leadership</td>
+                <td>CAC, ROAS&gt;2.0 target; repeat rate tracking</td>
+            </tr>
+        </table>
+        <p>Key KPIs (first 90 days; Targets are Estimates)</p>
+        <ul>
+            <li>ROAS: 1.5–2.0 in month 1; 2.0–3.0 by month 3.</li>
+            <li>TACoS (total ad cost of sales): 20–30% by month 3.</li>
+            <li>Review count per SKU: 30–50 with &gt;4.4 average.</li>
+            <li>Repeat purchase rate (60–90 days): 20–30%.</li>
+            <li>On-time fulfillment: &gt;98%.</li>
+        </ul>
+        <p>Sources &amp; Appendix</p>
+        <p>Primary Sources (accessed 2023–2025):</p>
+        <ul>
+            <li>WTO Trade Profiles, HS 09 “Coffee, tea, mate and spices,” and UN Comtrade (HS 0902 “Tea”) — EU, Germany, France, Netherlands import data.</li>
+            <li>Eurostat: International trade in goods (tea HS 0902), COICOP household expenditure, ICT/e-commerce statistics.</li>
+            <li>EUR-Lex:</li>
+            <li>Regulation (EC) No 178/2002 (General Food Law)</li>
+            <li>Regulation (EC) No 852/2004 (Hygiene)</li>
+            <li>Regulation (EC) No 396/2005 (Pesticide MRLs)</li>
+            <li>Regulation (EC) No 1881/2006 (contaminants; as amended)</li>
+            <li>Regulation (EU) No 1169/2011 (Food Information to Consumers)</li>
+            <li>Regulation (EC) No 1924/2006 (Nutrition and Health Claims); EU Register of Claims</li>
+            <li>Regulation (EU) 2018/848 (Organic)</li>
+            <li>Packaging/EPR:</li>
+            <li>Germany: VerpackG/LUCID (Zentrale Stelle Verpackungsregister)</li>
+            <li>France: Triman/Info-Tri (CITEO)</li>
+            <li>Netherlands: Afvalfonds Verpakkingen</li>
+            <li>Retail and consumer trends:</li>
+            <li>Eurostat ICT Usage in Households and by Individuals (e-commerce penetration 2023–2024)</li>
+            <li>National retail association publications (DE/FR/NL; 2023–2025)</li>
+            <li>Platform documentation: Amazon Seller Central, bol.com Partner Platform (fees/features; 2024–2025).</li>
+        </ul>
+        <p>Data Gaps &amp; Validation Needs</p>
+        <ul>
+            <li>Exact retail TAM by country and segment requires subscription datasets (e.g., Euromonitor, NielsenIQ). We provide ranges as Estimates.</li>
+            <li>Market share by brand is not provided due to lack of publicly verifiable figures.</li>
+            <li>Detailed price elasticity by SKU and shopper cohorts requires live testing.</li>
+        </ul>
+        <p>Appendix: Budget Notes</p>
+        <ul>
+            <li>The 40,000 budget excludes inventory production costs, which must be funded separately or within budget; if within 40,000, reduce ad spend proportionally — Assumption (Estimate).</li>
+            <li>Amazon FBA fees vary by size/weight and country; confirm latest 2025 fee tables before final pricing.</li>
+        </ul>
+        <p>JSON</p>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DE&quot;, &quot;FR&quot;, &quot;NL&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;retail_media_performance&quot;: 26000,</p>
+        <p>&quot;content_localization&quot;: 3000,</p>
+        <p>&quot;compliance_certifications&quot;: 4000,</p>
+        <p>&quot;channel_setup_fees&quot;: 2500,</p>
+        <p>&quot;three_pl_setup_logistics&quot;: 2500,</p>
+        <p>&quot;retail_pilot_activations&quot;: 2000</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DE&quot;: &quot;1100-1400M (Estimate)&quot;,</p>
+        <p>&quot;FR&quot;: &quot;800-1000M (Estimate)&quot;,</p>
+        <p>&quot;NL&quot;: &quot;250-350M (Estimate)&quot;</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Estimate: Budget currency assumed EUR; adjust if different.&quot;,</p>
+        <p>&quot;Estimate: TAM derived from HS 0902 import data multiples and observable retail pricing; requires validation with retail panel data.&quot;,</p>
+        <p>&quot;Estimate: SAM assumed at 35–45% of TAM based on accessible channels (marketplaces, specialty, limited retail pilots).&quot;,</p>
+        <p>&quot;Estimate: SOM reflects digital-first acquisition economics (CPA 8–15 EUR; AOV 12–18 EUR; 25–35% repeat).&quot;,</p>
+        <p>&quot;Estimate: Initial 6-SKU portfolio focused on herbal/fruit and classic teas; compliant claims only.&quot;,</p>
+        <p>&quot;Estimate: Inventory production cost not included in the 40,000 unless noted; if included, reduce media spend.&quot;,</p>
+        <p>&quot;Regulatory: Country-specific EPR programs (DE LUCID, FR Triman, NL Afvalfonds) required for packaging placed on market.&quot;,</p>
+        <p>&quot;Regulatory: Only authorized nutrition/health claims permitted under EU Regulation (EC) 1924/2006; botanical claims need legal review.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

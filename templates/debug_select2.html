@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select2 Debug</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .form-group {
+        margin: 20px 0;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .select2-container {
+        width: 100% !important;
+      }
+      .debug-info {
+        background: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Select2 Debug Page</h1>
+
+    <div class="debug-info">
+      <h3>Debug Information:</h3>
+      <div id="debug-info">Loading...</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Product/Service (Static Options)</label>
+      <select
+        id="product-select-static"
+        class="form-control"
+        multiple="multiple"
+      >
+        <option value="test1">Test Product 1</option>
+        <option value="test2">Test Product 2</option>
+        <option value="test3">Test Product 3</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Product/Service (AJAX)</label>
+      <select
+        id="product-select-ajax"
+        class="form-control"
+        multiple="multiple"
+      ></select>
+    </div>
+
+    <button onclick="testStaticSelect2()">Test Static Select2</button>
+    <button onclick="testAjaxSelect2()">Test AJAX Select2</button>
+    <button onclick="checkStatus()">Check Status</button>
+
+    <div id="status"></div>
+
+    <script>
+      function updateDebugInfo() {
+        const info = `
+                <p>jQuery loaded: ${typeof $ !== "undefined"}</p>
+                <p>Select2 loaded: ${typeof $.fn.select2 !== "undefined"}</p>
+                <p>Static select element: ${
+                  $("#product-select-static").length
+                }</p>
+                <p>AJAX select element: ${$("#product-select-ajax").length}</p>
+                <p>Static select classes: ${$("#product-select-static").attr(
+                  "class"
+                )}</p>
+                <p>AJAX select classes: ${$("#product-select-ajax").attr(
+                  "class"
+                )}</p>
+            `;
+        $("#debug-info").html(info);
+      }
+
+      function testStaticSelect2() {
+        console.log("Testing static Select2...");
+        $("#status").html("Testing static Select2...");
+
+        try {
+          $("#product-select-static").select2({
+            placeholder: "Select products...",
+            allowClear: true,
+          });
+          console.log("Static Select2 initialized successfully");
+          $("#status").html(
+            '<p style="color: green;">Static Select2 initialized successfully!</p>'
+          );
+          updateDebugInfo();
+        } catch (error) {
+          console.error("Static Select2 initialization error:", error);
+          $("#status").html(
+            `<p style="color: red;">Static Select2 error: ${error.message}</p>`
+          );
+        }
+      }
+
+      function testAjaxSelect2() {
+        console.log("Testing AJAX Select2...");
+        $("#status").html("Testing AJAX Select2...");
+
+        try {
+          $("#product-select-ajax").select2({
+            ajax: {
+              url: "/api/select2-terms",
+              dataType: "json",
+              delay: 300,
+              data: function (params) {
+                return {
+                  q: params.term,
+                  page: params.page || 1,
+                  per_page: 20,
+                };
+              },
+              processResults: function (data, params) {
+                return {
+                  results: data.results.map(function (item) {
+                    return {
+                      id: item.id,
+                      text: item.text,
+                    };
+                  }),
+                  pagination: {
+                    more: data.pagination.more,
+                  },
+                };
+              },
+              cache: true,
+            },
+            placeholder: "Search and select products...",
+            allowClear: true,
+            minimumInputLength: 2,
+          });
+          console.log("AJAX Select2 initialized successfully");
+          $("#status").html(
+            '<p style="color: green;">AJAX Select2 initialized successfully!</p>'
+          );
+          updateDebugInfo();
+        } catch (error) {
+          console.error("AJAX Select2 initialization error:", error);
+          $("#status").html(
+            `<p style="color: red;">AJAX Select2 error: ${error.message}</p>`
+          );
+        }
+      }
+
+      function checkStatus() {
+        updateDebugInfo();
+        const staticClasses = $("#product-select-static").attr("class");
+        const ajaxClasses = $("#product-select-ajax").attr("class");
+
+        let status = "<h3>Current Status:</h3>";
+        status += `<p>Static select classes: ${staticClasses}</p>`;
+        status += `<p>AJAX select classes: ${ajaxClasses}</p>`;
+        status += `<p>Static select has select2-hidden-accessible: ${
+          staticClasses && staticClasses.includes("select2-hidden-accessible")
+        }</p>`;
+        status += `<p>AJAX select has select2-hidden-accessible: ${
+          ajaxClasses && ajaxClasses.includes("select2-hidden-accessible")
+        }</p>`;
+
+        $("#status").html(status);
+      }
+
+      $(document).ready(function () {
+        console.log("DOM ready");
+        updateDebugInfo();
+
+        // Auto-initialize static Select2
+        setTimeout(testStaticSelect2, 1000);
+      });
+    </script>
+  </body>
+</html>

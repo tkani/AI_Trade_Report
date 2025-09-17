@@ -14,14 +14,17 @@ class InputSpec:
     brand: str
     product: str
     budget: str
+    enterprise_size: str
 
 def validate_input(spec: InputSpec):
-    if not spec.brand or not spec.product or not spec.budget:
-        raise ValueError("brand, product and budget must be provided")
+    if not spec.brand or not spec.product or not spec.budget or not spec.enterprise_size:
+        raise ValueError("brand, product, budget and enterprise_size must be provided")
     if len(spec.brand) > 120 or len(spec.product) > 120:
         raise ValueError("brand/product too long")
     if len(spec.budget) > 40:
         raise ValueError("budget string too long")
+    if spec.enterprise_size not in ["small", "medium", "large"]:
+        raise ValueError("enterprise_size must be small, medium, or large")
 
 def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language: str = "en") -> str:
     # Language-specific prompts
@@ -60,9 +63,18 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
         )
 
     if language == "it":
+        # Map enterprise size to Italian
+        enterprise_size_map = {
+            "small": "Piccola Impresa",
+            "medium": "Media Impresa", 
+            "large": "Grande Impresa"
+        }
+        enterprise_size_it = enterprise_size_map.get(spec.enterprise_size, spec.enterprise_size)
+        
         user_instruction = (
             f"Ricerca e analizza le opportunità di espansione del mercato per *{spec.product}* "
-            f"sotto il brand *{spec.brand}* con un budget totale disponibile di **{spec.budget}**.\n\n"
+            f"sotto il brand *{spec.brand}* con un budget totale disponibile di **{spec.budget}**.\n"
+            f"**Dimensione Azienda:** {enterprise_size_it}\n\n"
             "Conduci una ricerca di mercato completa focalizzandoti su:\n"
             "- Identificazione e dimensionamento del mercato target (TAM, SAM, SOM)\n"
             "- Analisi del panorama competitivo\n"
@@ -75,9 +87,18 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "Fornisci insights azionabili e raccomandazioni strategiche per un ingresso di successo nel mercato.\n"
         )
     else:
+        # Map enterprise size to English
+        enterprise_size_map = {
+            "small": "Small Enterprise",
+            "medium": "Medium Enterprise",
+            "large": "Big Enterprise"
+        }
+        enterprise_size_en = enterprise_size_map.get(spec.enterprise_size, spec.enterprise_size)
+        
         user_instruction = (
             f"Research and analyze the market expansion opportunities for *{spec.product}* "
-            f"under the brand *{spec.brand}* with a total available budget of **{spec.budget}**.\n\n"
+            f"under the brand *{spec.brand}* with a total available budget of **{spec.budget}**.\n"
+            f"**Enterprise Size:** {enterprise_size_en}\n\n"
             "Conduct comprehensive market research focusing on:\n"
             "- Target market identification and sizing (TAM, SAM, SOM)\n"
             "- Competitive landscape analysis\n"
@@ -208,23 +229,28 @@ GUIDELINES:
     except Exception as e:
         print(f"Research API error: {e}")
         # Fallback to regular chat completion if research API is not available
-        # messages = [
-        #     {"role": "system", "content": research_instructions},
-        #     {"role": "user", "content": prompt},
-        # ]
-        
-        # api_params = {
-        #     "model": model,
-        #     "messages": messages,
-        # }
-        
-        # # Add appropriate parameters based on model
-        # if model == "gpt-5":
-        #     # GPT-5 only supports default temperature (1) and no custom token limits
-        #     pass  # Let GPT-5 use its default settings
-        # else:
-        #     api_params["temperature"] = temperature
-        #     api_params["max_tokens"] = 4000
-        
-        # response = client.chat.completions.create(**api_params)
-        # return response.choices[0].message.content
+        try:
+            messages = [
+                {"role": "system", "content": research_instructions},
+                {"role": "user", "content": prompt},
+            ]
+            
+            api_params = {
+                "model": model,
+                "messages": messages,
+            }
+            
+            # Add appropriate parameters based on model
+            if model == "gpt-5":
+                # GPT-5 only supports default temperature (1) and no custom token limits
+                pass  # Let GPT-5 use its default settings
+            else:
+                api_params["temperature"] = temperature
+                api_params["max_tokens"] = 4000
+            
+            response = client.chat.completions.create(**api_params)
+            return response.choices[0].message.content
+        except Exception as fallback_error:
+            print(f"Fallback API error: {fallback_error}")
+            # Return a default error message if all else fails
+            return f"Error generating report: {str(e)}. Please try again or contact support."

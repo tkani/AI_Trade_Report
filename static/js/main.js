@@ -13,6 +13,7 @@ const translations = {
         form_subtitle: "Enter your business details to generate a professional report",
         brand_label: "Brand Name",
         product_label: "Product/Service",
+        product_placeholder: "Search and select your product or service",
         budget_label: "Investment Budget",
         ai_model_label: "AI Model",
         ai_model_info: "Advanced AI with latest market data and insights",
@@ -36,6 +37,7 @@ const translations = {
         form_subtitle: "Inserisci i dettagli della tua azienda per generare un report professionale",
         brand_label: "Nome del Brand",
         product_label: "Prodotto/Servizio",
+        product_placeholder: "Cerca e seleziona il tuo prodotto o servizio",
         budget_label: "Budget di Investimento",
         ai_model_label: "Modello AI",
         ai_model_info: "AI avanzata con i dati di mercato e insights più recenti",
@@ -84,8 +86,24 @@ $(document).ready(function () {
         var formData = $(this).serialize();
         var selectedModel = $('#ai_model').val();
         
+        // Debug: Log the AI model value
+        console.log('AI Model value:', selectedModel);
+        
+        // Ensure we have a valid model
+        if (!selectedModel || selectedModel === 'undefined') {
+            selectedModel = 'gpt-5';
+            $('#ai_model').val('gpt-5');
+            console.log('AI Model corrected to:', selectedModel);
+        }
+        
         // Add the AI model selection to form data
         formData += '&ai_model=' + encodeURIComponent(selectedModel);
+        
+        // Add selected products to form data
+        const selectedProducts = $('#product-select').val();
+        if (selectedProducts && selectedProducts.length > 0) {
+            formData += '&product=' + encodeURIComponent(selectedProducts.join(', '));
+        }
 
         $.ajax({
             url: '/generate',
@@ -196,3 +214,393 @@ function translatePage(language) {
         document.title = 'AI Trade Report - Professional Market Analysis';
     }
 }
+
+// Select2 Product Input Functionality
+function initializeSelect2Input() {
+    const productSelect = document.getElementById('product-select');
+    if (!productSelect) {
+        console.log('Product select element not found');
+        return;
+    }
+    
+    console.log('Initializing Select2 for product select');
+    
+    // Get current language
+    const currentLang = document.getElementById('html-lang').lang || 'en';
+    const placeholder = translations[currentLang]?.product_placeholder || 'Search and select your products or services';
+    
+    // Check if Select2 is available
+    if (typeof $.fn.select2 === 'undefined') {
+        console.error('Select2 is not loaded');
+        return;
+    }
+    
+    // Initialize Select2
+    try {
+        $(productSelect).select2({
+        ajax: {
+            url: '/api/select2-terms',
+            dataType: 'json',
+            delay: 300,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    page: params.page || 1,
+                    per_page: 20
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                
+                return {
+                    results: data.results.map(function(item) {
+                        return {
+                            id: item.id,
+                            text: item.text,
+                            description: item.description,
+                            category: item.category
+                        };
+                    }),
+                    pagination: {
+                        more: data.pagination.more
+                    }
+                };
+            },
+            cache: true
+        },
+        placeholder: placeholder,
+        allowClear: true,
+        multiple: true,
+        minimumInputLength: 2,
+        tags: true, // Enable custom entries
+        tokenSeparators: [',', ';'], // Allow comma and semicolon as separators
+        createTag: function (params) {
+            // Allow creation of custom tags
+            var term = $.trim(params.term);
+            if (term === '') {
+                return null;
+            }
+            return {
+                id: term,
+                text: term,
+                isCustom: true // Mark as custom entry
+            };
+        },
+        templateResult: formatProductOption,
+        templateSelection: formatProductSelection,
+        escapeMarkup: function (markup) { return markup; },
+        language: {
+            inputTooShort: function () {
+                return 'Please enter at least 2 characters';
+            },
+            noResults: function () {
+                return 'No products found. Press Enter to add custom entry.';
+            },
+            searching: function () {
+                return 'Searching...';
+            }
+        }
+    });
+    
+    console.log('Select2 initialized successfully');
+    
+    // Ensure proper width after initialization
+    setTimeout(function() {
+        const container = $(productSelect).next('.select2-container');
+        const searchField = container.find('.select2-search__field');
+        const searchInline = container.find('.select2-search--inline');
+        
+        // Force width on all elements
+        container.css({
+            'width': '100%',
+            'max-width': '100%'
+        });
+        
+        if (searchInline.length) {
+            searchInline.css({
+                'width': '100%',
+                'min-width': '300px',
+                'flex': '1 1 auto'
+            });
+        }
+        
+        if (searchField.length) {
+            searchField.css({
+                'width': '100%',
+                'min-width': '300px',
+                'max-width': 'none',
+                'flex': '1 1 auto',
+                'box-sizing': 'border-box'
+            });
+        }
+        
+        // Also force width on the selection area
+        const selection = container.find('.select2-selection--multiple');
+        if (selection.length) {
+            selection.css({
+                'width': '100%',
+                'max-width': '100%',
+                'display': 'flex',
+                'flex-wrap': 'wrap'
+            });
+        }
+    }, 100);
+    
+    // Additional width fix after a longer delay
+    setTimeout(function() {
+        const searchField = $(productSelect).next('.select2-container').find('.select2-search__field');
+        const searchInline = $(productSelect).next('.select2-container').find('.select2-search--inline');
+        
+        if (searchField.length) {
+            searchField.attr('style', searchField.attr('style') + '; width: 100% !important; min-width: 200px !important; max-width: none !important; overflow: visible !important; white-space: nowrap !important;');
+        }
+        
+        if (searchInline.length) {
+            searchInline.attr('style', searchInline.attr('style') + '; flex: 1 1 200px !important; min-width: 200px !important; order: 999 !important; margin-left: 4px !important;');
+        }
+    }, 500);
+    
+    // Monitor for changes and reapply width fixes
+    $(productSelect).on('select2:select select2:unselect', function() {
+        setTimeout(function() {
+            forceSelect2Width();
+            // Also fix tag overflow
+            fixTagOverflow();
+        }, 100);
+    });
+    
+    // Function to fix tag overflow
+    function fixTagOverflow() {
+        const choices = $(productSelect).next('.select2-container').find('.select2-selection__choice');
+        choices.each(function() {
+            const $choice = $(this);
+            const $display = $choice.find('.select2-selection__choice__display');
+            
+            // Ensure proper width constraints
+            $choice.css({
+                'max-width': '300px',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis',
+                'white-space': 'nowrap',
+                'flex': '0 0 auto'
+            });
+            
+            if ($display.length) {
+                $display.css({
+                    'max-width': '250px',
+                    'overflow': 'hidden',
+                    'text-overflow': 'ellipsis',
+                    'white-space': 'nowrap',
+                    'display': 'inline-block'
+                });
+            }
+        });
+    }
+    
+    // Make fixTagOverflow available globally
+    window.fixTagOverflow = fixTagOverflow;
+    
+    // Update placeholder when language changes
+    $(document).on('languageChanged', function() {
+        const newLang = document.getElementById('html-lang').lang || 'en';
+        const newPlaceholder = translations[newLang]?.product_placeholder || 'Search and select your products or services';
+        $(productSelect).select2('destroy');
+        $(productSelect).attr('data-placeholder', newPlaceholder);
+        initializeSelect2Input();
+    });
+    
+    } catch (error) {
+        console.error('Error initializing Select2:', error);
+        // Fallback: show a regular input
+        fallbackToRegularInput();
+    }
+}
+
+function fallbackToRegularInput() {
+    console.log('Falling back to regular input');
+    const productSelect = document.getElementById('product-select');
+    if (!productSelect) return;
+    
+    // Create a regular input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = 'product';
+    input.id = 'product-input-fallback';
+    input.className = 'form-input';
+    input.placeholder = 'Enter your product or service';
+    input.required = true;
+    
+    // Replace the select with input
+    productSelect.parentNode.replaceChild(input, productSelect);
+    
+    // Initialize the old searchable functionality
+    initializeSearchableInputFallback();
+}
+
+function initializeSearchableInputFallback() {
+    const productInput = document.getElementById('product-input-fallback');
+    if (!productInput) return;
+    
+    let searchTimeout;
+    
+    productInput.addEventListener('input', function(e) {
+        const query = e.target.value.trim();
+        
+        clearTimeout(searchTimeout);
+        
+        if (query.length < 2) {
+            return;
+        }
+        
+        searchTimeout = setTimeout(() => {
+            searchTermsFallback(query);
+        }, 300);
+    });
+}
+
+function searchTermsFallback(query) {
+    fetch(`/api/search-terms?q=${encodeURIComponent(query)}&limit=5`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Search results:', data.terms);
+            // You could implement a simple dropdown here if needed
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+        });
+}
+
+function formatProductOption(product) {
+    if (product.loading) {
+        return product.text;
+    }
+    
+    // Check if this is a custom entry
+    if (product.isCustom) {
+        const $container = $(
+            '<div class="select2-result-text">' +
+                '<div class="select2-result-term">' + product.text + '</div>' +
+                '<div class="select2-result-description">Custom entry - Press Enter to add</div>' +
+                '<div class="select2-result-category">CUSTOM</div>' +
+            '</div>'
+        );
+        return $container;
+    }
+    
+    const $container = $(
+        '<div class="select2-result-text">' +
+            '<div class="select2-result-term">' + product.text + '</div>' +
+            '<div class="select2-result-description">' + (product.description || '') + '</div>' +
+            (product.category ? '<div class="select2-result-category">' + product.category + '</div>' : '') +
+        '</div>'
+    );
+    
+    return $container;
+}
+
+function formatProductSelection(product) {
+    return product.text;
+}
+
+// Initialize Select2 when DOM is ready
+$(document).ready(function() {
+    console.log('DOM ready, initializing Select2...');
+    initializeSelect2Input();
+});
+
+// Also try to initialize after window load
+$(window).on('load', function() {
+    console.log('Window loaded, checking Select2...');
+    setTimeout(function() {
+        // Check if Select2 is already initialized
+        if ($('#product-select').hasClass('select2-hidden-accessible')) {
+            console.log('Select2 already initialized');
+            // Force width even if already initialized
+            forceSelect2Width();
+            return;
+        }
+        console.log('Trying to initialize Select2 after window load');
+        initializeSelect2Input();
+    }, 500);
+});
+
+// Function to force Select2 width
+function forceSelect2Width() {
+    console.log('Forcing Select2 width...');
+    const container = $('#product-select').next('.select2-container');
+    const searchField = container.find('.select2-search__field');
+    const searchInline = container.find('.select2-search--inline');
+    const selection = container.find('.select2-selection--multiple');
+    
+    // Apply aggressive width fixes
+    container.css({
+        'width': '100% !important',
+        'max-width': '100% !important',
+        'min-width': '100% !important'
+    });
+    
+    if (searchInline.length) {
+        searchInline.css({
+            'width': '100% !important',
+            'min-width': '300px !important',
+            'flex': '1 1 auto !important'
+        });
+    }
+    
+    if (searchField.length) {
+        searchField.css({
+            'width': '100% !important',
+            'min-width': '200px !important',
+            'max-width': 'none !important',
+            'flex': '1 1 auto !important',
+            'overflow': 'visible !important',
+            'white-space': 'nowrap !important',
+            'text-overflow': 'ellipsis !important'
+        });
+    }
+    
+    if (selection.length) {
+        selection.css({
+            'width': '100% !important',
+            'max-width': '100% !important',
+            'display': 'flex !important',
+            'flex-wrap': 'wrap !important'
+        });
+    }
+    
+    console.log('Select2 width forced');
+    
+    // Also fix tag overflow
+    fixTagOverflow();
+}
+
+// Function to fix tag overflow
+function fixTagOverflow() {
+    const choices = $('#product-select').next('.select2-container').find('.select2-selection__choice');
+    choices.each(function() {
+        const $choice = $(this);
+        const $display = $choice.find('.select2-selection__choice__display');
+        
+        // Ensure proper width constraints
+        $choice.css({
+            'max-width': '300px',
+            'overflow': 'hidden',
+            'text-overflow': 'ellipsis',
+            'white-space': 'nowrap',
+            'flex': '0 0 auto'
+        });
+        
+        if ($display.length) {
+            $display.css({
+                'max-width': '250px',
+                'overflow': 'hidden',
+                'text-overflow': 'ellipsis',
+                'white-space': 'nowrap',
+                'display': 'inline-block'
+            });
+        }
+    });
+}
+
+// Make forceSelect2Width available globally for debugging
+window.forceSelect2Width = forceSelect2Width;

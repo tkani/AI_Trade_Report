@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile - AI Trade Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <style>
+      .profile-edit-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+      }
+      .profile-edit-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 3rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .profile-edit-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .profile-edit-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+      }
+      .profile-edit-subtitle {
+        color: #6b7280;
+        font-size: 1rem;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+      }
+      .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        background: #f9fafb;
+      }
+      .form-input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        background: white;
+      }
+      .form-input:disabled {
+        background: #f3f4f6;
+        color: #6b7280;
+        cursor: not-allowed;
+      }
+      .error-message {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #fecaca;
+        font-size: 0.875rem;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: white;
+      }
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      .brand-icon {
+        font-size: 2rem;
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .brand-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+      .form-note {
+        background: #f0f9ff;
+        color: #0369a1;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #bae6fd;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="profile-edit-container">
+      <div class="profile-edit-card">
+        <div class="profile-edit-header">
+          <div class="brand-logo">
+            <img
+              src="/static/logo_trade_on_chain.png"
+              alt="AI Trade Report"
+              class="brand-logo-img"
+            />
+            <span class="brand-text">AI Trade Report</span>
+          </div>
+          <h1 class="profile-edit-title">Edit Profile</h1>
+          <p class="profile-edit-subtitle">Update your account information</p>
+        </div>
+
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+
+        <div class="form-note">
+          <strong>Note:</strong> You can update your personal information below.
+          If you change your email address, make sure it's not already taken by
+          another user.
+        </div>
+
+        <form method="POST" action="/profile/update">
+          <div class="form-group">
+            <label class="form-label" for="name">First Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="form-input"
+              value="{{ user.name }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="surname">Last Name</label>
+            <input
+              type="text"
+              id="surname"
+              name="surname"
+              class="form-input"
+              value="{{ user.surname }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              value="{{ user.email }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="company_name">Company Name</label>
+            <input
+              type="text"
+              id="company_name"
+              name="company_name"
+              class="form-input"
+              value="{{ user.company_name }}"
+              required
+            />
+          </div>
+
+          <div class="action-buttons">
+            <button type="submit" class="btn btn-primary">
+              💾 Save Changes
+            </button>
+            <a href="/profile" class="btn btn-secondary">❌ Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

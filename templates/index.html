@@ -14,7 +14,12 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/static/css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   </head>
   <body>
     <!-- Language Selection Modal -->
@@ -44,15 +49,18 @@
     <nav class="navbar">
       <div class="nav-container">
         <div class="nav-brand">
-          <div class="brand-icon">📊</div>
+          <img
+            src="/static/logo_trade_on_chain.png"
+            alt="AI Trade Report"
+            class="brand-logo-img"
+          />
           <span class="brand-text" data-translate="brand_name"
             >AI Trade Report</span
           >
         </div>
         <div class="nav-links">
-          <a href="#" class="nav-link" data-translate="features">Features</a>
-          <a href="#" class="nav-link" data-translate="pricing">Pricing</a>
-          <a href="#" class="nav-link" data-translate="support">Support</a>
+          <a href="/profile" class="nav-link">👤 Profile</a>
+          <a href="/logout" class="nav-link">🚪 Logout</a>
         </div>
       </div>
     </nav>
@@ -82,6 +90,15 @@
           competitive analysis, and strategic recommendations for your business
           expansion.
         </p>
+        {% if user %}
+        <div class="welcome-message">
+          <p>
+            Welcome back,
+            <strong>{{ user.name }} {{ user.surname }}</strong> from
+            <strong>{{ user.company_name }}</strong>!
+          </p>
+        </div>
+        {% endif %}
       </div>
     </section>
 
@@ -105,6 +122,7 @@
               id="language-input"
               value="en"
             />
+            <input type="hidden" name="ai_model" id="ai_model" value="gpt-5" />
             <div class="form-grid">
               <div class="form-group">
                 <label class="form-label">
@@ -114,7 +132,7 @@
                 <input
                   type="text"
                   name="brand"
-                  class="form-input"
+                  class="form-input brand-input"
                   data-placeholder-en="Enter your brand name"
                   data-placeholder-it="Inserisci il nome del tuo brand"
                   placeholder="Enter your brand name"
@@ -128,15 +146,15 @@
                   <span class="label-icon">📦</span>
                   <span data-translate="product_label">Product/Service</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   name="product"
-                  class="form-input"
-                  data-placeholder-en="Describe your product or service"
-                  data-placeholder-it="Descrivi il tuo prodotto o servizio"
-                  placeholder="Describe your product or service"
+                  id="product-select"
+                  class="form-control select2-multiple"
+                  multiple="multiple"
+                  data-placeholder-en="Search and select your products or services"
+                  data-placeholder-it="Cerca e seleziona i tuoi prodotti o servizi"
                   required
-                />
+                ></select>
                 <div class="input-focus-line"></div>
               </div>
 
@@ -159,26 +177,54 @@
 
               <div class="form-group">
                 <label class="form-label">
-                  <span class="label-icon">🤖</span>
-                  <span data-translate="ai_model_label">AI Model</span>
+                  <span class="label-icon">🏢</span>
+                  <span data-translate="enterprise_size_label"
+                    >Enterprise Size</span
+                  >
                 </label>
                 <div class="select-wrapper">
-                  <select name="ai_model" id="ai_model" class="form-select">
+                  <select
+                    name="enterprise_size"
+                    id="enterprise_size"
+                    class="form-select"
+                  >
                     <option
-                      value="gpt-5"
+                      value=""
+                      disabled
                       selected
-                      data-text-en="GPT-5 (Latest Generation)"
-                      data-text-it="GPT-5 (Ultima Generazione)"
+                      data-text-en="Select enterprise size"
+                      data-text-it="Seleziona dimensione azienda"
                     >
-                      GPT-5 (Latest Generation)
+                      Select enterprise size
+                    </option>
+                    <option
+                      value="small"
+                      data-text-en="Small Enterprise"
+                      data-text-it="Piccola Impresa"
+                    >
+                      Small Enterprise
+                    </option>
+                    <option
+                      value="medium"
+                      data-text-en="Medium Enterprise"
+                      data-text-it="Media Impresa"
+                    >
+                      Medium Enterprise
+                    </option>
+                    <option
+                      value="large"
+                      data-text-en="Big Enterprise"
+                      data-text-it="Grande Impresa"
+                    >
+                      Big Enterprise
                     </option>
                   </select>
                   <div class="select-arrow">▼</div>
                 </div>
                 <div class="model-info">
-                  <span class="info-icon">⚡</span>
-                  <span class="info-text" data-translate="ai_model_info"
-                    >Advanced AI with latest market data and insights</span
+                  <span class="info-icon">📊</span>
+                  <span class="info-text" data-translate="enterprise_size_info"
+                    >Choose your company size for tailored analysis</span
                   >
                 </div>
               </div>
