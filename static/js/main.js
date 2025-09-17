@@ -75,7 +75,7 @@ $(document).ready(function () {
 
     // Enhanced form submission with loading steps
     $('#report-form').submit(function (e) {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission
         
         // Show splash screen
         $('#splash-screen').css('display', 'flex');
@@ -83,6 +83,7 @@ $(document).ready(function () {
         // Animate loading steps
         animateLoadingSteps();
 
+        // Get form data
         var formData = $(this).serialize();
         var selectedModel = $('#ai_model').val();
         
@@ -98,37 +99,60 @@ $(document).ready(function () {
         
         // Add the AI model selection to form data
         formData += '&ai_model=' + encodeURIComponent(selectedModel);
-        
-        // Add selected products to form data
-        const selectedProducts = $('#product-select').val();
-        if (selectedProducts && selectedProducts.length > 0) {
-            formData += '&product=' + encodeURIComponent(selectedProducts.join(', '));
-        }
 
+        // Set a timeout for the request
+        const requestTimeout = setTimeout(function() {
+            $('#splash-screen').css('display', 'none');
+            alert('Report generation is taking longer than expected. Please try again.');
+        }, 120000); // 2 minutes timeout
+
+        // Show progress updates
+        let progressCounter = 0;
+        const progressInterval = setInterval(function() {
+            progressCounter += 10;
+            if (progressCounter <= 90) {
+                console.log('Generating report... ' + progressCounter + '%');
+            }
+        }, 10000); // Update every 10 seconds
+
+        // Submit form data via AJAX
         $.ajax({
             url: '/generate',
             type: 'POST',
             data: formData,
-            success: function (res) {
+            timeout: 120000, // 2 minutes timeout
+            success: function (response, status, xhr) {
+                clearTimeout(requestTimeout);
+                clearInterval(progressInterval);
+                
                 // Complete all steps
                 completeAllSteps();
                 
-                // Small delay before redirect for better UX
-                setTimeout(function() {
-                    $('#splash-screen').css('display', 'none');
-                    
-                    if (res.status === "success") {
-                        // Redirect to the report page
-                        window.location.href = res.redirect_url;
-                    } else {
-                        alert("Error: " + res.message);
-                    }
-                }, 1000);
+                // Check if we got a successful response
+                if (response.status === 'success') {
+                    // Small delay before redirect for better UX
+                    setTimeout(function() {
+                        $('#splash-screen').css('display', 'none');
+                        window.location.href = response.redirect_url;
+                    }, 1000);
+                } else {
+                    // If no success, hide splash screen and show error
+                    setTimeout(function() {
+                        $('#splash-screen').css('display', 'none');
+                        alert('Error: ' + (response.message || 'Unknown error occurred'));
+                    }, 1000);
+                }
             },
-            error: function () {
-                // Hide splash screen
+            error: function (xhr, status, error) {
+                clearTimeout(requestTimeout);
+                clearInterval(progressInterval);
                 $('#splash-screen').css('display', 'none');
-                alert("An error occurred while generating the report.");
+                
+                if (status === 'timeout') {
+                    alert('Request timed out. Please try again.');
+                } else {
+                    alert('An error occurred while generating the report: ' + error);
+                }
             }
         });
     });
@@ -175,6 +199,43 @@ $(document).ready(function () {
         }
     });
 });
+
+// Function to poll job status
+function pollJobStatus(jobId) {
+    const pollInterval = setInterval(function() {
+        $.ajax({
+            url: `/job-status/${jobId}`,
+            type: 'GET',
+            success: function(status) {
+                console.log('Job status:', status);
+                
+                if (status.status === 'completed') {
+                    clearInterval(pollInterval);
+                    // Complete all steps
+                    completeAllSteps();
+                    
+                    // Small delay before redirect for better UX
+                    setTimeout(function() {
+                        $('#splash-screen').css('display', 'none');
+                        window.location.href = status.redirect_url;
+                    }, 1000);
+                } else if (status.status === 'error') {
+                    clearInterval(pollInterval);
+                    $('#splash-screen').css('display', 'none');
+                    alert('Error generating report: ' + status.error);
+                } else if (status.status === 'processing') {
+                    // Update progress if needed
+                    console.log('Progress:', status.progress + '%');
+                }
+            },
+            error: function() {
+                clearInterval(pollInterval);
+                $('#splash-screen').css('display', 'none');
+                alert('Error checking report status.');
+            }
+        });
+    }, 2000); // Poll every 2 seconds
+}
 
 // Translation function
 function translatePage(language) {

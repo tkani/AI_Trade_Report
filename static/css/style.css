@@ -246,9 +246,18 @@ body {
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 700;
   line-height: 1.1;
-  color: white;
+  color: #1a1a1a !important;
   margin-bottom: var(--space-lg);
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Force black color for hero title */
+.hero-content .hero-title {
+  color: #1a1a1a !important;
+}
+
+h1.hero-title {
+  color: #1a1a1a !important;
 }
 
 .title-highlight {
@@ -315,7 +324,7 @@ body {
 
 .nav-brand .brand-text {
   font-size: 1.25rem;
-  color: white;
+  color: #1a1a1a;
 }
 
 /* Responsive Logo Styling */
@@ -1571,6 +1580,21 @@ body {
     display: flex;
     align-items: center;
   }
+}
+
+/* Force hero title to be black - highest specificity */
+body .hero-content h1.hero-title {
+  color: #1a1a1a !important;
+}
+
+/* Additional override for any conflicting styles */
+.hero-section .hero-content .hero-title {
+  color: #1a1a1a !important;
+}
+
+/* Force nav brand text to be black */
+.navbar .nav-brand .brand-text {
+  color: #1a1a1a !important;
 }
 
 @media print {

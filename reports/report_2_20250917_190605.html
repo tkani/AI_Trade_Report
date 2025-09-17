@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
+                flex: 1;
+                max-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">17 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title: Strategic Market Analysis Report – Expansion Opportunities for “Tea: Extracts and Preparations (including instant tea) – Prepared ‘by steaming or by boiling in water’” under Brand “tea”</p>
+        <p>Analysis Date: 17 September 2025</p>
+        <p>Enterprise Size: Medium Enterprise</p>
+        <p>Total Available Budget: 40,000</p>
+        <br>
+        <p>Executive Summary</p>
+        <p>This report evaluates market expansion opportunities for a tea product described as “cooked by steaming or by boiling in water,” which aligns with tea extracts and preparations (e.g., instant tea, tea concentrates) commonly classified under HS 2101.20 (Tea and mate extracts, essences and concentrates; and preparations based on these products or on tea). Where possible, we use official, recent data from WTO/Comtrade/Eurostat/OECD/World Bank. Due to constraints in live database access within this environment, we provide structured recommendations grounded in verifiable classification logic, cite authoritative sources for validation, and clearly label all estimates.</p>
+        <p>Top recommended entry markets (Estimate, justified by official trade availability and typical demand profiles for instant/prepared tea products) are:</p>
+        <ul>
+            <li>DEU (Germany): Large health/wellness FMCG market, high retail sophistication, strong tea consumption culture in segments, robust e-commerce.</li>
+            <li>FRA (France): Premium grocery penetration, high specialty retail density, and openness to functional/ready-to-prepare beverages.</li>
+            <li>ITA (Italy): Growth in health-focused beverages and specialty grocers; strong HoReCa channel for premium hot beverages.</li>
+        </ul>
+        <p>Given a constrained budget (40,000), we recommend a low-capex, test-and-learn entry using marketplace e-commerce, select specialty distributors, and targeted B2B sampling in HoReCa. Key priorities: regulatory compliance (food labeling, additives, contaminants), precise HS classification confirmation, and demand testing through digital channels. A 90-day plan focuses on compliance readiness, distributor outreach, marketplace listings, and controlled geo-targeted campaigns.</p>
+        <br>
+        <ol>
+            <li>Market Overview</li>
+        <p>Scope definition and HS classification</p>
+            <li>Product scope: Tea extracts/preparations intended for consumption after reconstitution/infusion (“prepared by steaming or by boiling in water”). Closest harmonized classification: HS 2101.20 (Tea and mate extracts, essences and concentrates; and preparations based on these products or on tea).</li>
+            <li>Why HS 2101.20: The phrase “prepared by steaming or boiling in water” corresponds to production methods for extracts/instant tea and preparations to be reconstituted/used with hot water rather than loose leaf tea (HS 0902).</li>
+            <li>Implications: Competitors, tariffs, labeling, and import statistics for HS 2101.20 are the right reference for market sizing and compliance.</li>
+        </ol>
+        <p>Demand drivers (qualitative; sources listed for verification)</p>
+        <ul>
+            <li>Health and wellness trend in hot beverages (functional tea, low-sugar alternatives) in the EU market.</li>
+            <li>Growth in e-commerce grocery and specialty beverage niches (accelerated post-2020).</li>
+            <li>Out-of-home (HoReCa) adoption of concentrates/extracts for consistency and speed.</li>
+        </ul>
+        <p>Key macro context (to be validated with sources by the client team)</p>
+        <ul>
+            <li>EU single market: No internal tariffs; common food regulatory framework (EU). VAT varies by country.</li>
+            <li>Stable logistics and distributor ecosystems in DE, FR, IT.</li>
+        </ul>
+        <ol>
+            <li>Target Market Analysis (TAM, SAM, SOM)</li>
+        <p>Important note on data quality</p>
+            <li>We do not fabricate market sizes. Without live pulls, we cannot quote current 2023–2025 import values for HS 2101.20 per country. Therefore, we provide a method and clearly labeled, conservative “order-of-magnitude” Estimates with reasoning. We cite official sources to validate HS and approach. Client should validate with the referenced databases (Eurostat/Comtrade/WTO) before final decisions.</li>
+        </ol>
+        <p>Methodology</p>
+        <ul>
+            <li>TAM (Estimate): Total import demand for HS 2101.20 in each target country (proxy for total market accessible to a foreign entrant), validated by UN Comtrade/Eurostat.</li>
+            <li>SAM (Estimate): Share of TAM corresponding to premium/functional instant/prepared tea sold via retail and e-commerce specialty channels (excludes industrial/bulk and non-premium B2B).</li>
+            <li>SOM (Estimate): 12-month attainable share for a new entrant with a 40,000 budget using digital-first and distributor-assisted entry.</li>
+        </ul>
+        <p>Assumption anchors (to be validated)</p>
+        <ul>
+            <li>Germany likely among top EU importers for HS 2101.20; France and Italy significant but smaller than Germany. Historical patterns generally show Germany and France as top EU destinations for tea and tea preparations.</li>
+            <li>Premium/specialty/e-commerce subsegment typically a fraction of total imports; we assume 20–35% for SAM (Estimate) due to the niche nature of premium/functional products.</li>
+            <li>Initial SOM for a new brand with limited spend typically ≤0.1% of TAM in year one; we assume 0.02–0.06% depending on channel readiness (Estimate).</li>
+        </ul>
+        <p>TAM, SAM, SOM (Estimates)</p>
+        <ul>
+            <li>Germany (DEU)</li>
+            <li>TAM (Estimate): 180–260 million EUR (HS 2101.20 imports). Reasoning: Germany’s scale in hot beverages, re-exports hub role.</li>
+            <li>SAM (Estimate): 45–75 million EUR (25–30% of TAM). Reasoning: Premium/e-commerce/specialty share.</li>
+            <li>SOM (12 months) (Estimate): 0.06% of TAM ≈ 108–156k EUR potential sell-in with strong execution; with 40,000 budget, realistic initial realized sales 60–100k EUR depends on distributor terms and retail pricing.</li>
+            <li>France (FRA)</li>
+            <li>TAM (Estimate): 120–180 million EUR.</li>
+            <li>SAM (Estimate): 24–54 million EUR (20–30%).</li>
+            <li>SOM (Estimate): 0.04% of TAM ≈ 48–72k EUR potential; realized 30–50k EUR.</li>
+            <li>Italy (ITA)</li>
+            <li>TAM (Estimate): 70–110 million EUR.</li>
+            <li>SAM (Estimate): 14–33 million EUR (20–30%).</li>
+            <li>SOM (Estimate): 0.03% of TAM ≈ 21–33k EUR potential; realized 15–25k EUR.</li>
+        </ul>
+        <p>Data sources for validation (no statistics quoted from them here):</p>
+        <ul>
+            <li>UN Comtrade – HS 2101.20 imports by partner country (Publication years: 2023–2025 releases).</li>
+            <li>Eurostat Comext – EU intra/extra-EU trade by CN code aligned to HS 2101.20 (Latest release 2023–2025).</li>
+            <li>WTO Tariff/Trade Data – product profiles by HS code (2023–2025).</li>
+        </ul>
+        <ol>
+            <li>Competitive Landscape</li>
+        <p>Note: Without live database access, we do not list specific brand shares. We outline competitor types and positioning observable in EU retail/e-commerce for HS 2101.20 (instant tea, tea extracts, ready-to-boil tea preparations). The client should validate final names and shares via NielsenIQ/IRI/Statista reports or marketplace data.</p>
+        <p>Competitor archetypes</p>
+            <li>Global FMCG tea brands: Offer instant tea, flavored/functional variants; advantage in distribution and brand trust.</li>
+            <li>Specialty tea houses: Premium extracts/concentrates; strong storytelling and direct-to-consumer.</li>
+            <li>Private label: Retailer-owned instant tea/preparations; price leadership, strong shelf access.</li>
+            <li>Asian origin brands: Authentic formats (powders/concentrates) via ethnic/specialty channels; strong flavor leadership.</li>
+            <li>HoReCa suppliers: Tea concentrates for cafés/hotels; emphasize consistency and cost-in-use.</li>
+        </ol>
+        <p>Competitive factors</p>
+        <ul>
+            <li>Quality and source transparency (origin/organic/fair trade).</li>
+            <li>Functional claims (vitamins, botanicals) within EU health-claims rules.</li>
+            <li>Sugar and sweetener profile; clean label.</li>
+            <li>Pack formats: single-serve sticks, jars, liquid concentrates.</li>
+            <li>Price bands: economy private label to premium specialty.</li>
+        </ul>
+        <ol>
+            <li>Regulatory Environment</li>
+        <p>Applicable EU frameworks and references (to be validated for final labeling):</p>
+            <li>General Food Law: Regulation (EC) No 178/2002 – food safety principles (EU).</li>
+            <li>Food Information to Consumers: Regulation (EU) No 1169/2011 – labeling, allergens, nutrition.</li>
+            <li>Additives: Regulation (EC) No 1333/2008 – permitted additives; flavorings Regulation (EC) No 1334/2008.</li>
+            <li>Contaminants: Regulation (EC) No 1881/2006 (and amendments) – maximum levels for contaminants.</li>
+            <li>Pesticide residues: Regulation (EC) No 396/2005 – MRLs (relevant for tea inputs).</li>
+            <li>Health claims: Regulation (EC) No 1924/2006 – nutrition and health claims; only authorized claims allowed.</li>
+            <li>Organic claims: Regulation (EU) 2018/848 – organic production and labeling (if applicable).</li>
+            <li>Materials in contact with food: Regulation (EC) No 1935/2004 (packaging).</li>
+            <li>Novel Food: Regulation (EU) 2015/2283 – if using novel botanicals/extracts (check status).</li>
+            <li>Import/tariff and customs: TARIC database for HS 2101.20 to confirm tariffs (intra-EU: none; extra-EU imports into EU: MFN/preference as applicable).</li>
+        <p>Sources:</p>
+            <li>EUR-Lex official journal database (consolidated acts; access dates 2023–2025).</li>
+            <li>European Commission – DG SANTE, DG GROW guidance pages (2023–2025).</li>
+        </ol>
+        <ol>
+            <li>Consumer Analysis</li>
+        <p>Qualitative insights (to be validated with national consumer panels or Statista/NielsenIQ):</p>
+            <li>Germany: High acceptance of functional hot beverages; growth in sugar-reduced options; strong online grocery penetration for pantry staples.</li>
+            <li>France: Openness to premium flavors and organic/clean label; strong specialty retail culture.</li>
+            <li>Italy: Tradition around coffee; tea category growing from a lower base; opportunity in wellness and evening/decaf segments.</li>
+            <li>Buying triggers: health benefits, convenience (instant), taste authenticity, sustainability certifications.</li>
+            <li>Price sensitivity: segmented; premium consumers accept higher €/kg for clean-label functional products with provenance.</li>
+        </ol>
+        <p>6. Distribution Channels</p>
+        <p>Channel priorities for a 40,000 budget</p>
+        <ul>
+            <li>Marketplace e-commerce (Amazon DE/FR/IT; national marketplaces): Fast listing, immediate demand testing, reviews creation. Fees and FBA costs to be modeled.</li>
+            <li>Specialty distributors (organic/health chains; ethnic/specialty): Targeted outreach with samples and trade terms; focus on Germany first.</li>
+            <li>Direct-to-consumer web shop: Lightweight storefront for brand story; leverage performance marketing at modest scale for retargeting and email capture.</li>
+            <li>HoReCa B2B: Pilot with liquid concentrates/foodservice packs through regional distributors; focus on cafés and hotels in urban hubs.</li>
+        <p>Entry barriers</p>
+            <li>Listing fees and promotion requirements in grocery retail.</li>
+            <li>Need for local language packaging and compliance.</li>
+            <li>Reviews/social proof requirements on marketplaces.</li>
+            <li>Working capital for inventory and logistics.</li>
+        </ul>
+        <p>8. Risk Assessment</p>
+        <p>Key risks and mitigations</p>
+        <ul>
+            <li>Regulatory non-compliance: Pre-market label review by EU regulatory specialist; conservative claims strategy.</li>
+            <li>Demand risk: Stage-gated test; proceed to broader distribution only upon hitting CAC/LTV and reorder KPIs.</li>
+            <li>Price competition with private label: Differentiate via clean label, origin, organic, and functional positioning.</li>
+            <li>Supply continuity and quality: Supplier audits, pesticide residue and contaminant testing per EU regs.</li>
+            <li>FX/logistics volatility: Price lists with quarterly review; nearshoring stock in EU 3PL.</li>
+            <li>Reputation risk from claims: Avoid unauthorized health claims; substantiate all statements.</li>
+        </ul>
+        <p>9. Strategic Recommendations</p>
+        <ul>
+            <li>Product-market fit</li>
+            <li>Confirm HS 2101.20 classification for all SKUs; align formulations to EU additive/flavoring limits.</li>
+            <li>Develop two hero SKUs: Unsweetened clean-label instant tea; Functional variant (e.g., vitamin C or botanical authorized claims).</li>
+            <li>Packaging in local languages (DE, FR, IT); create single-serve format for trials and e-commerce.</li>
+            <li>Market sequence</li>
+            <li>Phase 1: Germany (primary), France (secondary), Italy (tertiary) to concentrate spend and learn fast.</li>
+            <li>Channel strategy</li>
+            <li>Launch on Amazon DE and FR; consider IT once reviews accumulate.</li>
+            <li>Appoint 1–2 specialty distributors in each market; negotiate trial placements in top 50–100 stores cumulative.</li>
+            <li>Pilot HoReCa with 2 regional distributors (Germany first) using foodservice packs.</li>
+            <li>Pricing and margins (Estimate)</li>
+            <li>Target consumer price: Premium but competitive with specialty instant tea. Back-solve from target gross margin ≥40% ex-works and retailer margin 30–40%. Validate against marketplace price comps before finalizing.</li>
+            <li>Brand and demand generation</li>
+            <li>Position around clean label, origin transparency, and convenience.</li>
+            <li>Run targeted PPC on Amazon and meta-search with strict ACoS targets; invest in reviews and subscribe-and-save.</li>
+            <li>Compliance and quality</li>
+            <li>Full dossier: specs, COAs, pesticide tests, allergens, nutritional, labeling checks; authorized claims only.</li>
+        </ul>
+        <p>10. Implementation Plan (90-day action plan)</p>
+        <p>Day 0 prerequisites: Budget 40,000; core SKUs finalized.</p>
+        <br>
+        <p>Phase 1: Compliance, readiness, and listings (Weeks 1–4)</p>
+        <ul>
+            <li>Regulatory and labeling review (EU specialist) – Responsible: Regulatory Lead</li>
+            <li>Confirm HS 2101.20 and TARIC codes; check additives/flavorings – Responsible: Regulatory Lead</li>
+            <li>Translation and packaging proofs (DE/FR/IT) – Responsible: Marketing</li>
+            <li>Amazon seller accounts (DE/FR) set-up; 3PL selection in EU – Responsible: E-commerce Lead</li>
+            <li>Initial inventory for EU 3PL (conservative) – Responsible: Ops</li>
+        </ul>
+        <p>Phase 2: Channel and distributor outreach (Weeks 5–8)</p>
+        <ul>
+            <li>Identify and contact specialty distributors (Germany priority) – Responsible: Sales Lead</li>
+            <li>HoReCa distributor pilots (Germany) – Responsible: Sales Lead</li>
+            <li>Amazon listings live with A+ content; initial PPC and review generation – Responsible: E-commerce Lead</li>
+            <li>Build D2C site (lightweight) – Responsible: Marketing/E-commerce</li>
+        </ul>
+        <p>Phase 3: Scaling tests and optimization (Weeks 9–12)</p>
+        <ul>
+            <li>Expand Amazon to FR; consider IT if reviews &gt;50 with 4.3+ rating in DE</li>
+            <li>Negotiate trial shelf placements with 1–2 specialty chains per market</li>
+            <li>Run controlled geo-targeted social ads for remarketing; email capture</li>
+            <li>KPI review: CAC, ACoS, CVR, repeat rate, distributor reorder velocity; refine pricing and pack</li>
+        </ul>
+        <p>Budget Allocation (40,000) – Estimate</p>
+        <ul>
+            <li>Regulatory and compliance (label, claims, testing): 6,000</li>
+            <li>Packaging translations/design and packaging changeover: 4,000</li>
+            <li>Initial inventory for EU 3PL and inbound freight: 12,000</li>
+            <li>Amazon set-up, content, PPC launch (DE/FR): 8,000</li>
+            <li>Distributor development (samples, travel, trade terms support): 5,000</li>
+            <li>HoReCa pilot (sampling, POS): 3,000</li>
+            <li>Contingency (10%): 2,000</li>
+        </ul>
+        <p>11. Sources &amp; References</p>
+        <p>Note: We do not reproduce statistics here. These official sources should be used to validate HS classification, import values (TAM), and regulatory requirements. Publication years are provided; users should pull the latest 2023–2025 datasets or consolidated acts.</p>
+        <br>
+        <p>Trade and market size</p>
+        <ul>
+            <li>UN Comtrade Database – HS 2101.20 import data by reporting country (United Nations, 2023–2025 editions). https://comtradeplus.un.org</li>
+            <li>Eurostat Comext – International trade in goods, CN/HS data (European Commission, 2023–2025). https://ec.europa.eu/eurostat</li>
+            <li>WTO Data Portal – Tariffs and trade by HS code (WTO, 2023–2025). https://data.wto.org</li>
+        </ul>
+        <p>Regulatory</p>
+        <ul>
+            <li>Regulation (EC) No 178/2002 (General Food Law) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EU) No 1169/2011 (Food Information to Consumers) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EC) No 1333/2008 (Food additives) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EC) No 1334/2008 (Flavorings) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EC) No 1881/2006 (Contaminants) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EC) No 396/2005 (Pesticide residues MRLs) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EU) 2018/848 (Organic) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>Regulation (EU) 2015/2283 (Novel Foods) – EUR-Lex consolidated, latest 2023–2025.</li>
+            <li>TARIC consultation (European Commission) for HS 2101.20 duty schedule and measures – 2023–2025.</li>
+        </ul>
+        <p>Tables</p>
+        <br>
+        <p>Comparative Market Analysis – TAM, SAM, SOM (Estimates; to be validated)</p>
+        <table>
+            <tr>
+                <td>Market</td>
+                <td>TAM (EUR M) (Estimate)</td>
+                <td>SAM (EUR M) (Estimate)</td>
+                <td>SOM (EUR M, 12 mo) (Estimate)</td>
+                <td>Rationale</td>
+            </tr>
+            <tr>
+                <th>--------</th>
+                <th>-------------------------</th>
+                <th>-------------------------</th>
+                <th>-------------------------------</th>
+                <th>-----------</th>
+            </tr>
+            <tr>
+                <td>Germany (DEU)</td>
+                <td>180–260</td>
+                <td>45–75</td>
+                <td>0.11–0.16</td>
+                <td>Large import market; strong specialty/e-comm; re-export hub</td>
+            </tr>
+            <tr>
+                <td>France (FRA)</td>
+                <td>120–180</td>
+                <td>24–54</td>
+                <td>0.03–0.07</td>
+                <td>Premium acceptance, specialty retail</td>
+            </tr>
+            <tr>
+                <td>Italy (ITA)</td>
+                <td>70–110</td>
+                <td>14–33</td>
+                <td>0.02–0.03</td>
+                <td>Growing tea category; HoReCa potential</td>
+            </tr>
+        </table>
+        <p>Competitive Landscape Matrix (Qualitative)</p>
+        <table>
+            <tr>
+                <td>Archetype</td>
+                <td>Strengths</td>
+                <td>Weaknesses</td>
+                <td>Implications</td>
+            </tr>
+            <tr>
+                <th>-----------</th>
+                <th>-----------</th>
+                <th>------------</th>
+                <th>--------------</th>
+            </tr>
+            <tr>
+                <td>Global FMCG</td>
+                <td>Brand, distribution</td>
+                <td>Less agile for clean label</td>
+                <td>Differentiate on ingredients/origin</td>
+            </tr>
+            <tr>
+                <td>Specialty brands</td>
+                <td>Story, premium</td>
+                <td>Limited reach</td>
+                <td>Outcompete with channel mix</td>
+            </tr>
+            <tr>
+                <td>Private label</td>
+                <td>Price, shelf</td>
+                <td>Weak brand equity</td>
+                <td>Avoid price war; premiumize</td>
+            </tr>
+            <tr>
+                <td>Asian origin</td>
+                <td>Authentic flavors</td>
+                <td>Labeling gaps</td>
+                <td>Ensure EU-compliant SKUs</td>
+            </tr>
+            <tr>
+                <td>HoReCa suppliers</td>
+                <td>Cost-in-use</td>
+                <td>Limited retail pull</td>
+                <td>Separate foodservice packs</td>
+            </tr>
+        </table>
+        <p>Risk Assessment Matrix</p>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Label/claims non-compliance</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>EU regulatory review, conservative claims</td>
+            </tr>
+            <tr>
+                <td>Slow sell-through</td>
+                <td>Medium</td>
+                <td>Medium-High</td>
+                <td>Stage-gated pilots, PPC optimization</td>
+            </tr>
+            <tr>
+                <td>Price pressure</td>
+                <td>High</td>
+                <td>Medium</td>
+                <td>Premium value props, formats, bundles</td>
+            </tr>
+            <tr>
+                <td>Supply quality issues</td>
+                <td>Low-Med</td>
+                <td>High</td>
+                <td>COAs, pesticide/contaminant testing</td>
+            </tr>
+            <tr>
+                <td>Logistics delays</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>EU 3PL buffer stock</td>
+            </tr>
+            <tr>
+                <td>Negative reviews</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>QA, responsive CX, sampling</td>
+            </tr>
+        </table>
+        <p>Budget Allocation Recommendations (Estimate)</p>
+        <table>
+            <tr>
+                <td>Category</td>
+                <td>EUR</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>-----</th>
+            </tr>
+            <tr>
+                <td>Regulatory &amp; testing</td>
+                <td>6,000</td>
+            </tr>
+            <tr>
+                <td>Packaging &amp; localization</td>
+                <td>4,000</td>
+            </tr>
+            <tr>
+                <td>Initial inventory &amp; freight</td>
+                <td>12,000</td>
+            </tr>
+            <tr>
+                <td>E-commerce setup &amp; PPC</td>
+                <td>8,000</td>
+            </tr>
+            <tr>
+                <td>Distributor development</td>
+                <td>5,000</td>
+            </tr>
+            <tr>
+                <td>HoReCa pilot</td>
+                <td>3,000</td>
+            </tr>
+            <tr>
+                <td>Contingency</td>
+                <td>2,000</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td>40,000</td>
+            </tr>
+        </table>
+        <p>90-Day Action Plan – Timelines and Responsibilities</p>
+        <table>
+            <tr>
+                <td>Week</td>
+                <td>Task</td>
+                <td>Owner</td>
+                <td>Output/KPI</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------</th>
+                <th>-------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>1–2</td>
+                <td>Regulatory review; HS code confirmation; label drafts</td>
+                <td>Regulatory Lead</td>
+                <td>Approved labels; HS 2101.20 confirmed</td>
+            </tr>
+            <tr>
+                <td>2–3</td>
+                <td>Packaging translation (DE/FR/IT); artwork</td>
+                <td>Marketing</td>
+                <td>Print-ready files</td>
+            </tr>
+            <tr>
+                <td>3–4</td>
+                <td>Amazon DE setup; 3PL contract; initial stock</td>
+                <td>E-comm/Ops</td>
+                <td>Listings ready; stock at 3PL</td>
+            </tr>
+            <tr>
+                <td>5–6</td>
+                <td>Go-live Amazon DE; PPC; review seeding</td>
+                <td>E-comm</td>
+                <td>ACoS ≤35% (initial), 20 reviews</td>
+            </tr>
+            <tr>
+                <td>5–8</td>
+                <td>Distributor outreach (DE first); sampling</td>
+                <td>Sales</td>
+                <td>2–3 distributor contracts</td>
+            </tr>
+            <tr>
+                <td>6–8</td>
+                <td>HoReCa pilot (DE)</td>
+                <td>Sales</td>
+                <td>10–20 outlets on trial</td>
+            </tr>
+            <tr>
+                <td>7–9</td>
+                <td>D2C site live; retargeting</td>
+                <td>Marketing</td>
+                <td>CR ≥2%, email list 500+</td>
+            </tr>
+            <tr>
+                <td>9–10</td>
+                <td>Amazon FR launch</td>
+                <td>E-comm</td>
+                <td>10 reviews; ACoS trend improving</td>
+            </tr>
+            <tr>
+                <td>10–12</td>
+                <td>Shelf trials with specialty chains</td>
+                <td>Sales</td>
+                <td>50–100 stores cumulative</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td>KPI review and next-step gating</td>
+                <td>Leadership</td>
+                <td>CAC, CVR, reorder velocity met</td>
+            </tr>
+        </table>
+        <p>Data limitations and next steps</p>
+        <ul>
+            <li>Immediate action: Pull 2023–2024 HS 2101.20 import values from UN Comtrade and Eurostat for DE, FR, IT to replace TAM Estimates with actuals. Recalculate SAM using channel split data from Statista/NielsenIQ (if available) and refine SOM targets.</li>
+            <li>Validate ingredient lists against EU additive/flavoring regs and health-claims register before printing packaging.</li>
+        </ul>
+        <p>JSON summary</p>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DEU&quot;, &quot;FRA&quot;, &quot;ITA&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;regulatory_testing&quot;: 6000,</p>
+        <p>&quot;packaging_localization&quot;: 4000,</p>
+        <p>&quot;inventory_freight&quot;: 12000,</p>
+        <p>&quot;ecommerce_setup_ppc&quot;: 8000,</p>
+        <p>&quot;distributor_development&quot;: 5000,</p>
+        <p>&quot;horeca_pilot&quot;: 3000,</p>
+        <p>&quot;contingency&quot;: 2000</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DEU&quot;: &quot;180-260 (EUR M) (Estimate)&quot;,</p>
+        <p>&quot;FRA&quot;: &quot;120-180 (EUR M) (Estimate)&quot;,</p>
+        <p>&quot;ITA&quot;: &quot;70-110 (EUR M) (Estimate)&quot;</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Assumption: Product aligns with HS 2101.20 (tea extracts and preparations) based on description ‘prepared by steaming or boiling in water’.&quot;,</p>
+        <p>&quot;Assumption: Germany, France, and Italy are priority EU markets due to scale, retail maturity, and specialty/e-commerce development.&quot;,</p>
+        <p>&quot;Assumption: SAM equals 20–30% (up to 35% for Germany) of TAM to reflect premium/e-commerce/specialty subsegment.&quot;,</p>
+        <p>&quot;Assumption: First-year attainable SOM ranges 0.02–0.06% of TAM with a 40,000 budget and focused execution.&quot;,</p>
+        <p>&quot;Assumption: No internal tariffs within EU single market; compliance costs and VAT variations are managed within operating budget.&quot;,</p>
+        <p>&quot;Assumption: Channel mix prioritizes Amazon and specialty distributors due to budget constraints.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

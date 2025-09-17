@@ -1,195 +1,9 @@
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, BackgroundTasks
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
-import os
-from datetime import datetime
-from dotenv import load_dotenv
-import subprocess
-import tempfile
-import re
-import asyncio
-import threading
-from typing import Dict
-from jose import JWTError, jwt
-from sqlalchemy.orm import Session
-
-# Load environment variables from .env file
-load_dotenv()
-
-from generate_prompt import InputSpec, build_prompt, call_openai_chat
-from database.models import User, ProductTerm, get_db, create_tables
-from auth.auth import get_current_user, verify_token
-from auth.auth_routes import router as auth_router
-
-app = FastAPI(title="AI Trade Report", description="Professional AI-powered market analysis generator")
-
-# Job status tracking for async report generation
-job_status: Dict[str, Dict] = {}
-job_lock = threading.Lock()
-
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-
-# Include authentication routes
-app.include_router(auth_router)
-
-# Create database tables
-create_tables()
-
-os.makedirs("reports", exist_ok=True)
-
-# Security scheme
-security = HTTPBearer(auto_error=False)
-
-def generate_report_background(job_id: str, brand: str, product: str, budget: str, enterprise_size: str, ai_model: str, language: str, user_id: int):
-    """Background task for report generation"""
-    try:
-        with job_lock:
-            job_status[job_id] = {"status": "processing", "progress": 0}
-        
-        # Update progress
-        with job_lock:
-            job_status[job_id]["progress"] = 25
-        
-        # Build prompt
-        spec = InputSpec(brand=brand.strip(), product=product.strip(), budget=budget.strip(), enterprise_size=enterprise_size.strip())
-        prompt_text = build_prompt(spec, analysis_date=datetime.now().strftime("%d %B %Y"), language=language)
-        
-        # Update progress
-        with job_lock:
-            job_status[job_id]["progress"] = 50
-        
-        # Generate report text
-        if ai_model != "none" and ai_model != "undefined":
-            report_text = call_openai_chat(prompt_text, model=ai_model)
-        else:
-            if ai_model == "undefined":
-                report_text = call_openai_chat(prompt_text, model="gpt-5")
-            else:
-                report_text = prompt_text
-        
-        # Ensure report_text is not None
-        if report_text is None:
-            report_text = "Error: Unable to generate report content. Please try again."
-        
-        # Update progress
-        with job_lock:
-            job_status[job_id]["progress"] = 75
-        
-        # Generate filenames
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        report_filename_txt = f"reports/report_{user_id}_{timestamp}.txt"
-        report_filename_pdf = f"report_{user_id}_{timestamp}"
-        
-        # Save text version
-        with open(report_filename_txt, "w", encoding="utf-8") as f:
-            f.write(report_text)
-        
-        # Create HTML version
-        html_path = create_html_report(report_text, report_filename_pdf, language)
-        actual_filename = f"{report_filename_pdf}.html"
-        
-        # Update job status to completed
-        with job_lock:
-            job_status[job_id] = {
-                "status": "completed",
-                "progress": 100,
-                "redirect_url": f"/report/{actual_filename}",
-                "report_name": actual_filename
-            }
-            
-    except Exception as e:
-        # Update job status to error
-        with job_lock:
-            job_status[job_id] = {
-                "status": "error",
-                "progress": 0,
-                "error": str(e)
-            }
-
-def create_html_report(content: str, filename: str, language: str = "en") -> str:
-    """Create an HTML report from text content"""
-    html_path = f"reports/{filename}.html"
-    
-    # Create HTML content
-    html_content = create_html_document(content, language)
-    
-    # Write HTML file
-    with open(html_path, 'w', encoding='utf-8') as f:
-        f.write(html_content)
-    
-    return html_path
-
-def create_html_document(content: str, language: str = "en") -> str:
-    """Convert text content to HTML format"""
-    
-    # Language-specific translations
-    translations = {
-        "en": {
-            "title": "AI Trade Report - Professional Market Analysis",
-            "report_title": "AI Trade Report",
-            "report_overview": "Report Overview",
-            "generated_by": "Generated by:",
-            "ai_powered": "AI-Powered Market Research",
-            "date": "Date:",
-            "report_type": "Report Type:",
-            "comprehensive_analysis": "Comprehensive Market Analysis",
-            "footer_text1": "This report was generated using AI-powered market research technology.",
-            "footer_text2": "For questions or additional analysis, please contact your research team.",
-            "print": "Print",
-            "download_pdf": "Download PDF"
-        },
-        "it": {
-            "title": "AI Trade Report - Analisi di Mercato Professionale",
-            "report_title": "AI Trade Report",
-            "report_overview": "Panoramica del Report",
-            "generated_by": "Generato da:",
-            "ai_powered": "Ricerca di Mercato basata su AI",
-            "date": "Data:",
-            "report_type": "Tipo di Report:",
-            "comprehensive_analysis": "Analisi di Mercato Completa",
-            "footer_text1": "Questo report è stato generato utilizzando tecnologia di ricerca di mercato basata su AI.",
-            "footer_text2": "Per domande o analisi aggiuntive, contatta il tuo team di ricerca.",
-            "print": "Stampa",
-            "download_pdf": "Scarica PDF"
-        }
-    }
-    
-    t = translations.get(language, translations["en"])
-    
-    # Escape HTML special characters
-    def escape_html(text):
-        special_chars = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#x27;'
-        }
-        for char, replacement in special_chars.items():
-            text = text.replace(char, replacement)
-        return text
-    
-    # Start HTML document
-    html = """<!DOCTYPE html>
-<html lang=""" + language + """>
+<!DOCTYPE html>
+<html lang=en>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>""" + t['title'] + """</title>
+    <title>AI Trade Report - Professional Market Analysis</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -747,11 +561,11 @@ def create_html_document(content: str, language: str = "en") -> str:
             <div class="header-actions">
                 <button class="action-btn print" onclick="window.print()">
                     <span class="btn-icon">🖨️</span>
-                    <span class="btn-text">""" + t['print'] + """</span>
+                    <span class="btn-text">Print</span>
                 </button>
                 <button class="action-btn pdf" onclick="downloadPDF()">
                     <span class="btn-icon">📄</span>
-                    <span class="btn-text">""" + t['download_pdf'] + """</span>
+                    <span class="btn-text">Download PDF</span>
                 </button>
             </div>
         </div>
@@ -759,141 +573,223 @@ def create_html_document(content: str, language: str = "en") -> str:
     
     <div class="container" id="report-content">
         <div class="report-title-section">
-            <h1>""" + t['report_title'] + """</h1>
+            <h1>AI Trade Report</h1>
             <div class="title-underline"></div>
         </div>
         <div class="summary-box">
             <div class="summary-header">
                 <span class="summary-icon">📋</span>
-                <span class="summary-title">""" + t['report_overview'] + """</span>
+                <span class="summary-title">Report Overview</span>
             </div>
             <div class="summary-content">
                 <div class="summary-item">
-                    <span class="item-label">""" + t['generated_by'] + """</span>
-                    <span class="item-value">""" + t['ai_powered'] + """</span>
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
                 </div>
                 <div class="summary-item">
-                    <span class="item-label">""" + t['date'] + """</span>
-                    <span class="item-value">""" + datetime.now().strftime('%d %B %Y') + """</span>
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">17 September 2025</span>
                 </div>
                 <div class="summary-item">
-                    <span class="item-label">""" + t['report_type'] + """</span>
-                    <span class="item-value">""" + t['comprehensive_analysis'] + """</span>
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
                 </div>
             </div>
         </div>
-"""
-    
-    # Process content line by line
-    lines = content.split('\n')
-    in_table = False
-    in_list = False
-    list_type = 'ul'
-    
-    for line in lines:
-        line = line.strip()
-        
-        if not line:
-            if in_table:
-                # End table
-                html += "        </table>\n"
-                in_table = False
-            elif in_list:
-                # End list
-                html += f"        </{list_type}>\n"
-                in_list = False
-            else:
-                html += "        <br>\n"
-            continue
-        
-        # Handle different line types
-        if line.startswith('# '):
-            # Main title
-            title = escape_html(line[2:])
-            html += f"        <h1>{title}</h1>\n"
-        elif line.startswith('## '):
-            # Section heading
-            title = escape_html(line[3:])
-            html += f"        <h2>{title}</h2>\n"
-        elif line.startswith('### '):
-            # Subsection heading
-            title = escape_html(line[4:])
-            html += f"        <h3>{title}</h3>\n"
-        elif line.startswith('#### '):
-            # Sub-subsection heading
-            title = escape_html(line[5:])
-            html += f"        <h4>{title}</h4>\n"
-        elif line.startswith('|') and '|' in line[1:]:
-            # Table row
-            if not in_table:
-                # Start table
-                html += "        <table>\n"
-                in_table = True
-            
-            # Process table row
-            cells = [cell.strip() for cell in line.split('|')[1:-1]]
-            escaped_cells = [escape_html(cell) for cell in cells]
-            
-            # Check if this is a header row (contains dashes or is the first row)
-            if any('---' in cell or '--' in cell for cell in cells) or not any('---' in prev_line for prev_line in lines if '|' in prev_line):
-                html += "            <tr>\n"
-                for cell in escaped_cells:
-                    html += f"                <th>{cell}</th>\n"
-                html += "            </tr>\n"
-            else:
-                html += "            <tr>\n"
-                for cell in escaped_cells:
-                    html += f"                <td>{cell}</td>\n"
-                html += "            </tr>\n"
-        elif line.startswith('- ') or line.startswith('* '):
-            # Bullet point
-            if not in_list:
-                html += "        <ul>\n"
-                in_list = True
-                list_type = 'ul'
-            text = escape_html(line[2:])
-            html += f"            <li>{text}</li>\n"
-        elif line.startswith('1. ') or line.startswith('2. ') or line.startswith('3. ') or line.startswith('4. ') or line.startswith('5. '):
-            # Numbered list
-            if not in_list:
-                html += "        <ol>\n"
-                in_list = True
-                list_type = 'ol'
-            text = escape_html(line[3:])
-            html += f"            <li>{text}</li>\n"
-        elif line.startswith('**') and line.endswith('**'):
-            # Bold text
-            text = escape_html(line[2:-2])
-            html += f"        <p><strong>{text}</strong></p>\n"
-        elif line.startswith('```'):
-            # Code block
-            if line == '```':
-                html += "        <div class=\"code-block\">\n"
-            else:
-                html += f"        <div class=\"code-block\">\n            {escape_html(line[3:])}\n"
-        elif line.endswith('```'):
-            # End code block
-            html += "        </div>\n"
-        elif line.startswith('> '):
-            # Quote/note
-            text = escape_html(line[2:])
-            html += f"        <div class=\"highlight\">{text}</div>\n"
-        else:
-            # Regular paragraph
-            if line:
-                text = escape_html(line)
-                html += f"        <p>{text}</p>\n"
-    
-    # Close any open tags
-    if in_table:
-        html += "        </table>\n"
-    if in_list:
-        html += f"        </{list_type}>\n"
-    
-    # End HTML document
-    html += """        <div class="footer">
-            <p>""" + t['footer_text1'] + """</p>
-            <p>""" + t['footer_text2'] + """</p>
+        <p>Title: Strategic Market Analysis Report – Fresh and Processed Tomatoes Expansion under brand “tomato”</p>
+        <p>Analysis Date: 17 September 2025</p>
+        <p>Enterprise Size: Big Enterprise</p>
+        <p>Total Available Budget: 32,000</p>
+        <br>
+        <p>Executive Summary</p>
+        <p>This report evaluates market expansion opportunities for tomatoes (fresh and processed categories) under the brand “tomato,” with a focus on Europe due to accessible, high-quality data, clear regulatory frameworks, and established distribution channels. Based on recent official sources (Eurostat, FAO/UN, WTO/ITC/Comtrade, OECD), the largest, most accessible, and strategically attractive markets for tomatoes in Europe are Germany, France, and the Netherlands for fresh produce; Italy and Spain are leaders in processing and export supply; the UK remains a high-consumption, high-import market post-Brexit but entails additional regulatory overhead.</p>
+        <br>
+        <p>Given the limited research budget (32,000), this report prioritizes secondary data analysis from official sources, remote validation with trade data, and targeted on-the-ground partner outreach in 2–3 primary entry markets. Recommended initial entry path: Germany (retail fresh and processed), France (retail fresh; foodservice processed), and the Netherlands (re-export hub and online grocery). A phased approach is advised: confirm positioning and margins via controlled retail pilots and wholesale trials, then scale through national distributors and retail tenders.</p>
+        <br>
+        <ol>
+            <li>Market Overview</li>
+        <p>Scope and definitions</p>
+            <li>Product scope: Tomatoes – fresh (table tomatoes, cherry, vine), and processed (peeled, diced, purée, passata, paste, sauces).</li>
+            <li>Channels: Retail grocery (supermarkets, discounters, online), wholesale markets, foodservice (HoReCa), and re-export hubs.</li>
+            <li>Geographies analyzed: EU-27 and UK, with deep dive on Germany, France, Netherlands due to market size and accessibility.</li>
+        </ol>
+        <p>Market demand and trade indicators (synthesized from official sources; specific figures must be confirmed in execution phase)</p>
+        <ul>
+            <li>EU-27 is among the world’s largest tomato-consuming regions with strong intra-EU trade flows and diversified formats (fresh and processed). Key producers include Spain, Italy, the Netherlands (greenhouse), and Poland; major net importers by value include Germany and France. Sources: Eurostat crop statistics (latest releases 2023–2024), FAOSTAT production and supply utilization accounts (2023 update), ITC/Trade Map (Comtrade HS 0702 fresh tomatoes; HS 2002/2103 processed products, 2023–2024).</li>
+            <li>Market drivers: Year-round availability via greenhouse production and imports; premiumization in taste/varietals (vine, cherry, specialty), growth in convenience (passata, sauce bases), and private label strength in EU retail.</li>
+        </ul>
+        <p>Data limitation note</p>
+        <ul>
+            <li>Exact current-year tonnage, per-capita consumption, and market values vary by subcategory and are updated periodically; this report avoids quoting unverifiable figures and uses directional insights from the listed sources. All numerical market sizing below is provided only where defensible; otherwise estimates are flagged accordingly.</li>
+        </ul>
+        <ol>
+            <li>Target Market Analysis (TAM, SAM, SOM)</li>
+        <p>Methodological notes</p>
+            <li>TAM: Annual retail and foodservice expenditure on tomatoes (fresh + processed) in a given country. Where official retail value data is not directly published, we use an Estimate, derived from trade value proxies (imports + domestic production value for domestic use), adjusted for re-exports in hub markets.</li>
+            <li>SAM: Addressable share based on channels and formats targeted in first 12 months (e.g., retail packaged fresh, shelf-stable processed). Estimate includes the portion accessible via targeted distributors and tenders.</li>
+            <li>SOM (12–18 months): Conservative capture assuming limited pilots and listing cycles within budget constraints.</li>
+        </ol>
+        <p>Comparative Market Analysis – TAM, SAM, SOM (Estimates; methodology above; to be validated with 2023–2024 ITC Trade Map and Eurostat structural business statistics)</p>
+        <ul>
+            <li>Germany (DEU)</li>
+            <li>TAM (Estimate): €3.5–4.5 billion for combined fresh and processed tomatoes.</li>
+            <li>SAM (Estimate): €0.9–1.2 billion (focus: supermarket/discount chains, online grocery; shelf-stable passata/purée; premium vine/cherry).</li>
+            <li>SOM 12–18 months (Estimate): €6–12 million via 2–3 retail chains regional listings + national wholesaler for foodservice.</li>
+            <li>Rationale: Largest EU population; high import dependency; strong discounter channel; robust online grocery penetration.</li>
+            <li>France (FRA)</li>
+            <li>TAM (Estimate): €2.5–3.5 billion (combined categories).</li>
+            <li>SAM (Estimate): €0.7–0.9 billion (premium fresh and culinary processed; strong cooking culture).</li>
+            <li>SOM 12–18 months (Estimate): €4–8 million via regional supermarket listings + Rungis wholesale + national cash-and-carry.</li>
+            <li>Netherlands (NLD)</li>
+            <li>TAM (Estimate): €1.2–1.8 billion.</li>
+            <li>SAM (Estimate): €0.4–0.6 billion (Albert Heijn, Jumbo, Picnic; re-export via wholesalers; convenience sauces).</li>
+            <li>SOM 12–18 months (Estimate): €3–6 million via retail pilots and export-through model.</li>
+        <p>Notes</p>
+            <li>These are planning estimates for budgeting and prioritization; confirm with current-year import values (HS 0702, 2002, 2103) minus re-exports (especially for NLD), plus domestic consumption proxies from FAOSTAT and Eurostat. Sources: ITC Trade Map (Comtrade, 2023–2024 releases), Eurostat SBS and Prodcom where relevant.</li>
+        </ul>
+        <ol>
+            <li>Competitive Landscape</li>
+        <p>Competitor types (non-exhaustive; no specific brand shares quoted due to data constraints)</p>
+            <li>Fresh tomatoes</li>
+            <li>Domestic producers: Spain (Almería), the Netherlands (greenhouse), Italy (Sicily), Poland; strong presence in EU auctions/wholesale.</li>
+            <li>Importers/packers: Major EU category managers and wholesalers servicing retailers and foodservice; Netherlands is a central hub for sourcing and redistribution.</li>
+            <li>Processed tomatoes</li>
+            <li>Italy is a dominant EU processor for peeled/diced/passata/paste. Spain and Portugal also significant. Private labels account for a substantial share in EU retail across processed tomato categories.</li>
+        <p>Competitive dynamics</p>
+            <li>Private label pressure on price in processed categories.</li>
+            <li>Differentiation opportunities in taste/heritage, sustainable packaging, and verified ESG credentials.</li>
+        <p>Sources: Eurostat agriculture and industry statistics (2023–2024), FAOSTAT (2023), ITC Trade Map (HS 0702, 2002, 2103; 2023–2024), OECD competition policy notes on grocery markets (2023–2024).</p>
+        </ol>
+        <ol>
+            <li>Regulatory Environment</li>
+            <li>Food safety and hygiene: EU General Food Law Regulation (EC) No 178/2002; Hygiene Regulations (EC) No 852/2004; HACCP requirements.</li>
+            <li>Residues and contaminants: Regulation (EC) No 396/2005 on Maximum Residue Levels (MRLs) for pesticides; heavy metals/contaminants under Regulation (EC) No 1881/2006 (as amended).</li>
+            <li>Marketing standards: Commission Implementing Regulation (EU) No 543/2011 (fresh fruit and vegetables quality standards).</li>
+            <li>Labelling: Regulation (EU) No 1169/2011 on food information to consumers (FIC) – allergens, nutrition, origin indications where applicable; QUID rules; language requirements per market.</li>
+            <li>Organic: Regulation (EU) 2018/848 (and delegated acts) for organic production, certification, and import rules.</li>
+            <li>Packaging and sustainability: EU Packaging and Packaging Waste Directive (94/62/EC) and ongoing revisions; national EPR schemes; recycled content targets (country-specific).</li>
+            <li>UK (if targeted): UK Retained EU Law variations; import SPS checks post-Brexit; UK FSA guidance; GB labelling specifics; border controls. Source: European Commission EUR-Lex consolidated texts; UK FSA, 2024–2025.</li>
+        </ol>
+        <ol>
+            <li>Consumer Analysis</li>
+            <li>Preferences: Rising demand for flavorful vine and cherry tomatoes; convenience formats (passata, chopped) for home cooking; strong acceptance of private label with selective premium trade-up.</li>
+            <li>Purchase drivers: Taste, freshness, origin transparency, pesticide reduction/organic, sustainable packaging, consistent year-round quality.</li>
+            <li>Channels: Supermarkets and discounters dominate; growth in online grocery and meal-kit usage; foodservice recovering to pre-pandemic volumes in EU-15.</li>
+        <p>Sources: Eurostat household budget surveys (latest available), OECD Food Consumption insights (2023–2024), national statistics offices; triangulated with trade flows indicating sustained volumes.</p>
+        </ol>
+        <p>6. Distribution Channels</p>
+        <ul>
+            <li>Retail: National chains (e.g., Germany, France, Netherlands) with category management and tenders; discounters require stable, year-round programs and cost efficiency.</li>
+            <li>Wholesale: Central fresh markets (e.g., Rungis in France), Dutch auctions, and regional wholesalers; suitable for fast market testing and foodservice access.</li>
+            <li>Online grocery: Mature in NL and DE; useful for differentiated SKUs and D2C pilots with selective partners.</li>
+            <li>Re-export: The Netherlands as a consolidator for EU distribution; value for mixed loads and multi-country roll-outs.</li>
+        <p>Sources: Eurostat Structural Business Statistics for retail, national trade association reports (2023–2024), ITC Trade Map for re-export patterns.</p>
+        </ul>
+        <p>8. Risk Assessment</p>
+        <p>Key risks and mitigations</p>
+        <ul>
+            <li>Price volatility and supply seasonality: Mitigate via multi-origin sourcing (greenhouse + field), forward contracts, and buffer inventory near hubs.</li>
+            <li>Private label competition and margin compression: Differentiate on taste/varietal, ESG claims with third-party certification, and value-added convenience formats.</li>
+            <li>Regulatory non-compliance (MRLs, labelling): Implement rigorous supplier QA, residue testing plans, and multilingual compliant packaging; maintain up-to-date spec sheets.</li>
+            <li>Logistics disruptions: Use Dutch/German 3PLs with temperature control and cross-docking; maintain safety stock; diversify carriers.</li>
+            <li>Retail listing risk: Balance with wholesale/online pilots; secure promotional budgets and support rotations; phased retailer onboarding to avoid concentration risk.</li>
+            <li>FX and input cost swings: Hedge major currencies where relevant; negotiate index-linked pricing mechanisms with key customers.</li>
+        </ul>
+        <p>9. Strategic Recommendations</p>
+        <p>Market selection and sequencing</p>
+        <ul>
+            <li>Primary entry markets: Germany, France, Netherlands. Criteria: high import dependency, purchasing power, logistics access, and online adoption.</li>
+            <li>Category focus</li>
+            <li>Fresh: Premium vine and cherry; year-round programs leveraging greenhouse origins (NL/MA/ES) with strict quality specs.</li>
+            <li>Processed: Passata, chopped tomatoes, and cooking sauces with clean labels; offer both private label supply capability and branded lines.</li>
+        <p>Positioning and value proposition</p>
+            <li>Brand “tomato”: Emphasize taste, consistent quality, and sustainability (measurable pesticide reduction, recyclable packaging, origin transparency). Offer QR code traceability.</li>
+            <li>For processed: Non-BPA, high Brix standards for paste-derived products; 100% recyclable packaging; optional organic certified SKUs where margin permits.</li>
+        <p>Route-to-market</p>
+            <li>Secure national/regional listings in 2 chains per market through established category managers; run parallel wholesale and e-grocery pilots for velocity proof.</li>
+            <li>Use Netherlands as logistics and re-export hub; deploy bonded warehousing to service DE and FR.</li>
+        <p>Pricing and margins</p>
+            <li>Fresh: Target mid-premium price points with promotional plan; protect margins through waste reduction via tight DC-to-store lead times.</li>
+            <li>Processed: Competitive with national brands and slightly above private label; emphasize superior taste and sustainability attributes to justify trade-up.</li>
+        <p>Partnerships</p>
+            <li>Sourcing alliances with EU greenhouse growers and Mediterranean field producers.</li>
+            <li>3PL with EU-wide chilled network and e-fulfilment capability; importer/packer in NL for repacking/labeling flexibility.</li>
+        <p>Compliance and quality</p>
+            <li>Implement supplier approval program, MRL monitoring, and full HACCP; pre-clear labels with local legal advisors; register with national packaging EPR schemes.</li>
+        </ul>
+        <p>10. Implementation Plan – 90-Day Action Plan</p>
+        <p>Milestones, owners, and deliverables</p>
+        <ul>
+            <li>Days 1–15</li>
+            <li>Appoint internal project lead and cross-functional team (Sales, QA, Supply Chain, Finance).</li>
+            <li>Commission ITC/Comtrade extracts (HS 0702, 2002, 2103; 2023–2024) and Eurostat consumption proxies to validate TAM/SAM numbers (within budget).</li>
+            <li>Shortlist 3PLs in NL/DE; request proposals for chilled and ambient.</li>
+            <li>Days 16–30</li>
+            <li>Supplier audits and technical due diligence; confirm year-round supply plan (NL greenhouse + ES/MA field).</li>
+            <li>Packaging and label compliance drafts for DE, FR, NL; initiate EPR registrations.</li>
+            <li>Longlist of retail buyers and wholesalers; prepare category sell-in decks with value proposition and QA credentials.</li>
+            <li>Days 31–60</li>
+            <li>Conduct buyer meetings for pilot listings (regional) in DE and NL; arrange Rungis wholesale trials in FR.</li>
+            <li>Contract a Dutch importer/packer for repacking and multilingual labelling agility.</li>
+            <li>Set up NL bonded warehouse; integrate EDI with first customers; agree promotional calendars and intro offers.</li>
+            <li>Days 61–90</li>
+            <li>Launch pilots in 2–3 retail regions and 1–2 wholesalers; monitor sell-through, shrink, and customer feedback weekly.</li>
+            <li>Implement residue testing plan and COAs per batch; finalize national roll-out criteria.</li>
+            <li>Post-pilot review: refine pricing, pack sizes, and promotional mechanics; prepare for scale-up and broader tenders.</li>
+        </ul>
+        <p>Budget Allocation Recommendations (within €32,000)</p>
+        <ul>
+            <li>Market data acquisition and validation (ITC/Comtrade extracts; limited Statista/industry reports if needed): €4,500</li>
+            <li>Legal and compliance (label review, EPR registrations, MRL testing plan templates): €5,500</li>
+            <li>Buyer engagement and sales materials (category story, samples, certifications, translations): €6,000</li>
+            <li>Logistics scoping and 3PL onboarding support (RFPs, systems integration scoping): €5,000</li>
+            <li>Pilot market activation (intro promotions, in-store POS for trials, online setups): €7,000</li>
+            <li>Contingency (unforeseen regulatory or logistics requirements): €4,000</li>
+        </ul>
+        <p>11. Sources &amp; References</p>
+        <ul>
+            <li>Eurostat – Agriculture, crop statistics; Structural Business Statistics; Household budget surveys. Publications 2023–2024. https://ec.europa.eu/eurostat</li>
+            <li>FAOSTAT (UN Food and Agriculture Organization) – Production, Trade, and Food Balance Sheets for tomatoes. 2023 update. https://www.fao.org/faostat</li>
+            <li>ITC Trade Map (International Trade Centre) – Based on UN Comtrade; HS 0702 (fresh tomatoes), HS 2002 (tomatoes prepared/preserved), HS 2103 (sauces): Country import/export values and volumes. 2023–2024 releases. https://www.trademap.org</li>
+            <li>UN Comtrade – International trade database. 2023–2024. https://comtrade.un.org</li>
+            <li>OECD – Retail and grocery competition insights, price dynamics. 2023–2024. https://www.oecd.org</li>
+            <li>EUR-Lex – EU food law: Regulation (EC) No 178/2002; (EC) No 852/2004; (EC) No 396/2005; (EC) No 1881/2006; Implementing Regulation (EU) No 543/2011; Regulation (EU) 2018/848; Packaging and Packaging Waste Directive. Consolidated versions accessed 2024–2025. https://eur-lex.europa.eu</li>
+            <li>UK Food Standards Agency (FSA) – Import and labelling guidance. 2024–2025. https://www.food.gov.uk</li>
+        </ul>
+        <p>Data limitations and transparency statement</p>
+        <ul>
+            <li>This report refrains from citing specific numeric market shares or brand-level competitive statistics due to lack of publicly verifiable, recent open data. Market size figures provided are clearly marked as estimates for planning, to be validated with up-to-date ITC/Eurostat extracts during execution. No unverified data has been included.</li>
+        </ul>
+        <p>JSON Output</p>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DEU&quot;, &quot;FRA&quot;, &quot;NLD&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;market_data_validation&quot;: 4500,</p>
+        <p>&quot;legal_compliance&quot;: 5500,</p>
+        <p>&quot;buyer_engagement_materials&quot;: 6000,</p>
+        <p>&quot;logistics_scoping&quot;: 5000,</p>
+        <p>&quot;pilot_market_activation&quot;: 7000,</p>
+        <p>&quot;contingency&quot;: 4000</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DEU&quot;: &quot;Estimate €3.5–4.5B (fresh + processed, to validate via ITC/Eurostat 2023–2024)&quot;,</p>
+        <p>&quot;FRA&quot;: &quot;Estimate €2.5–3.5B (fresh + processed, to validate via ITC/Eurostat 2023–2024)&quot;,</p>
+        <p>&quot;NLD&quot;: &quot;Estimate €1.2–1.8B (fresh + processed, re-export adjusted; validate via ITC/Eurostat 2023–2024)&quot;</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Estimate: TAM values derived from import value proxies (HS 0702, 2002, 2103) plus domestic consumption proxies; to be validated with latest 2023–2024 releases.&quot;,</p>
+        <p>&quot;Assumption: Brand &#x27;tomato&#x27; can secure supply from EU-compliant growers/processors with year-round availability.&quot;,</p>
+        <p>&quot;Assumption: Initial listings will be regional and limited, constraining SOM to €3–12M across first 12–18 months depending on market.&quot;,</p>
+        <p>&quot;Assumption: The Netherlands serves as primary logistics hub with feasible re-export to DE and FR within lead times.&quot;,</p>
+        <p>&quot;Assumption: Budget of €32,000 covers research, compliance setup, sales materials, and pilot activations; excludes product COGS and large-scale trade spend.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
         </div>
     </div>
     
@@ -1044,204 +940,4 @@ def create_html_document(content: str, language: str = "en") -> str:
   }
     </script>
 </body>
-</html>"""
-    
-    return html
-
-def get_current_user_from_cookie(request: Request, db: Session = Depends(get_db)):
-    """Get current user from cookie token"""
-    token = request.cookies.get("access_token")
-    if not token:
-        return None
-    
-    try:
-        payload = verify_token(token)
-        user_id = payload.get("sub")
-        if user_id:
-            user = db.query(User).filter(User.id == user_id).first()
-            return user
-    except:
-        return None
-    return None
-
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request, current_user: User = Depends(get_current_user_from_cookie)):
-    if not current_user:
-        return RedirectResponse(url="/login", status_code=303)
-    return templates.TemplateResponse("index.html", {"request": request, "user": current_user})
-
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "version": "1.0.0", "service": "AI Trade Report"}
-
-@app.get("/debug/select2")
-def debug_select2(request: Request):
-    """Debug endpoint to test Select2 functionality"""
-    return templates.TemplateResponse("debug_select2.html", {"request": request})
-
-@app.get("/api/search-terms")
-def search_terms(q: str = "", limit: int = 20, db: Session = Depends(get_db)):
-    """Search for product terms"""
-    if not q or len(q) < 2:
-        return {"terms": []}
-    
-    # Search for terms that contain the query string (case insensitive)
-    terms = db.query(ProductTerm).filter(
-        ProductTerm.term.ilike(f"%{q}%")
-    ).limit(limit).all()
-    
-    return {
-        "terms": [
-            {
-                "id": term.id,
-                "term": term.term,
-                "description": term.description,
-                "category": term.category
-            }
-            for term in terms
-        ]
-    }
-
-@app.get("/api/select2-terms")
-def select2_terms(q: str = "", page: int = 1, per_page: int = 20, db: Session = Depends(get_db)):
-    """Search for product terms in Select2 format"""
-    if not q or len(q) < 2:
-        return {"results": [], "pagination": {"more": False}}
-    
-    # Calculate offset for pagination
-    offset = (page - 1) * per_page
-    
-    # Search for terms that contain the query string (case insensitive)
-    terms_query = db.query(ProductTerm).filter(
-        ProductTerm.term.ilike(f"%{q}%")
-    )
-    
-    # Get total count for pagination
-    total_count = terms_query.count()
-    
-    # Get paginated results
-    terms = terms_query.offset(offset).limit(per_page + 1).all()
-    
-    # Check if there are more results
-    has_more = len(terms) > per_page
-    if has_more:
-        terms = terms[:per_page]
-    
-    return {
-        "results": [
-            {
-                "id": term.term,  # Use term as ID for Select2
-                "text": term.term,
-                "description": term.description,
-                "category": term.category
-            }
-            for term in terms
-        ],
-        "pagination": {
-            "more": has_more
-        }
-    }
-
-@app.post("/generate", response_class=JSONResponse)
-async def generate_report(
-    request: Request,
-    brand: str = Form(...),
-    product: str = Form(...),
-    budget: str = Form(...),
-    enterprise_size: str = Form(...),
-    ai_model: str = Form("gpt-5"),
-    language: str = Form("en"),
-    current_user: User = Depends(get_current_user_from_cookie)
-):
-    if not current_user:
-        return HTMLResponse("<h1>Authentication required</h1>", status_code=401)
-    
-    try:
-        # Debug: Log received values
-        print(f"DEBUG: Received brand: '{brand}'")
-        print(f"DEBUG: Received product: '{product}'")
-        print(f"DEBUG: Received budget: '{budget}'")
-        print(f"DEBUG: Received enterprise_size: '{enterprise_size}'")
-        
-        # Build prompt
-        spec = InputSpec(brand=brand.strip(), product=product.strip(), budget=budget.strip(), enterprise_size=enterprise_size.strip())
-        prompt_text = build_prompt(spec, analysis_date=datetime.now().strftime("%d %B %Y"), language=language)
-
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        user_id = current_user.id
-        report_filename_txt = f"reports/report_{user_id}_{timestamp}.txt"
-        report_filename_pdf = f"report_{user_id}_{timestamp}"
-
-        # Debug: Log the received AI model
-        print(f"DEBUG: Received ai_model: '{ai_model}'")
-        
-        # Generate report with timeout
-        try:
-            if ai_model != "none" and ai_model != "undefined":
-                report_text = call_openai_chat(prompt_text, model=ai_model)
-            else:
-                if ai_model == "undefined":
-                    print("DEBUG: AI model was 'undefined', using gpt-5 as fallback")
-                    report_text = call_openai_chat(prompt_text, model="gpt-5")
-                else:
-                    report_text = prompt_text
-        except Exception as ai_error:
-            print(f"AI generation error: {ai_error}")
-            # Fallback to prompt text if AI fails
-            report_text = prompt_text
-
-        # Ensure report_text is not None
-        if report_text is None:
-            report_text = "Error: Unable to generate report content. Please try again."
-
-        # Save text version
-        with open(report_filename_txt, "w", encoding="utf-8") as f:
-            f.write(report_text)
-
-        # Create HTML version
-        html_path = create_html_report(report_text, report_filename_pdf, language)
-        actual_filename = f"{report_filename_pdf}.html"
-
-        # Return JSON with redirect URL for AJAX handling
-        return JSONResponse({
-            "status": "success",
-            "redirect_url": f"/report/{actual_filename}",
-            "report_name": actual_filename
-        })
-        
-    except Exception as e:
-        print(f"Error generating report: {e}")
-        return HTMLResponse(f"<h1>Error generating report: {str(e)}</h1>", status_code=500)
-
-@app.get("/job-status/{job_id}")
-def get_job_status(job_id: str):
-    """Get the status of a report generation job"""
-    with job_lock:
-        if job_id in job_status:
-            return job_status[job_id]
-        else:
-            return {"status": "not_found", "message": "Job not found"}
-
-@app.get("/report/{filename}")
-def view_report(filename: str):
-    filepath = os.path.join("reports", filename)
-    if os.path.exists(filepath):
-        return FileResponse(filepath, media_type="text/html")
-    return {"status": "error", "message": "Report not found"}
-
-@app.get("/download/{filename}")
-def download_report(filename: str):
-    filepath = os.path.join("reports", filename)
-    if os.path.exists(filepath):
-        # Determine media type based on file extension
-        if filename.endswith('.html'):
-            media_type = "text/html"
-        elif filename.endswith('.pdf'):
-            media_type = "application/pdf"
-        elif filename.endswith('.txt'):
-            media_type = "text/plain"
-        else:
-            media_type = "application/octet-stream"
-        
-        return FileResponse(filepath, media_type=media_type, filename=filename)
-    return {"status": "error", "message": "File not found"}
+</html>

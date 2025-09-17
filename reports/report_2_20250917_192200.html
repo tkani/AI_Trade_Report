@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
+                flex: 1;
+                max-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">17 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title Page</p>
+        <p>Strategic Market Analysis Report</p>
+        <p>Brand: tomato</p>
+        <p>Product: Tomato (Fresh and Processed Tomato Products)</p>
+        <p>Enterprise Size: Small Enterprise</p>
+        <p>Total Available Budget: 35,000</p>
+        <p>Analysis Date: 17 September 2025</p>
+        <p>Prepared for: Board of Directors</p>
+        <br>
+        <p>Executive Summary</p>
+        <p>This report evaluates near-term expansion opportunities in European markets for tomato-branded tomato products, focusing on fresh tomatoes and shelf-stable processed formats that are feasible for a small enterprise budget. Based on official data availability and practical entry pathways, the recommended entry sequence is Germany, Netherlands, and Poland, prioritizing processed tomato products first due to lower perishability risk and simpler logistics at small scale.</p>
+        <br>
+        <p>EU market demand for tomatoes and processed tomato products remains substantial, with the EU among the world’s largest importers for intra-EU trade and extra-EU supply. Trade and consumption statistics from Eurostat, UN Comtrade, and FAO/WTO indicate robust, year-round demand supported by established retail and foodservice channels. Given the 35,000 budget ceiling, a capital-light, importer-led entry with private label pilot and limited branded SKUs is advised, complemented by digital marketplace listings where permissible. Budget should prioritize trade partner development, compliance, and targeted retailer category trials rather than broad consumer advertising.</p>
+        <br>
+        <ol>
+            <li>Market Overview</li>
+        <p>Scope note: Only official data used. Where country-level 2024 to 2025 figures are not yet fully published, directional context is provided without numerical claims. No unverifiable numbers are included.</p>
+        </ol>
+        <ul>
+            <li>EU position: The European Union is a leading producer and trader of tomatoes and processed tomato products. Italy and Spain dominate EU tomato processing, while the Netherlands, Spain, and Morocco are major fresh suppliers to EU markets. Source: Eurostat international trade in goods statistics, Prodcom and Combined Nomenclature chapters 07 and 20, publications 2023 to 2025.</li>
+            <li>Year-round demand: EU retail and foodservice rely on intra-EU and extra-EU imports to balance seasonal gaps. Source: Eurostat international trade database by CN codes for tomatoes and processed tomato products, 2024 publication cycle.</li>
+            <li>Trade flows: UN Comtrade data for HS 0702 (tomatoes, fresh or chilled) and HS 2002 (tomatoes prepared or preserved, excluding vinegar) show sustained import volumes among Germany, Netherlands, Poland, France, and the UK (extra-EU). Sources: UN Comtrade database, latest updates through 2024 to 2025.</li>
+            <li>Price sensitivity: Northern and Eastern EU markets display higher price sensitivity in fresh categories, with processed categories showing stable, value-driven price tiers. Sources: Eurostat HICP food categories and CPI components for vegetables and processed foods, 2023 to 2025 releases.</li>
+        </ul>
+        <ol>
+            <li>Target Market Analysis</li>
+        <p>Methodology note: To avoid fabricating figures, TAM, SAM, and SOM are presented as structured ranges labeled as Estimate using triangulation logic from official sources without asserting unverifiable numeric market totals. Ranges are reasoned using import demand relevance, retail penetration feasibility for a small enterprise, and category breadth across fresh and processed segments. These ranges are directional for prioritization and should be validated with a targeted data purchase or retailer scans before commitment.</p>
+        </ol>
+        <p>Selected markets</p>
+        <ul>
+            <li>Germany: Large importer and consumer of both fresh and processed tomatoes with developed retail consolidation.</li>
+            <li>Netherlands: High trade intensity, sophisticated retail, strong private label and re-export platform suitable for a small brand leveraging importer networks.</li>
+            <li>Poland: Growing modern trade penetration, value orientation, expanding demand for processed tomato products.</li>
+        </ul>
+        <p>TAM/SAM/SOM Comparative Table (Estimate)</p>
+        <table>
+            <tr>
+                <td>Country</td>
+                <td>TAM (Estimate)</td>
+                <td>SAM (Estimate)</td>
+                <td>SOM Year 1 (Estimate)</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>----------------</th>
+                <th>----------------</th>
+                <th>----------------------</th>
+            </tr>
+            <tr>
+                <td>Germany</td>
+                <td>Qualitative high across fresh and processed categories based on Eurostat and UN Comtrade import relevance</td>
+                <td>National grocers plus select online channels within top 8 regions</td>
+                <td>Pilot penetration via 2 to 4 importers and 200 to 400 stores equivalent through limited rotations</td>
+            </tr>
+            <tr>
+                <td>Netherlands</td>
+                <td>Qualitative high trade hub with strong retail private label opportunities</td>
+                <td>Importer-led national access plus foodservice distributors</td>
+                <td>Pilot via 1 to 2 importers and 80 to 150 stores equivalent, plus foodservice trials</td>
+            </tr>
+            <tr>
+                <td>Poland</td>
+                <td>Qualitative medium to high in processed, moderate in fresh due to local price sensitivity</td>
+                <td>Modern trade chains and discounter buyers for sauces and passata</td>
+                <td>Pilot via 1 importer-distributor and 100 to 200 stores equivalent for processed SKUs</td>
+            </tr>
+        </table>
+        <p>Notes</p>
+        <ul>
+            <li>TAM refers to total addressable consumption for tomato and processed tomato categories in each market. Data direction supported by Eurostat trade and production statistics and UN Comtrade HS 0702 and HS 2002 flows, latest updates 2023 to 2025.</li>
+            <li>SAM narrows to channels realistically serviceable by a small enterprise via importer partnerships.</li>
+            <li>SOM Year 1 reflects realistic pilot footprint rather than share percentages, given budget constraints.</li>
+        </ul>
+        <ol>
+            <li>Competitive Landscape</li>
+        <p>Scope: Competitor identification at brand level is limited by public-source constraints. The structure below summarizes competitive dynamics without asserting market shares.</p>
+        </ol>
+        <ul>
+            <li>Fresh tomatoes: Dominated by grower cooperatives and importer-packers supplying retailers with loose and prepacked SKUs. Spain, Morocco, the Netherlands key supply origins. Source: Eurostat trade by partner for HS 0702; EU market reports 2023 to 2025.</li>
+            <li>Processed tomatoes: Category leaders include Italian processors supplying passata, peeled, chopped, and puree for both brand and private label. Retail private label is strong across Germany, Netherlands, and Poland. Source: Eurostat Prodcom for processed tomato products, UN Comtrade HS 2002, 2023 to 2025.</li>
+            <li>Channel power: Retailer private label exerts significant price and shelf control in Northern and Western Europe; discounters are influential in Germany and Poland. Source: Eurostat Structural Business Statistics for retail and OECD retail indicators, 2023 to 2024.</li>
+        </ul>
+        <p>Competitive Landscape Matrix (Qualitative)</p>
+        <table>
+            <tr>
+                <td>Segment</td>
+                <td>Competitive Intensity</td>
+                <td>Key Dynamics</td>
+                <td>Entry Implications</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>-----------------------</th>
+                <th>--------------</th>
+                <th>-------------------</th>
+            </tr>
+            <tr>
+                <td>Fresh tomatoes</td>
+                <td>High</td>
+                <td>Consolidated buyer power, strict specs, year-round programs</td>
+                <td>Hard for small enterprise without grower scale and year-round programs</td>
+            </tr>
+            <tr>
+                <td>Processed tomatoes</td>
+                <td>High to medium</td>
+                <td>Strong private label and established Italian brands</td>
+                <td>Feasible niche via quality, origin story, and importer-led listing fees</td>
+            </tr>
+            <tr>
+                <td>Foodservice</td>
+                <td>Medium</td>
+                <td>Distributors value reliability and price per kilogram</td>
+                <td>Case-pack and pallet efficiency can enable entry with fewer SKUs</td>
+            </tr>
+        </table>
+        <ol>
+            <li>Regulatory Environment</li>
+            <li>EU general food law: Regulation (EC) No 178/2002 sets the framework for food safety, traceability, and responsibilities. Source: EUR-Lex, consolidated text, accessed 2024 to 2025.</li>
+            <li>Hygiene and HACCP: Regulation (EC) No 852/2004 on food hygiene requires HACCP-based procedures. Source: EUR-Lex, consolidated text, accessed 2024 to 2025.</li>
+            <li>Food information to consumers: Regulation (EU) No 1169/2011 on labelling, allergen, nutrition declarations, and language requirements. Source: EUR-Lex, consolidated text, accessed 2024 to 2025.</li>
+            <li>Marketing standards for fresh produce: EU marketing standards for fruits and vegetables apply to tomatoes including quality classes, sizing, and presentation. Source: European Commission, Marketing Standards for Fresh Fruit and Vegetables, consolidated guidance 2023 to 2025.</li>
+            <li>Residues and contaminants: Maximum Residue Levels under Regulation (EC) No 396/2005 and contaminants rules under Regulation (EC) No 1881/2006. Source: EUR-Lex, consolidated texts, accessed 2024 to 2025.</li>
+            <li>Import controls: Border Official Controls Regulation (EU) 2017/625 and common health entry documents as applicable. Source: EUR-Lex, accessed 2024 to 2025.</li>
+            <li>Packaging and sustainability: EU Packaging and Packaging Waste Directive, and ongoing PPWR proposal status. Source: European Commission, 2024 to 2025 updates.</li>
+            <li>Origin marking and languages: Country of origin for fresh produce, and language requirements for labels in destination markets. Source: Regulation (EU) 1169/2011.</li>
+        </ol>
+        <ol>
+            <li>Consumer Analysis</li>
+            <li>Value and private label: Northern and Eastern EU consumers display strong acceptance of private label for staple categories including tomato products. Source: Eurostat HICP and OECD consumer indicators for private label trend context, 2023 to 2024.</li>
+            <li>Quality cues: For processed tomato products, origin cues such as Italian-style processing, absence of additives, and tomato variety claims influence choice. Source: European Commission FIC guidance and general food claims framework, 2023 to 2025.</li>
+            <li>Channel behavior: Weekly grocery missions dominate purchase occasions; e-grocery penetration varies by country with higher adoption in the Netherlands and Germany versus Poland. Source: OECD digital economy indicators and national stats portals, 2023 to 2024.</li>
+        </ol>
+        <p>6. Distribution Channels</p>
+        <ul>
+            <li>Importer-distributor model: Primary route for small enterprises to access German, Dutch, and Polish retailers and foodservice. Importers handle customs, warehousing, and listing negotiations. Source: ITA and national trade promotion guides on food distribution in Europe, 2023 to 2025.</li>
+            <li>Retail consolidation: Germany’s grocery sector is concentrated among a few national chains; Netherlands and Poland have strong discounter and supermarket chains. Source: OECD retail sector notes and Eurostat structural business statistics, 2023 to 2024.</li>
+            <li>Online marketplaces: Country-compliant e-grocery and B2B wholesale platforms can supplement reach, subject to VAT and labeling compliance. Source: OECD e-commerce indicators 2023 to 2024.</li>
+        </ul>
+        <p>8. Risk Assessment</p>
+        <p>Risk Assessment Matrix</p>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Retailer slotting and listing fees exceed budget</td>
+                <td>High</td>
+                <td>High</td>
+                <td>Focus on importer-led category trials, private label co-pack, and limited geographic pilots</td>
+            </tr>
+            <tr>
+                <td>Quality or labeling non-compliance</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Preclear labels to Regulation (EU) 1169/2011, secure HACCP documentation, conduct third-party lab tests</td>
+            </tr>
+            <tr>
+                <td>Price undercutting by private label</td>
+                <td>High</td>
+                <td>Medium to High</td>
+                <td>Differentiate via origin, processing attributes, case efficiencies, and bundle pricing for multipacks</td>
+            </tr>
+            <tr>
+                <td>Logistics volatility for fresh</td>
+                <td>High</td>
+                <td>High</td>
+                <td>Prioritize processed formats initially; if fresh, limit to near-market origins and seasonal windows</td>
+            </tr>
+            <tr>
+                <td>FX and payment terms risk with distributors</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Use euro-denominated contracts, credit insurance where possible, and staged deliveries</td>
+            </tr>
+            <tr>
+                <td>Demand fragmentation across SKUs</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Limit to 2 to 4 SKUs for pilot and scale only proven items</td>
+            </tr>
+            <tr>
+                <td>Regulatory updates on packaging</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Design packaging to meet emerging PPWR proposals and recyclability standards</td>
+            </tr>
+        </table>
+        <p>9. Strategic Recommendations</p>
+        <p>Positioning</p>
+        <ul>
+            <li>Prioritize processed tomato products for entry: passata, chopped tomatoes, peeled tomatoes in cans or Tetra Pak, given budget constraints and shelf stability.</li>
+            <li>Use an importer-first approach: target importers with established listings in Germany, Netherlands, and Poland to minimize listing fees and speed time-to-shelf.</li>
+            <li>Adopt dual strategy: offer private label co-pack to win volume while building a small branded presence for tomato where commercially viable.</li>
+        </ul>
+        <p>Portfolio and Pricing</p>
+        <ul>
+            <li>Start with 3 SKUs: passata 700 g, chopped tomatoes 400 g, peeled tomatoes 400 g.</li>
+            <li>Price architecture: target price tiers in line with private label value and mid tiers; maintain margin discipline via case pack optimization. Specific retail price points should be validated with importer quotes and shelf scans before commitment.</li>
+        </ul>
+        <p>Compliance and Quality</p>
+        <ul>
+            <li>Complete HACCP and labelling conformity to EU 1169/2011 before negotiations.</li>
+            <li>Prepare technical data sheets per SKU including allergens, nutrition, shelf life, and traceability.</li>
+        </ul>
+        <p>Channel and Market Entry</p>
+        <ul>
+            <li>Germany first: leverage importer networks focused on Italian-style processed tomatoes; aim for regional listings and discounter test buys.</li>
+            <li>Netherlands second: position for private label or brand-specified quality with importers that also serve Belgium and re-export channels.</li>
+            <li>Poland third: emphasize value SKUs and multipacks through discounters and cash-and-carry wholesaler distributors.</li>
+        </ul>
+        <p>Performance Management</p>
+        <ul>
+            <li>Define success metrics per pilot: accepted listings, on-time deliveries, return rate, and reorders per SKU after 12 weeks.</li>
+        </ul>
+        <p>10. Implementation Plan</p>
+        <p>90-Day Action Plan</p>
+        <table>
+            <tr>
+                <td>Phase</td>
+                <td>Weeks</td>
+                <td>Key Activities</td>
+                <td>Owner</td>
+                <td>Deliverables</td>
+            </tr>
+            <tr>
+                <th>-------</th>
+                <th>-------</th>
+                <th>----------------</th>
+                <th>-------</th>
+                <th>-------------</th>
+            </tr>
+            <tr>
+                <td>Preparation</td>
+                <td>1 to 2</td>
+                <td>Confirm product SKUs, packaging, and compliance requirements</td>
+                <td>Founder, QA</td>
+                <td>Finalized specs, HACCP plan outline</td>
+            </tr>
+            <tr>
+                <td>Compliance</td>
+                <td>1 to 4</td>
+                <td>Nutrition, label translations, EU 1169/2011 compliance review</td>
+                <td>QA, Regulatory advisor</td>
+                <td>Compliant artwork files, technical data sheets</td>
+            </tr>
+            <tr>
+                <td>Supply readiness</td>
+                <td>2 to 6</td>
+                <td>Secure production slots, raw material sourcing plan, case pack design</td>
+                <td>Operations</td>
+                <td>Production plan, MOQ and lead times</td>
+            </tr>
+            <tr>
+                <td>Partner targeting</td>
+                <td>2 to 6</td>
+                <td>Build longlist of importers in Germany, Netherlands, Poland</td>
+                <td>Sales</td>
+                <td>15 to 25 qualified targets per market</td>
+            </tr>
+            <tr>
+                <td>Pitch materials</td>
+                <td>3 to 6</td>
+                <td>Prepare sell sheets, pricing ladder, samples</td>
+                <td>Sales, Marketing</td>
+                <td>Buyer deck, sample packs</td>
+            </tr>
+            <tr>
+                <td>Outreach</td>
+                <td>6 to 10</td>
+                <td>Contact importers, schedule tastings, negotiate terms</td>
+                <td>Sales</td>
+                <td>6 to 9 meetings booked</td>
+            </tr>
+            <tr>
+                <td>Pilot setup</td>
+                <td>8 to 12</td>
+                <td>Confirm first orders, plan logistics, quality checks</td>
+                <td>Operations</td>
+                <td>Confirmed POs, delivery schedule</td>
+            </tr>
+            <tr>
+                <td>Launch</td>
+                <td>10 to 13</td>
+                <td>Ship first pallets, execute trade marketing at POS</td>
+                <td>Sales, Ops</td>
+                <td>On-shelf presence, initial sales read</td>
+            </tr>
+            <tr>
+                <td>Review</td>
+                <td>12 to 13</td>
+                <td>KPI assessment and next-step plan</td>
+                <td>Leadership</td>
+                <td>Go or adjust decision, reorder plan</td>
+            </tr>
+        </table>
+        <p>Budget Allocation Recommendations</p>
+        <table>
+            <tr>
+                <td>Line Item</td>
+                <td>Allocation EUR</td>
+                <td>Notes</td>
+            </tr>
+            <tr>
+                <th>----------</th>
+                <th>----------------</th>
+                <th>-------</th>
+            </tr>
+            <tr>
+                <td>Regulatory and label compliance</td>
+                <td>5,000</td>
+                <td>Artwork, translations, legal review</td>
+            </tr>
+            <tr>
+                <td>Samples and product development</td>
+                <td>3,500</td>
+                <td>Pilot batch and shipping samples</td>
+            </tr>
+            <tr>
+                <td>Trade partner development</td>
+                <td>8,000</td>
+                <td>Travel, meetings, buyer fees where applicable</td>
+            </tr>
+            <tr>
+                <td>Listing and trade marketing</td>
+                <td>10,000</td>
+                <td>Intro allowances, in-store demos or leaflet exposure</td>
+            </tr>
+            <tr>
+                <td>Logistics and initial inventory buffer</td>
+                <td>6,500</td>
+                <td>First pallet shipments and contingencies</td>
+            </tr>
+            <tr>
+                <td>Contingency</td>
+                <td>2,000</td>
+                <td>Unforeseen costs</td>
+            </tr>
+        <p>Total allocation equals the 35,000 budget.</p>
+        </table>
+        <p>11. Sources &amp; References</p>
+        <ul>
+            <li>Eurostat. International trade in goods statistics by CN. CN 0702 Tomatoes, fresh or chilled; CN 2002 Tomatoes prepared or preserved. Publications and database access 2023 to 2025. https://ec.europa.eu/eurostat</li>
+            <li>UN Comtrade Database. HS 0702 and HS 2002 trade flows for EU member states including Germany, Netherlands, Poland. Updated through 2024 to 2025. https://comtrade.un.org</li>
+            <li>EUR-Lex. Regulation (EC) No 178/2002 General Food Law. Consolidated text accessed 2024 to 2025. https://eur-lex.europa.eu</li>
+            <li>EUR-Lex. Regulation (EC) No 852/2004 on the hygiene of foodstuffs. Consolidated text accessed 2024 to 2025. https://eur-lex.europa.eu</li>
+            <li>EUR-Lex. Regulation (EU) No 1169/2011 on the provision of food information to consumers. Consolidated text accessed 2024 to 2025. https://eur-lex.europa.eu</li>
+            <li>European Commission. Marketing Standards for Fresh Fruit and Vegetables including tomatoes. Guidance publications 2023 to 2025. https://food.ec.europa.eu</li>
+            <li>EUR-Lex. Regulation (EC) No 396/2005 on Maximum Residue Levels of pesticides. Consolidated text accessed 2024 to 2025. https://eur-lex.europa.eu</li>
+            <li>EUR-Lex. Commission Regulation (EU) 2017/625 on Official Controls. Consolidated text accessed 2024 to 2025. https://eur-lex.europa.eu</li>
+            <li>European Commission. Packaging and Packaging Waste legislation and PPWR proposal status. 2024 to 2025 updates. https://environment.ec.europa.eu</li>
+            <li>OECD. Retail and e-commerce indicators for EU markets. 2023 to 2024 publications. https://www.oecd.org</li>
+        </ul>
+        <p>JSON Summary</p>
+        <div class="code-block">
+            json
+        <p>{</p>
+        <p>&quot;top_markets&quot;: [&quot;DE&quot;, &quot;NL&quot;, &quot;PL&quot;],</p>
+        <p>&quot;budget_allocation&quot;: {</p>
+        <p>&quot;regulatory_and_label_compliance&quot;: 5000,</p>
+        <p>&quot;samples_and_product_development&quot;: 3500,</p>
+        <p>&quot;trade_partner_development&quot;: 8000,</p>
+        <p>&quot;listing_and_trade_marketing&quot;: 10000,</p>
+        <p>&quot;logistics_and_initial_inventory_buffer&quot;: 6500,</p>
+        <p>&quot;contingency&quot;: 2000</p>
+        <p>},</p>
+        <p>&quot;tams&quot;: {</p>
+        <p>&quot;DE&quot;: &quot;Qualitative high across fresh and processed categories (Estimate)&quot;,</p>
+        <p>&quot;NL&quot;: &quot;Qualitative high trade hub and retail market (Estimate)&quot;,</p>
+        <p>&quot;PL&quot;: &quot;Qualitative medium to high driven by processed products (Estimate)&quot;</p>
+        <p>},</p>
+        <p>&quot;assumptions&quot;: [</p>
+        <p>&quot;Estimate: Small enterprise cannot secure national listings without importer partnership within 90 days.&quot;,</p>
+        <p>&quot;Estimate: Processed tomato formats present lower risk than fresh for initial entry due to shelf stability.&quot;,</p>
+        <p>&quot;Estimate: Listing fees and trade allowances will consume a significant share of budget in Germany and Poland.&quot;,</p>
+        <p>&quot;Estimate: Retail private label share remains structurally high in selected markets, requiring value-based pricing.&quot;</p>
+        <p>]</p>
+        <p>}</p>
+        <div class="code-block">
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

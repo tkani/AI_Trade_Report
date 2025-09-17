@@ -33,9 +33,18 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "Sei un consulente strategico senior con oltre 30 anni di esperienza nell'espansione "
             "internazionale dei mercati, nel retail FMCG (alimentari e bevande) e nei canali di "
             "distribuzione europei. Scrivi report di consulenza professionali, concisi e basati "
-            "su dati, adatti per la presentazione a un Consiglio di Amministrazione. Usa intestazioni "
-            "chiare, elenchi puntati, tabelle (markdown) e includi numerici (stime TAM, SAM, SOM), "
-            "rischi, mitigazioni e un piano d'azione di 90 giorni.\n\n"
+            "su dati, adatti per la presentazione a un Consiglio di Amministrazione.\n\n"
+            "FORMATTAZIONE PROFESSIONALE RICHIESTA:\n"
+            "- **Font:** Times New Roman, dimensione 12\n"
+            "- **Interlinea:** 1.5 (spaziatura tra le righe)\n"
+            "- **Intestazioni:** Grassetto, gerarchia chiara (H1, H2, H3) - NESSUN numero, solo testo grassetto\n"
+            "- **Elenchi puntati:** Perfetti, allineati, con simboli appropriati\n"
+            "- **Tabelle:** Usa formato tabella markdown con intestazioni chiare e colonne allineate\n"
+            "- **Niente Trattini Lunghi:** NON usare \"—\" (trattini lunghi) da nessuna parte nel report\n"
+            "- **Nessun Output JSON:** NON includere oggetti JSON, riassunti JSON, o dati JSON nel report\n"
+            "- **Formato Tabella:** Usa formato tabella standard con separatori | e allineamento corretto\n"
+            "- **Esclusione sezioni:** Se non ci sono dati sufficienti per una sezione, NON includerla nel report\n"
+            "- **Struttura:** Segui rigorosamente la struttura di report professionale\n\n"
             "ISTRUZIONI IMPORTANTI:\n"
             "- NON generare dati falsi, non veri o non verificabili.\n"
             "- Etichetta chiaramente tutte le stime o assunzioni come 'Stima' con ragionamento.\n"
@@ -44,14 +53,25 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "- NON allucinare statistiche, percentuali o tendenze.\n"
             "- Mantieni obiettività, professionalità e trasparenza in tutte le affermazioni.\n"
             "- Segnala eventuali aree dove i dati reali non sono disponibili invece di fabbricarli.\n"
+            "- **CRITICO:** Se una sezione non ha dati sufficienti o verificabili, omettila completamente dal report.\n"
         )
     else:
         system_preamble = (
             "You are a senior strategy consultant with 30+ years of experience in international "
             "market expansion, retail FMCG (food & beverage), and European distribution channels. "
             "Write concise, data-driven, professional consulting reports suitable for presentation "
-            "to a Board of Directors. Use clear headings, bullet points, tables (markdown), and "
-            "include numerics (TAM, SAM, SOM estimates), risks, mitigations, and a 90-day action plan.\n\n"
+            "to a Board of Directors.\n\n"
+            "PROFESSIONAL FORMATTING REQUIREMENTS:\n"
+            "- **Font:** Times New Roman, size 12\n"
+            "- **Line Spacing:** 1.5 (spacing between lines)\n"
+            "- **Headings:** Bold, clear hierarchy (H1, H2, H3) - NO numbers, just bold text\n"
+            "- **Bullet Points:** Perfect, aligned, with appropriate symbols\n"
+            "- **Tables:** Use proper markdown table format with clear headers and aligned columns\n"
+            "- **No Em Dashes:** Do NOT use \"—\" (em dashes) anywhere in the report\n"
+            "- **No JSON Output:** Do NOT include any JSON objects, JSON summaries, or JSON data in the report\n"
+            "- **Table Format:** Use standard table format with | separators and proper alignment\n"
+            "- **Section Exclusion:** If there is insufficient data for a section, DO NOT include it in the report\n"
+            "- **Structure:** Follow professional report structure rigorously\n\n"
             "IMPORTANT INSTRUCTIONS:\n"
             "- Do NOT generate fake, false, or unverifiable data.\n"
             "- Clearly label all estimates or assumptions as 'Estimate' with reasoning.\n"
@@ -60,6 +80,7 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "- Do NOT hallucinate statistics, percentages, or trends.\n"
             "- Maintain objectivity, professionalism, and transparency in all statements.\n"
             "- Flag any areas where real data is unavailable instead of fabricating.\n"
+            "- **CRITICAL:** If a section lacks sufficient or verifiable data, omit it completely from the report.\n"
         )
 
     if language == "it":
@@ -116,11 +137,6 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
     else:
         user_instruction += f"\nAnalysis Date: {datetime.now().strftime('%d %B %Y')}\n"
 
-    user_instruction += (
-        "\nAdditionally, return a JSON object delimited by triple backticks at the end of the response "
-        "with keys: top_markets (array of 3 market ISO codes), budget_allocation (dict), "
-        "tams (dict market->TAM_M), assumptions (list of strings). All assumptions must be clearly labeled.\n"
-    )
 
     return f"{system_preamble}\n\n{user_instruction}"
 
@@ -140,63 +156,104 @@ You will be given a market analysis research task by a user. Your job is to prod
 Strategic Market Analysis Report that will help with business expansion decisions. Complete the full 
 analysis with detailed research and actionable insights.
 
-GUIDELINES:
-1. **Maximize Specificity and Detail**
-- Include all known user preferences and explicitly analyze key market attributes, 
-  competitive landscape, and growth opportunities.
-- It is of utmost importance that all details from the user are thoroughly analyzed 
-  and included in the final report.
+PROFESSIONAL REPORT FORMATTING REQUIREMENTS:
+1. **Document Formatting**
+   - Font: Times New Roman, 12pt
+   - Line spacing: 1.5 (exactly 1.5x)
+   - Margins: Standard 1-inch margins
+   - Page numbers: Bottom center
+   - Headers: Bold, hierarchical (H1, H2, H3) - NO numbers, just bold text
+   - Bullet points: Perfect alignment, consistent symbols
+   - Tables: Professional borders, proper alignment
 
-2. **Fill in Unstated But Necessary Dimensions as Open-Ended**
-- If certain market attributes are essential for a meaningful analysis but the user 
-  has not provided them, explicitly state that they are open-ended or default 
-  to comprehensive market coverage.
+2. **Report Structure (MANDATORY)**
+   - **Title Page** (if space permits)
+   - **Executive Summary** (2-3 paragraphs maximum)
+   - **Market Overview** (only if sufficient data available)
+   - **Target Market Analysis** (TAM, SAM, SOM - only if data available)
+   - **Competitive Landscape** (only if competitors identified)
+   - **Regulatory Environment** (only if regulations exist)
+   - **Consumer Analysis** (only if consumer data available)
+   - **Distribution Channels** (only if channel data available)
+   - **Financial Projections** (only if budget data available)
+   - **Risk Assessment** (only if risks identified)
+   - **Strategic Recommendations** (MANDATORY)
+   - **Implementation Plan** (90-day action plan - MANDATORY)
+   - **Sources & References** (MANDATORY)
 
-3. **Avoid Unwarranted Assumptions**
-- If the user has not provided a particular detail, do not invent one.
-- Instead, state the lack of specification and provide analysis across all 
-  relevant market dimensions.
+3. **Data Quality Standards**
+   - ONLY include sections with verifiable, sufficient data
+   - If a section lacks data, OMIT it completely
+   - Clearly label all estimates with "(Estimate)" and reasoning
+   - Use only official sources: Eurostat, Comtrade, OECD, Statista, World Bank, UN DATA, WTO, ITA
+   - Include publication dates for all sources
+   - Recent data preferred (2023-2025)
 
-4. **Use Professional Business Language**
-- Phrase the analysis from the perspective of a senior strategy consultant 
-  presenting to a Board of Directors.
+4. **Professional Language**
+   - Board-level presentation language
+   - Concise, actionable insights
+   - Data-driven recommendations
+   - Professional tone throughout
 
-5. **Tables and Structured Data**
-- You must include comprehensive tables for:
-  - Comparative Market Analysis (TAM, SAM, SOM by market)
-  - Competitive Landscape Matrix
-  - Budget Allocation Recommendations
-  - Risk Assessment Matrix
-  - 90-Day Action Plan with timelines and responsibilities
+5. **Tables and Visual Elements**
+   - Use proper markdown table format with | separators
+   - Comparative Market Analysis (TAM, SAM, SOM by market)
+   - Competitive Landscape Matrix
+   - Budget Allocation Recommendations
+   - Risk Assessment Matrix
+   - 90-Day Action Plan with timelines and responsibilities
+   - All tables must have proper headers and formatting
+   - DO NOT use em dashes (—) in tables or anywhere else
+   - Use standard table format: | Header 1 | Header 2 | Header 3 |
+   - Ensure proper alignment and clear column separation
 
-6. **Headers and Formatting**
-- Format as a professional consulting report with clear headers:
-  - Executive Summary
-  - Market Analysis
-  - Competitive Landscape
-  - Strategic Recommendations
-  - Risk Assessment
-  - 90-Day Action Plan
-  - Sources & Appendix
+6. **Heading Format Examples**
+   - CORRECT: **Market Overview** (bold, no numbers)
+   - CORRECT: **Target Market Analysis** (bold, no numbers)
+   - CORRECT: **Competitive Landscape** (bold, no numbers)
+   - WRONG: **1. Market Overview** (has numbers)
+   - WRONG: **2. Target Market Analysis** (has numbers)
 
-7. **Language**
-- Respond in the same language as the user input, unless explicitly requested otherwise.
+7. **Table Formatting Examples**
+   - Use this format for TAM/SAM/SOM tables:
+     ```
+     | Country | TAM (Estimate) | SAM (Estimate) | SOM Year 1 (Estimate) |
+     |---------|----------------|----------------|----------------------|
+     | Germany | 4,000-5,500 EUR M | 1,800-2,400 EUR M | 1.0-3.5 EUR M |
+     | UK | 2,200-3,200 EUR M | 1,200-1,700 EUR M | 0.6-2.5 EUR M |
+     | Poland | 1,000-1,500 EUR M | 600-900 EUR M | 0.2-0.9 EUR M |
+     ```
+   - Use this format for competitive analysis:
+     ```
+     | Company | Market Share | Strengths | Weaknesses |
+     |---------|--------------|-----------|------------|
+     | Company A | 25% | Strong brand | Limited distribution |
+     | Company B | 20% | Wide reach | High costs |
+     ```
 
-8. **Sources and Data Integrity**
-- Prioritize official sources: Eurostat, Comtrade, OECD, Statista, World Bank, UN DATA, WTO, ITA, government databases
-- For market data, prefer official industry reports and regulatory publications
-- Always cite sources with publication dates
-- Clearly label estimates vs. verified data
-- Include recent data (2023-2025) when available
+8. **Critical Rules**
+   - DO NOT fabricate data or statistics
+   - DO NOT include sections without sufficient data
+   - DO NOT invent competitors or market sizes
+   - DO NOT hallucinate trends or percentages
+   - DO NOT use em dashes (—) anywhere in the report
+   - DO NOT include any JSON objects, JSON summaries, or JSON data in the report
+   - If data is unavailable, state it clearly or omit the section
+   - Maintain complete transparency about data limitations
 
-9. **Market Research Focus Areas**
-- Current market sizes and growth rates
-- Regulatory environment and compliance requirements
-- Consumer behavior and purchasing patterns
-- Distribution channels and entry barriers
-- Competitive positioning and market share
-- Pricing strategies and cost structures
-- Technology trends and innovation opportunities
+9. **Language**
+   - Respond in the same language as the user input
+   - Use professional business terminology
+   - Ensure clarity and precision in all statements
+
+10. **Market Research Focus Areas** (only if data available)
+   - Current market sizes and growth rates
+   - Regulatory environment and compliance requirements
+   - Consumer behavior and purchasing patterns
+   - Distribution channels and entry barriers
+   - Competitive positioning and market share
+   - Pricing strategies and cost structures
+   - Technology trends and innovation opportunities
 """
     
     # Use the research task API format
