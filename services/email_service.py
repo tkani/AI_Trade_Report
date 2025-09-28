@@ -23,8 +23,9 @@ class EmailService:
     def send_password_reset_email(self, to_email: str, reset_token: str, user_name: str):
         """Send password reset email"""
         try:
-            # Create reset link
-            reset_link = f"http://127.0.0.1:8000/reset-password?token={reset_token}"
+            # Create reset link - use environment variable or default to hosted URL
+            base_url = os.getenv("BASE_URL", "https://ai-trade-report.onrender.com")
+            reset_link = f"{base_url}/reset-password?token={reset_token}"
             
             # Create message
             msg = MIMEMultipart('alternative')
