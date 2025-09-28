@@ -255,12 +255,13 @@ async def forgot_password(
         
         # Send reset email
         print(f"DEBUG: Attempting to send email to {user.email}")
-        email_sent = email_service.send_password_reset_email(
+        email_sent, error_message = email_service.send_password_reset_email(
             to_email=user.email,
             reset_token=reset_token,
             user_name=f"{user.name} {user.surname}"
         )
         print(f"DEBUG: Email sending result: {email_sent}")
+        print(f"DEBUG: Error message: {error_message}")
         
         if email_sent:
             return templates.TemplateResponse("forgot_password.html", {
@@ -268,9 +269,10 @@ async def forgot_password(
                 "success": "Password reset instructions have been sent to your email address."
             })
         else:
+            # Show the actual SMTP error message
             return templates.TemplateResponse("forgot_password.html", {
                 "request": request,
-                "error": "Failed to send reset email. Please try again later."
+                "error": f"Failed to send reset email: {error_message}"
             })
             
     except Exception as e:

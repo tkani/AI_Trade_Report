@@ -21,7 +21,7 @@ class EmailService:
         self.from_name = os.getenv("FROM_NAME", "AI Trade Report")
     
     def send_password_reset_email(self, to_email: str, reset_token: str, user_name: str):
-        """Send password reset email"""
+        """Send password reset email - returns (success: bool, error_message: str)"""
         try:
             # Create reset link - use environment variable or default to hosted URL
             base_url = os.getenv("BASE_URL", "https://ai-trade-report.onrender.com")
@@ -122,32 +122,35 @@ class EmailService:
                     
                     logger.info(f"Password reset email sent to {to_email}")
                     print(f"✅ Email sent successfully to {to_email}")
-                    return True
+                    return True, None
                 except smtplib.SMTPAuthenticationError as e:
-                    logger.error(f"SMTP Authentication failed: {e}")
-                    print(f"❌ SMTP Authentication failed: {e}")
-                    print(f"🔄 Falling back to console output...")
+                    error_msg = f"SMTP Authentication failed: {e}"
+                    logger.error(error_msg)
+                    print(f"❌ {error_msg}")
+                    return False, error_msg
                 except smtplib.SMTPException as e:
-                    logger.error(f"SMTP error: {e}")
-                    print(f"❌ SMTP error: {e}")
-                    print(f"🔄 Falling back to console output...")
+                    error_msg = f"SMTP connection error: {e}"
+                    logger.error(error_msg)
+                    print(f"❌ {error_msg}")
+                    return False, error_msg
                 except Exception as e:
-                    logger.error(f"Email sending failed: {e}")
-                    print(f"❌ Email sending failed: {e}")
-                    print(f"🔄 Falling back to console output...")
-                    # Fall through to console output
-                    pass
+                    error_msg = f"Email sending failed: {e}"
+                    logger.error(error_msg)
+                    print(f"❌ {error_msg}")
+                    return False, error_msg
             
             # Fallback: Show reset link in console
+            error_msg = "SMTP connection failed - email service not configured properly"
             logger.info(f"Password reset link for {to_email}: {reset_link}")
             print(f"\n🔐 PASSWORD RESET LINK FOR {to_email}:")
             print(f"   {reset_link}")
             print(f"   (SMTP connection failed - using console output)\n")
-            return True
+            return False, error_msg
                 
         except Exception as e:
-            logger.error(f"Failed to send password reset email to {to_email}: {str(e)}")
-            return False
+            error_msg = f"Failed to send password reset email: {str(e)}"
+            logger.error(error_msg)
+            return False, error_msg
 
 # Create global instance
 email_service = EmailService()
