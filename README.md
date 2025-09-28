@@ -29,6 +29,45 @@ A professional, multilingual AI-powered market analysis generator that creates c
 
 ## 🛠️ Installation
 
+### Option 1: Docker (Recommended)
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/tkani/AI_Trade_Report.git
+   cd AI_Trade_Report
+   ```
+
+2. **Set up environment variables**
+   Copy the example environment file and add your API keys:
+
+   ```bash
+   cp .env_example .env
+   # Edit .env with your actual API keys
+   ```
+
+3. **Run with Docker**
+
+   ```bash
+   # Make setup script executable
+   chmod +x docker-setup.sh
+   
+   # Run setup (builds and starts the application)
+   ./docker-setup.sh
+   ```
+
+4. **Test the application**
+
+   ```bash
+   # Make test script executable
+   chmod +x docker-test.sh
+   
+   # Run tests
+   ./docker-test.sh
+   ```
+
+### Option 2: Local Python Installation
+
 1. **Clone the repository**
 
    ```bash
@@ -88,6 +127,58 @@ AI_Trade_Report/
 ```
 
 ## 🎯 Usage
+
+### Docker Usage (Recommended)
+
+1. **Start the application**
+
+   ```bash
+   # Using Docker Compose
+   docker-compose up -d
+   
+   # Or using the setup script
+   ./docker-setup.sh
+   ```
+
+2. **Open your browser**
+
+   Navigate to `http://localhost:8000`
+
+3. **Useful Docker Commands**
+
+   ```bash
+   # View logs
+   docker-compose logs -f
+   
+   # Stop application
+   docker-compose down
+   
+   # Restart application
+   docker-compose restart
+   
+   # Test email functionality
+   docker-compose exec ai-trade-report python test_hosted_email.py
+   
+   # Test OpenAI API
+   docker-compose exec ai-trade-report python test_openai_api.py
+   
+   # Run all tests
+   ./docker-test.sh
+   ```
+
+### Local Python Usage
+
+1. **Start the application**
+
+   ```bash
+   python run_server.py
+   ```
+
+2. **Open your browser**
+
+   Navigate to `http://127.0.0.1:8000`
+
+### Application Usage
 
 ### 1. Language Selection
 
