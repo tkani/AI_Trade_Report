@@ -29,17 +29,22 @@
         max-width: 500px;
       }
       .auth-header {
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        color: #1e293b;
+        padding: 2rem;
         text-align: center;
-        margin-bottom: 2rem;
+        margin: -3rem -3rem 2rem -3rem;
+        border-bottom: 1px solid #e2e8f0;
+        border-radius: 1rem 1rem 0 0;
       }
       .auth-title {
         font-size: 2rem;
         font-weight: 700;
-        color: #1f2937;
+        color: #1e293b;
         margin-bottom: 0.5rem;
       }
       .auth-subtitle {
-        color: #6b7280;
+        color: #64748b;
         font-size: 1rem;
       }
       .form-group {
@@ -108,19 +113,58 @@
         margin-bottom: 1rem;
         font-size: 0.875rem;
       }
+      .form-help {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .brand-title {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+      .brand-logo-img {
+        height: 48px;
+        width: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+      }
+      .brand-logo-img:hover {
+        transform: scale(1.05);
+      }
+      .brand-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
     </style>
   </head>
   <body>
     <div class="auth-container">
       <div class="auth-card">
         <div class="auth-header">
+          <div class="brand-title">
+            <span class="brand-text">AI Trade Report</span>
+          </div>
           <div class="brand-logo">
             <img
               src="/static/logo_trade_on_chain.png"
               alt="AI Trade Report"
               class="brand-logo-img"
             />
-            <span class="brand-text">AI Trade Report</span>
+            <img
+              src="/static/logo2.png"
+              alt="AI Trade Report"
+              class="brand-logo-img"
+            />
           </div>
           <h1 class="auth-title">Create Account</h1>
           <p class="auth-subtitle">
@@ -186,11 +230,36 @@
               class="form-input"
               required
               minlength="6"
+              maxlength="72"
+              title="Password must be between 6 and 72 characters"
             />
+            <small class="form-help">Password must be 6-72 characters long</small>
           </div>
 
           <button type="submit" class="submit-btn">Create Account</button>
         </form>
+
+        <script>
+          // Client-side password validation
+          document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const helpText = this.nextElementSibling;
+            
+            if (password.length > 72) {
+              this.setCustomValidity('Password must be 72 characters or less');
+              helpText.style.color = '#dc2626';
+              helpText.textContent = 'Password is too long (max 72 characters)';
+            } else if (password.length < 6) {
+              this.setCustomValidity('Password must be at least 6 characters');
+              helpText.style.color = '#dc2626';
+              helpText.textContent = 'Password must be at least 6 characters';
+            } else {
+              this.setCustomValidity('');
+              helpText.style.color = '#6b7280';
+              helpText.textContent = 'Password must be 6-72 characters long';
+            }
+          });
+        </script>
 
         <div class="login-link">
           Already have an account? <a href="/login">Sign in here</a>

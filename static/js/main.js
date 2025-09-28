@@ -87,6 +87,13 @@ $(document).ready(function () {
         var formData = $(this).serialize();
         var selectedModel = $('#ai_model').val();
         
+        // Handle multiple product selections
+        var selectedProducts = $('#product-select').val();
+        if (selectedProducts && selectedProducts.length > 0) {
+            // Convert array to comma-separated string for backend processing
+            formData = formData.replace(/product=[^&]*/, 'product=' + encodeURIComponent(selectedProducts.join(', ')));
+        }
+        
         // Debug: Log the AI model value
         console.log('AI Model value:', selectedModel);
         
@@ -150,8 +157,22 @@ $(document).ready(function () {
                 
                 if (status === 'timeout') {
                     alert('Request timed out. Please try again.');
+                } else if (xhr.status === 401) {
+                    // Authentication required - redirect to login
+                    alert('You need to log in to generate reports. Redirecting to login page...');
+                    window.location.href = '/login';
                 } else {
-                    alert('An error occurred while generating the report: ' + error);
+                    // Try to parse error response
+                    let errorMessage = error;
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.message) {
+                            errorMessage = response.message;
+                        }
+                    } catch (e) {
+                        // If parsing fails, use the original error
+                    }
+                    alert('An error occurred while generating the report: ' + errorMessage);
                 }
             }
         });
@@ -198,6 +219,48 @@ $(document).ready(function () {
             $(this).removeClass('has-value');
         }
     });
+    
+        // Saved Reports Modal Toggle
+        $('#toggle-saved-reports').click(function() {
+            console.log('Toggle saved reports clicked');
+            showSavedReportsModal();
+        });
+
+        // Bootstrap modal event handlers
+        $('#savedReportsModal').on('show.bs.modal', function () {
+            console.log('Bootstrap modal is about to show');
+            // Check authentication when modal is about to show
+            fetch('/debug/auth')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'authenticated') {
+                        console.log('User is authenticated, loading reports');
+                        loadSavedReportsModal();
+                    } else {
+                        console.log('User not authenticated, showing auth message');
+                        showAuthRequiredMessage();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking authentication:', error);
+                    showAuthRequiredMessage();
+                });
+        });
+
+        $('#savedReportsModal').on('hidden.bs.modal', function () {
+            console.log('Bootstrap modal is hidden');
+            // Reset modal state when hidden
+            $('#reports-table-body').empty();
+            $('#no-reports-message').hide();
+            $('#auth-required-message').hide();
+            $('#loading-reports').hide();
+            $('#pagination-container').hide();
+        });
+    
+    // Auto-load saved reports if section is visible on page load
+    if ($('#saved-reports-section').is(':visible')) {
+        loadSavedReports();
+    }
 });
 
 // Function to poll job status
@@ -331,7 +394,7 @@ function initializeSelect2Input() {
         },
         placeholder: placeholder,
         allowClear: true,
-        multiple: false,
+        multiple: true, // Enable multiple selections
         minimumInputLength: 2,
         tags: true, // Enable custom entries
         tokenSeparators: [',', ';'], // Allow comma and semicolon as separators
@@ -665,3 +728,318 @@ function fixTagOverflow() {
 
 // Make forceSelect2Width available globally for debugging
 window.forceSelect2Width = forceSelect2Width;
+
+// Modal Functions
+function showSavedReportsModal() {
+    console.log('Showing saved reports modal');
+    // Use Bootstrap modal API
+    const modal = new bootstrap.Modal(document.getElementById('savedReportsModal'));
+    modal.show();
+}
+
+function showAuthRequiredMessage() {
+    $('#loading-reports').hide();
+    $('#no-reports-message').hide();
+    $('#auth-required-message').show();
+    $('#reports-table-body').empty();
+    $('#pagination-container').hide();
+}
+
+// Saved Reports Functionality - Global functions
+function loadSavedReportsModal() {
+    console.log('Loading saved reports for modal...');
+    
+    // Show loading state
+    $('#loading-reports').show();
+    $('#no-reports-message').hide();
+    $('#auth-required-message').hide();
+    $('#reports-table-body').empty();
+    $('#pagination-container').hide();
+    
+    // Fetch saved reports
+    fetch('/my-reports')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Authentication required. Please log in to view saved reports.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Received data:', data);
+            $('#loading-reports').hide();
+            
+            if (data.status === 'success' && data.reports && data.reports.length > 0) {
+                console.log('Displaying', data.reports.length, 'reports in table');
+                displaySavedReportsTable(data.reports);
+                $('#no-reports-message').hide();
+                $('#auth-required-message').hide();
+            } else {
+                console.log('No reports found or empty response');
+                $('#no-reports-message').show();
+                $('#auth-required-message').hide();
+                $('#reports-table-body').empty();
+                $('#pagination-container').hide();
+            }
+        })
+        .catch(error => {
+            console.error('Error loading saved reports:', error);
+            $('#loading-reports').hide();
+            
+            if (error.message.includes('Authentication required')) {
+                showAuthRequiredMessage();
+            } else {
+                $('#reports-table-body').html('<tr><td colspan="5" class="error-message" style="text-align: center; padding: 2rem; color: #dc2626;">Error loading reports. Please try again.</td></tr>');
+            }
+        });
+}
+
+// Display saved reports in table format
+function displaySavedReportsTable(reports) {
+    const tableBody = $('#reports-table-body');
+    if (!tableBody.length) {
+        console.warn('Reports table body element not found');
+        return;
+    }
+    
+    tableBody.empty();
+    
+    reports.forEach(report => {
+        const tableRow = createReportTableRow(report);
+        tableBody.append(tableRow);
+    });
+    
+    // Initialize table features
+    initializeTableFeatures();
+}
+
+// Display saved reports (legacy function for compatibility)
+function displaySavedReports(reports) {
+    const reportsList = $('#saved-reports-list');
+    if (!reportsList.length) {
+        console.warn('Saved reports list element not found');
+        return;
+    }
+    
+    reportsList.empty();
+    
+    reports.forEach(report => {
+        const reportItem = createReportItem(report);
+        reportsList.append(reportItem);
+    });
+}
+
+// Create report table row HTML
+function createReportTableRow(report) {
+    if (!report || !report.id) {
+        console.warn('Invalid report data:', report);
+        return $('<tr><td colspan="5" class="text-center text-danger">Invalid report data</td></tr>');
+    }
+    
+    const createdDate = new Date(report.created_at).toLocaleDateString();
+    const createdTime = new Date(report.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    return $(`
+        <tr data-report-id="${report.id}">
+            <td>
+                <span class="badge bg-primary">${escapeHtml(report.brand || 'N/A')}</span>
+            </td>
+            <td>
+                <span class="fw-medium">${escapeHtml(report.product || 'N/A')}</span>
+            </td>
+            <td>
+                <span class="badge bg-info">${escapeHtml(report.enterprise_size || 'N/A')}</span>
+            </td>
+            <td>
+                <div class="small">${createdDate}</div>
+                <div class="small text-muted">${createdTime}</div>
+            </td>
+            <td>
+                <div class="btn-group" role="group">
+                    <a href="/report/${report.file_path || ''}" class="btn btn-sm btn-outline-primary" title="View Report">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteReport(${report.id})" title="Delete Report">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `);
+}
+
+// Create report item HTML (legacy function for compatibility)
+function createReportItem(report) {
+    if (!report || !report.id) {
+        console.warn('Invalid report data:', report);
+        return $('<div>Invalid report data</div>');
+    }
+    
+    const createdDate = new Date(report.created_at).toLocaleDateString();
+    const createdTime = new Date(report.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    return $(`
+        <div class="saved-report-item" data-report-id="${report.id}">
+            <div class="report-item-header">
+                <h3 class="report-item-title">${escapeHtml(report.title || 'Untitled Report')}</h3>
+                <div class="report-item-date">${createdDate} ${createdTime}</div>
+            </div>
+            <div class="report-item-details">
+                <div class="report-detail-row">
+                    <span class="report-detail-label">Brand:</span>
+                    <span class="report-detail-value">${escapeHtml(report.brand || 'N/A')}</span>
+                </div>
+                <div class="report-detail-row">
+                    <span class="report-detail-label">Product:</span>
+                    <span class="report-detail-value">${escapeHtml(report.product || 'N/A')}</span>
+                </div>
+                <div class="report-detail-row">
+                    <span class="report-detail-label">Budget:</span>
+                    <span class="report-detail-value">${escapeHtml(report.budget || 'N/A')}</span>
+                </div>
+                <div class="report-detail-row">
+                    <span class="report-detail-label">Size:</span>
+                    <span class="report-detail-value">${escapeHtml(report.enterprise_size || 'N/A')}</span>
+                </div>
+            </div>
+            <div class="report-item-actions">
+                <a href="/report/${report.file_path || ''}" class="report-action-btn primary">
+                    <span>👁️</span>
+                    <span>View Report</span>
+                </a>
+                <button class="report-action-btn secondary" onclick="deleteReport(${report.id})">
+                    <span>🗑️</span>
+                    <span>Delete</span>
+                </button>
+            </div>
+        </div>
+    `);
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    if (typeof text !== 'string') {
+        return '';
+    }
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+// Table Features
+function initializeTableFeatures() {
+    // Initialize sorting only
+    initializeTableSorting();
+}
+
+// Table Sorting
+function initializeTableSorting() {
+    $('.reports-table th.sortable').click(function() {
+        const column = $(this).data('sort');
+        const currentSort = $(this).hasClass('asc') ? 'asc' : ($(this).hasClass('desc') ? 'desc' : 'none');
+        
+        // Reset all sort indicators
+        $('.reports-table th.sortable').removeClass('asc desc');
+        
+        // Set new sort direction
+        let newSort = 'asc';
+        if (currentSort === 'asc') {
+            newSort = 'desc';
+        }
+        
+        $(this).addClass(newSort);
+        
+        // Sort the table
+        sortTable(column, newSort);
+    });
+}
+
+function sortTable(column, direction) {
+    const tbody = $('#reports-table-body');
+    const rows = tbody.find('tr').toArray();
+    
+    rows.sort((a, b) => {
+        const aVal = $(a).find(`td:nth-child(${getColumnIndex(column)})`).text().trim();
+        const bVal = $(b).find(`td:nth-child(${getColumnIndex(column)})`).text().trim();
+        
+        // Handle date sorting
+        if (column === 'created_at') {
+            const aDate = new Date($(a).find('td:nth-child(4) .small:first').text());
+            const bDate = new Date($(b).find('td:nth-child(4) .small:first').text());
+            return direction === 'asc' ? aDate - bDate : bDate - aDate;
+        }
+        
+        // Handle text sorting
+        const comparison = aVal.localeCompare(bVal, undefined, { numeric: true });
+        return direction === 'asc' ? comparison : -comparison;
+    });
+    
+    // Re-append sorted rows
+    tbody.empty();
+    rows.forEach(row => tbody.append(row));
+}
+
+function getColumnIndex(column) {
+    const columnMap = {
+        'brand': 1,
+        'product': 2,
+        'enterprise_size': 3,
+        'created_at': 4
+    };
+    return columnMap[column] || 1;
+}
+
+// Removed search and filter functions as they are no longer needed
+
+// Delete report function
+window.deleteReport = function(reportId) {
+    if (!reportId) {
+        console.error('No report ID provided for deletion');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to delete this report? This action cannot be undone.')) {
+        fetch(`/delete-report/${reportId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Remove the report item from both table and list
+                $(`tr[data-report-id="${reportId}"]`).fadeOut(300, function() {
+                    $(this).remove();
+                });
+                $(`.saved-report-item[data-report-id="${reportId}"]`).fadeOut(300, function() {
+                    $(this).remove();
+                });
+                
+                // Check if no reports left
+                if ($('#reports-table-body tr').length === 0 && $('#saved-reports-list .saved-report-item').length === 0) {
+                    $('#no-reports-message').show();
+                }
+            } else {
+                alert('Error deleting report: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting report:', error);
+            alert('Error deleting report. Please try again.');
+        });
+    }
+};

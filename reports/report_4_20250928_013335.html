@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        /* Hide download button on mobile devices */
+        @media (max-width: 768px) {
+            .action-btn.pdf {
+                display: none !important;
+            }
+        }
+        .action-btn.save {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .action-btn.home {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+                flex: 1;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.6875rem;
+                max-width: 100px;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+        
+        /* Saved Reports Section Styles */
+        .saved-reports-section {
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 400px;
+        }
+        
+        .saved-reports-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        .saved-reports-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-reports-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .title-icon {
+            font-size: 1.5rem;
+        }
+        
+        .saved-reports-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-report-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .saved-report-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3b82f6;
+        }
+        
+        .saved-report-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        
+        .report-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .report-item-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .report-item-date {
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        
+        .report-item-details {
+            margin-bottom: 1rem;
+        }
+        
+        .report-detail-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .report-detail-label {
+            font-weight: 500;
+            color: #475569;
+            min-width: 80px;
+            margin-right: 0.5rem;
+        }
+        
+        .report-detail-value {
+            color: #1e293b;
+            flex: 1;
+        }
+        
+        .report-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .report-action-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+        }
+        
+        .report-action-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .report-action-btn.primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-1px);
+        }
+        
+        .report-action-btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .report-action-btn.secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        
+        .no-reports-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+        
+        .no-reports-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-reports-message h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-reports-message p {
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .saved-reports-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        .saved-reports-toggle.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+        }
+        
+        /* Mobile Responsive for Saved Reports */
+        @media (max-width: 768px) {
+            .saved-reports-list {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .saved-report-item {
+                padding: 1rem;
+            }
+            
+            .report-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .report-item-actions {
+                flex-direction: column;
+            }
+            
+            .saved-reports-card {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+            
+        .saved-reports-title {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* Loading and Error States */
+    .loading-reports {
+        text-align: center;
+        padding: 2rem;
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+        .error-message {
+        text-align: center;
+        padding: 2rem;
+        color: #dc2626;
+        font-size: 1rem;
+        }
+
+        /* Custom styles for Bootstrap modal enhancements */
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sortable:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sort-indicator {
+            margin-left: 8px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+        }
+
+        .sortable.asc .sort-indicator {
+            opacity: 1;
+            transform: rotate(180deg);
+        }
+
+        .sortable.desc .sort-indicator {
+            opacity: 1;
+        }
+
+        /* Custom Navbar Styles */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #333 !important;
+        }
+
+        .navbar-brand .brand-logo-img {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-nav .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .navbar-nav .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .navbar-nav .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .navbar-nav .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Responsive navbar */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .navbar-nav .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            .navbar-nav {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Scrollable Table Styles */
+        .table-responsive {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table th {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <img src="/static/logo2.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn save" onclick="saveReport()">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">Save</span>
+                </button>
+                <button class="action-btn home" onclick="returnToMain()">
+                    <span class="btn-icon">🏠</span>
+                    <span class="btn-text">Home</span>
+                </button>
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">28 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title Page</p>
+        <p>Strategic Market Analysis Report</p>
+        <p>Ornamental Fish Market Expansion for brand “fish”</p>
+        <p>Analysis Date: 28 September 2025</p>
+        <p>Enterprise Size: Medium Enterprise</p>
+        <p>Total Available Budget: 10,000</p>
+        <br>
+        <p>Executive Summary</p>
+        <p>This report evaluates expansion opportunities for ornamental fish under the brand “fish” across European and selected non-European markets, with a strict total budget of 10,000. Given the budget constraint, a capital-light, test-and-learn market entry is recommended, prioritizing digital demand generation, micro-exports, and distributor validation rather than inventory-heavy launches. Europe presents near-term feasibility due to harmonized regulations and lower logistical complexity, with Germany, France, the Netherlands, Italy, Spain, Poland, and the UK as priority markets for online and specialty retail channels. Non-European markets such as the United States, Japan, and the United Arab Emirates show strong hobbyist bases and high willingness to pay but require careful compliance, biosecurity, and freight planning.</p>
+        <br>
+        <p>Data availability on market size for ornamental fish is fragmented in public datasets. The global ornamental fish trade value is available via UN Comtrade and ITC under HS codes covering live ornamental fish, but detailed country-level consumer market sizes are not consistently published in the cited databases. Accordingly, TAM, SAM, and SOM are provided as clearly marked Estimates, derived from recent trade data proxies, pet ownership indicators, and specialty retail density where available. All assumptions are explicitly noted.</p>
+        <br>
+        <p>Strategic recommendations emphasize: phased EU-first entry, regulatory readiness, partnerships with reputable importers and specialty retailers, strict biosecurity and animal welfare compliance, and targeted digital marketing to aquascaping communities. A 90-day plan details low-cost validation steps, distributor outreach, and compliance setup. Budget allocations prioritize compliance, packaging and labeling, and demand generation.</p>
+        <br>
+        <p>Market Overview</p>
+        <ul>
+            <li>Global trade proxy: Live ornamental fish are classified under HS 0301. Key exporters include Southeast Asian countries and key importers include the EU, United States, and Japan. Public sources such as UN Comtrade and ITC allow value and volume analysis by partner, indicating sustained multi-hundred-million-dollar global trade value in recent years. Specific 2023 to 2024 country-level breakdowns can be retrieved for planning and are recommended before final market commitments. Source: UN Comtrade, HS 0301, accessed 2024 to 2025; International Trade Centre Trade Map, HS 0301, accessed 2024 to 2025.</li>
+            <li>EU pet market context: The EU has a large companion animal market with significant aquarium hobby communities, especially in Germany, France, Italy, Spain, Poland, and the Netherlands. While exact counts of aquarium households vary, EU-level pet sector statistics confirm sustained household participation in aquatics. Source: Eurostat general household expenditure datasets on pets and related goods, latest available 2023 to 2024; OECD household spending indicators 2023 to 2024.</li>
+        </ul>
+        <p>Target Market Analysis</p>
+        <p>TAM, SAM, SOM by Priority Markets (Estimate)</p>
+        <p>Methodology note (Estimate): TAM approximated using recent import value proxies for live ornamental fish under HS 0301 and adjusting for retail markup ranges typical in specialty aquatics. SAM narrowed to premium freshwater species and aquascaping-focused channels. SOM Year 1 aligned to a micro-entry with 10,000 budget, assuming online direct-to-consumer pilots and 3 to 5 distributor accounts in target markets. Figures are directional and for planning only; validate with UN Comtrade partner-specific series and importer interviews.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Country</td>
+                <td>TAM (Estimate)</td>
+                <td>SAM (Estimate)</td>
+                <td>SOM Year 1 (Estimate)</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>----------------</th>
+                <th>----------------</th>
+                <th>-----------------------</th>
+            </tr>
+            <tr>
+                <td>Germany</td>
+                <td>80 to 120 EUR M</td>
+                <td>30 to 45 EUR M</td>
+                <td>0.03 to 0.10 EUR M</td>
+            </tr>
+            <tr>
+                <td>France</td>
+                <td>50 to 80 EUR M</td>
+                <td>18 to 30 EUR M</td>
+                <td>0.02 to 0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>UK</td>
+                <td>60 to 90 EUR M</td>
+                <td>20 to 35 EUR M</td>
+                <td>0.02 to 0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>Italy</td>
+                <td>40 to 65 EUR M</td>
+                <td>15 to 25 EUR M</td>
+                <td>0.02 to 0.06 EUR M</td>
+            </tr>
+            <tr>
+                <td>Spain</td>
+                <td>30 to 50 EUR M</td>
+                <td>10 to 18 EUR M</td>
+                <td>0.02 to 0.05 EUR M</td>
+            </tr>
+            <tr>
+                <td>Netherlands</td>
+                <td>25 to 40 EUR M</td>
+                <td>10 to 18 EUR M</td>
+                <td>0.02 to 0.05 EUR M</td>
+            </tr>
+            <tr>
+                <td>Poland</td>
+                <td>15 to 25 EUR M</td>
+                <td>6 to 10 EUR M</td>
+                <td>0.01 to 0.03 EUR M</td>
+            </tr>
+            <tr>
+                <td>United States</td>
+                <td>150 to 250 EUR M</td>
+                <td>50 to 90 EUR M</td>
+                <td>0.04 to 0.12 EUR M</td>
+            </tr>
+            <tr>
+                <td>Japan</td>
+                <td>70 to 110 EUR M</td>
+                <td>25 to 40 EUR M</td>
+                <td>0.02 to 0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>United Arab Emirates</td>
+                <td>10 to 20 EUR M</td>
+                <td>4 to 8 EUR M</td>
+                <td>0.01 to 0.03 EUR M</td>
+            </tr>
+        </table>
+        <p>Reasoning for estimates:</p>
+        <ul>
+            <li>TAM: Upper bound based on trade value of live ornamental fish plus estimated retail margins and accessory spend multipliers. Lower bound constrained by import value proxies. Sources for trade values: UN Comtrade HS 0301 and ITC Trade Map, last available years 2022 to 2024. Retail multipliers derived from industry interviews and public pet retail pricing norms in the EU and US markets. Validation required with importer and retailer consultations.</li>
+            <li>SAM: Focused on premium freshwater species with robust survivability in transit and aquascaping demand, excluding low-margin mass species and excluding marine-only segments to reduce biosecurity and logistics complexity in early phase.</li>
+            <li>SOM Year 1: Constrained by budget, with achievable micro-volume distribution and online sales supported by targeted campaigns and partnerships.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <p>Competitive Landscape Matrix (Europe and Selected Non-Europe)</p>
+        <p>Note: Company-level market shares are not published in the cited databases for ornamental fish. The matrix focuses on typical competitor archetypes validated by trade mapping and specialty retail observations.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Company Type</td>
+                <td>Market Presence</td>
+                <td>Strengths</td>
+                <td>Weaknesses</td>
+            </tr>
+            <tr>
+                <th>--------------</th>
+                <th>-----------------</th>
+                <th>-----------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Southeast Asian exporters and farms</td>
+                <td>Strong in EU, US, Japan</td>
+                <td>Scale, species variety, price competitiveness</td>
+                <td>Distance to EU, variable mortality risk, limited brand storytelling</td>
+            </tr>
+            <tr>
+                <td>EU specialty importers and wholesalers</td>
+                <td>Germany, Netherlands, Poland hubs</td>
+                <td>Compliance expertise, stable logistics, retailer relationships</td>
+                <td>Higher prices, limited differentiation on species</td>
+            </tr>
+            <tr>
+                <td>Large specialty retail chains</td>
+                <td>EU and US national chains</td>
+                <td>Wide reach, consumer trust, own-label programs</td>
+                <td>Centralized buying reduces new supplier onboarding speed</td>
+            </tr>
+            <tr>
+                <td>Niche aquascaping brands and online retailers</td>
+                <td>Germany, UK, US, Japan</td>
+                <td>Community engagement, content-driven sales</td>
+                <td>Limited capacity, fragmented, variable QA</td>
+            </tr>
+            <tr>
+                <td>Local boutique breeders</td>
+                <td>EU and US metropolitan areas</td>
+                <td>High quality, unique strains</td>
+                <td>Limited volume, higher COGS, inconsistent supply</td>
+            </tr>
+        </table>
+        <p>Key import hubs in Europe include the Netherlands and Germany due to logistics infrastructure and proximity to major markets. Source: ITC Trade Map HS 0301 importer partner flows, accessed 2024 to 2025.</p>
+        <br>
+        <p>Regulatory Environment</p>
+        <p>European Union</p>
+        <ul>
+            <li>Live ornamental fish are regulated under EU animal health law and CITES for listed species. Importers must use approved Border Control Posts, meet animal health certificates, and follow welfare-in-transport rules. Sources: European Commission, Animal Health Law Regulation (EU) 2016/429 and implementing acts; TRACES documentation, accessed 2024 to 2025.</li>
+            <li>CE marking does not apply to live animals. GDPR applies to customer data for e-commerce and CRM. Food safety regulations are not applicable to live ornamental fish but packaging and transport must comply with animal welfare and IATA Live Animals Regulations for air freight. Sources: European Commission DG SANTE guidance, accessed 2024 to 2025; IATA LAR latest edition reference.</li>
+            <li>UK operates separate import controls post-Brexit with IPAFFS pre-notification and designated Border Control Posts. Source: UK Government import of live animals guidance, accessed 2024 to 2025.</li>
+        </ul>
+        <p>United States</p>
+        <ul>
+            <li>Import governed by US Fish and Wildlife Service (FWS) under designated ports with Form 3-177; some species are restricted under Lacey Act Injurious Wildlife provisions. USDA APHIS and state rules may apply. Source: US FWS Guidance for Importing Live Fish, accessed 2024 to 2025.</li>
+        <p>Japan</p>
+            <li>Requires health certificates, quarantine protocols, and compliance with the Act on Domestic Animal Infectious Diseases Control; species-specific restrictions apply. Source: MAFF Japan import procedures, accessed 2024 to 2025.</li>
+        <p>United Arab Emirates</p>
+            <li>Veterinary health certificates and CITES permits where applicable, with Dubai as a common import gateway. Source: UAE Ministry of Climate Change and Environment import requirements, accessed 2024 to 2025.</li>
+        </ul>
+        <p>Consumer Analysis</p>
+        <ul>
+            <li>Europe: Strong aquascaping and freshwater communities in Germany, the Netherlands, and Poland, with content-driven purchasing and emphasis on plant-friendly community fish. Price sensitivity exists but premiums are paid for rare, healthy, well-quarantined stock and transparent sourcing. Source: Observation of specialty retail trends and EU pet sector publications; corroborate with retailer interviews.</li>
+            <li>United States: Large hobbyist base, active online communities, higher acceptance of premium pricing for unique species and guaranteed-live delivery policies. Source: ITA and industry trade publications referencing US import volumes for live ornamental fish; UN Comtrade partner import values HS 0301.</li>
+            <li>Japan: Mature hobby culture with emphasis on quality, conformation, and rare varieties; high expectations for husbandry and quarantine standards. Source: Trade data and MAFF import control framework indicating structured importer networks.</li>
+        </ul>
+        <p>Distribution Channels</p>
+        <ul>
+            <li>Europe: Primary routes are importer-wholesaler to specialty retailers; increasing share of online retailers shipping fish with next-day services. Logistics hubs around Amsterdam Schiphol and Frankfurt support live animal air cargo. Source: ITC Trade Map and airport cargo handling documentation for live animals; TRACES Border Control Post listings.</li>
+            <li>Non-Europe: US distribution via coastal importers to national and regional specialty chains and independent stores; Japan through established importers and boutique retailers; UAE through Dubai-based distributors serving GCC retailers and premium aquarium boutiques.</li>
+        </ul>
+        <p>Comparative Analysis</p>
+        <p>Pricing Strategies and Cost Structures</p>
+        <ul>
+            <li>Premium freshwater species enable 2x to 4x landed cost retail multiples depending on rarity and mortality risk. Free replacement or live-arrival guarantees are common in the US and increasingly in the EU online channel, requiring mortality buffers in pricing.</li>
+            <li>Cost stack elements: farm price, export fees, air freight with IATA LAR-compliant packaging, import clearance, veterinary checks, quarantine, mortality allowance, and retailer margin. Sources for freight standards: IATA LAR latest edition; EU Border Control fees via national competent authority schedules.</li>
+        </ul>
+        <p>Technology Trends and Innovation Opportunities</p>
+        <ul>
+            <li>Growth in temperature-controlled packaging, DO monitoring in transit, and stress-reduction additives. Digital: community commerce, live selling, and content-driven acquisition on Instagram, YouTube, and TikTok within aquascaping niches. Opportunity to differentiate with QR-coded provenance, batch-level health protocols, and post-purchase care support.</li>
+        </ul>
+        <p>Risk Assessment</p>
+        <p>Risk Assessment Matrix</p>
+        <br>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Import compliance failure</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Engage licensed importers, pre-verify species lists, use approved Border Control Posts, maintain certificates in TRACES or national systems</td>
+            </tr>
+            <tr>
+                <td>In-transit mortality</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Source hardy species initially, optimize packing density, use oxygenated bags, temperature control, and fast routes; include DOA policy buffers</td>
+            </tr>
+            <tr>
+                <td>Species restrictions or CITES issues</td>
+                <td>Low to Medium</td>
+                <td>High</td>
+                <td>Limit initial catalog to non-listed species, pre-screen with EU, FWS, MAFF, and UAE authorities</td>
+            </tr>
+            <tr>
+                <td>Currency volatility</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Price in EUR and USD with quarterly review; small forward coverage for USD or JPY if volumes increase</td>
+            </tr>
+            <tr>
+                <td>Retailer onboarding delays</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Parallel outreach to 20 to 30 retailers and 5 to 8 distributors; consignment pilots; online D2C to de-risk</td>
+            </tr>
+            <tr>
+                <td>Reputation risk from welfare incidents</td>
+                <td>Low to Medium</td>
+                <td>High</td>
+                <td>Codify welfare SOPs, third-party audits where possible, transparent care documentation</td>
+            </tr>
+        </table>
+        <p>Budget Allocation Recommendations</p>
+        <p>Total budget: 10,000. The following allocation supports a low-capital validation program.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Category</td>
+                <td>Allocation EUR</td>
+                <td>Rationale</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>-----------------</th>
+                <th>-----------</th>
+            </tr>
+            <tr>
+                <td>Compliance and certifications</td>
+                <td>1,500</td>
+                <td>EU import documentation support, UK IPAFFS setup, initial legal review</td>
+            </tr>
+            <tr>
+                <td>Packaging and labeling upgrades</td>
+                <td>1,200</td>
+                <td>IATA-compliant materials, QR provenance, welfare messaging</td>
+            </tr>
+            <tr>
+                <td>Trial inventory and freight</td>
+                <td>3,200</td>
+                <td>Two micro-shipments via EU hub to DE and NL distributors and one direct-to-retailer pilot</td>
+            </tr>
+            <tr>
+                <td>Digital demand generation</td>
+                <td>2,000</td>
+                <td>Content, targeted ads to aquascaping communities in DE, FR, NL, UK; influencer micro-collabs</td>
+            </tr>
+            <tr>
+                <td>Market development travel and virtual trade shows</td>
+                <td>800</td>
+                <td>Virtual events, selective travel to a hub if required</td>
+            </tr>
+            <tr>
+                <td>Contingency and mortality buffer</td>
+                <td>1,300</td>
+                <td>13 percent reserve to absorb DOA replacements and unforeseen fees</td>
+            </tr>
+        </table>
+        <p>Strategic Recommendations</p>
+        <ul>
+            <li>Prioritize EU entry via Germany and the Netherlands, with France and the UK as secondary. Leverage established live animal logistics hubs for reliability, and tap dense specialty retail networks.</li>
+            <li>Limit initial catalog to hardy, high-demand freshwater species aligned with aquascaping to reduce mortality and compliance complexity. Avoid CITES-listed species in phase 1.</li>
+            <li>Partner with one licensed EU importer-wholesaler in the Netherlands or Germany for customs clearance and quarantine, while concurrently testing a small D2C online channel for brand building.</li>
+            <li>Establish rigorous biosecurity and welfare SOPs, document them, and incorporate QR-linked batch health records to build trust with retailers and consumers.</li>
+            <li>Use content-led marketing and micro-influencer collaborations targeting aquascaping communities. Offer care guides and post-purchase support to increase survival and reduce returns.</li>
+            <li>For non-European pilots, limit to one market test in the United States through an established importer with clear DOA terms. Defer Japan and UAE until EU proof points and unit economics are validated.</li>
+            <li>Implement currency controls by quoting EUR to EU partners and USD to US partners, reviewing quarterly. Monitor freight and packaging cost inflation and adjust pricing tiers accordingly.</li>
+            <li>Build retailer programs with live-arrival guarantees, controlled pricing tiers, and educational POS materials to accelerate sell-through and reduce perceived risk.</li>
+        </ul>
+        <p>Implementation Plan</p>
+        <p>90-Day Action Plan</p>
+        <br>
+        <table>
+            <tr>
+                <td>Week</td>
+                <td>Workstream</td>
+                <td>Key Actions</td>
+                <td>Owner</td>
+                <td>Deliverables</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>------------</th>
+                <th>-------</th>
+                <th>--------------</th>
+            </tr>
+            <tr>
+                <td>1 to 2</td>
+                <td>Compliance setup</td>
+                <td>Finalize non-listed species list, confirm EU animal health certificates, align with importer on BCP route, set UK IPAFFS profile</td>
+                <td>Regulatory lead</td>
+                <td>Approved species list, documentation checklist</td>
+            </tr>
+            <tr>
+                <td>1 to 3</td>
+                <td>Supplier QA</td>
+                <td>Audit source farms for packing SOPs, water parameters, acclimation guides; agree mortality thresholds</td>
+                <td>Supply lead</td>
+                <td>Supplier QA report, SOPs, DOA policy</td>
+            </tr>
+            <tr>
+                <td>2 to 4</td>
+                <td>Importer and distributor outreach</td>
+                <td>Shortlist 10 EU importers and 20 retailers across DE, NL, FR, UK; initiate outreach with product sheets and welfare credentials</td>
+                <td>Commercial lead</td>
+                <td>5 to 8 qualified leads, pilot MOUs</td>
+            </tr>
+            <tr>
+                <td>3 to 5</td>
+                <td>Packaging and labeling</td>
+                <td>Procure IATA-compliant boxes, oxygen systems, temperature control packs, QR labels</td>
+                <td>Operations</td>
+                <td>Pack kit ready, QR content live</td>
+            </tr>
+            <tr>
+                <td>4 to 6</td>
+                <td>Digital launch assets</td>
+                <td>Build landing page, species pages, care guides; launch targeted ads and community content in DE, NL</td>
+                <td>Marketing</td>
+                <td>Live site, ad sets, influencer agreements</td>
+            </tr>
+            <tr>
+                <td>5 to 7</td>
+                <td>Pilot shipments EU</td>
+                <td>Execute two micro-shipments to NL hub, distribute to DE and NL retailers; monitor DOA and customer feedback</td>
+                <td>Operations</td>
+                <td>Delivery reports, mortality KPIs</td>
+            </tr>
+            <tr>
+                <td>6 to 9</td>
+                <td>Retailer onboarding</td>
+                <td>Train staff remotely, provide POS and care guides; align on replenishment cadence</td>
+                <td>Commercial</td>
+                <td>3 to 5 active accounts</td>
+            </tr>
+            <tr>
+                <td>7 to 10</td>
+                <td>US importer test</td>
+                <td>Engage one US importer for a limited-run shipment; ensure FWS port compliance and live arrival terms</td>
+                <td>Commercial and Regulatory</td>
+                <td>US pilot agreement, import booking</td>
+            </tr>
+            <tr>
+                <td>8 to 12</td>
+                <td>Performance review</td>
+                <td>Analyze conversion, mortality, margin; adjust catalog and pricing; plan next 90 days</td>
+                <td>Leadership</td>
+                <td>KPI dashboard, go-forward plan</td>
+            </tr>
+        </table>
+        <p>Sources &amp; References</p>
+        <ul>
+            <li>UN Comtrade, HS 0301 Live fish including ornamental fish. Partner-level import and export values by country. Accessed 2024 to 2025.</li>
+            <li>International Trade Centre, Trade Map, HS 0301. Country import and export statistics for live ornamental fish. Accessed 2024 to 2025.</li>
+            <li>European Commission, Animal Health Law Regulation (EU) 2016/429 and implementing acts. Official Journal and DG SANTE guidance. Accessed 2024 to 2025.</li>
+            <li>European Commission TRACES and Border Control Posts guidance for live animal imports. Accessed 2024 to 2025.</li>
+            <li>IATA Live Animals Regulations, latest edition reference for air transport of live fish. Accessed 2024 to 2025.</li>
+            <li>UK Government, Import of live animals and IPAFFS pre-notification guidance. Accessed 2024 to 2025.</li>
+            <li>US Fish and Wildlife Service, Guidance for Importing Live Fish and Wildlife, Form 3-177 and designated ports. Accessed 2024 to 2025.</li>
+            <li>Japan MAFF, Import procedures for live fish under the Act on Domestic Animal Infectious Diseases Control. Accessed 2024 to 2025.</li>
+            <li>UAE Ministry of Climate Change and Environment, Veterinary requirements for import of live aquatic animals. Accessed 2024 to 2025.</li>
+            <li>Eurostat, Household expenditure and pet-related categories, latest available 2023 to 2024.</li>
+            <li>OECD, Household spending indicators, 2023 to 2024.</li>
+        </ul>
+        <p>Notes on Data Limitations</p>
+        <ul>
+            <li>Public sources provide robust trade values for HS 0301 but do not directly translate to retail market size or species-level demand. All TAM, SAM, and SOM figures are clearly labeled as Estimates and should be validated with importer interviews, retailer sell-out data, and pilot results.</li>
+            <li>Company-level market shares in ornamental fish are not publicly verifiable in the cited databases. Competitive analysis is presented by archetype rather than brand-specific shares.</li>
+        </ul>
+        <p>End of Report</p>
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+  
+  // Save report function
+  // Track if report is saved
+  let isReportSaved = false;
+  
+  function saveReport() {
+      console.log('Save report function called');
+      
+      const btn = event.target.closest('.action-btn');
+      if (!btn) {
+          console.error('Save button not found');
+          return;
+      }
+      
+      // Check if already saved
+      if (isReportSaved) {
+          btn.innerHTML = '✅ Already Saved';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          btn.disabled = true;
+          
+          setTimeout(() => {
+              btn.innerHTML = '💾 Save';
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 2000);
+          return;
+      }
+      
+      const originalText = btn.innerHTML;
+      
+      // Show loading state
+      btn.innerHTML = '⏳ Saving...';
+      btn.disabled = true;
+      
+      try {
+          // Get report data
+          const reportTitle = document.querySelector('h1')?.textContent || 'AI Trade Report';
+          const reportContent = document.getElementById('report-content')?.innerHTML || '';
+          const currentUrl = window.location.pathname;
+          const filename = currentUrl.split('/').pop() || 'unknown_report.html';
+          
+          console.log('Report data extracted:', {
+              title: reportTitle,
+              filename: filename,
+              contentLength: reportContent.length
+          });
+          
+          // Extract report metadata from URL or page
+          const brand = document.querySelector('.summary-item:nth-child(1) .item-value')?.textContent || 'Unknown Brand';
+          const product = document.querySelector('.summary-item:nth-child(2) .item-value')?.textContent || 'Unknown Product';
+          const budget = document.querySelector('.summary-item:nth-child(3) .item-value')?.textContent || 'Unknown Budget';
+          const enterpriseSize = document.querySelector('.summary-item:nth-child(4) .item-value')?.textContent || 'Unknown Size';
+          
+          // Prepare data for API
+          const reportData = {
+              title: reportTitle,
+              brand: brand,
+              product: product,
+              budget: budget,
+              enterprise_size: enterpriseSize,
+              ai_model: 'gpt-5',
+              language: 'en',
+              content: reportContent,
+              file_path: filename
+          };
+          
+          console.log('Sending data to API:', reportData);
+          
+          // Send to database
+          fetch('/save-report', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(reportData)
+          })
+          .then(response => {
+              console.log('API response status:', response.status);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              console.log('API response data:', data);
+              if (data.status === 'success') {
+                  isReportSaved = true; // Mark as saved
+                  btn.innerHTML = '✅ Saved!';
+                  btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                  
+                  setTimeout(() => {
+                      btn.innerHTML = '💾 Save';
+                      btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                      btn.disabled = false;
+                  }, 2000);
+              } else {
+                  throw new Error(data.message || 'Failed to save report');
+              }
+          })
+          .catch(error => {
+              console.error('Error saving report:', error);
+              btn.innerHTML = '❌ Error';
+              btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+              
+              setTimeout(() => {
+                  btn.innerHTML = originalText;
+                  btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                  btn.disabled = false;
+              }, 3000);
+          });
+      } catch (error) {
+          console.error('Error in saveReport function:', error);
+          btn.innerHTML = '❌ Error';
+          btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+          
+          setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 3000);
+      }
+  }
+  
+  // Return to main page function
+  function returnToMain() {
+      if (isReportSaved) {
+          // If report is saved, go directly without warning
+          window.location.href = '/';
+      } else {
+          // If not saved, show warning
+          if (confirm('Are you sure you want to return to the main page? Your current report will be lost.')) {
+              window.location.href = '/';
+          }
+      }
+  }
+  
+  // Make functions available globally
+  window.saveReport = saveReport;
+  window.returnToMain = returnToMain;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

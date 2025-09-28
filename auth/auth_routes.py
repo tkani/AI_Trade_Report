@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Form, Request, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -6,7 +6,9 @@ from datetime import timedelta, datetime
 from database.models import User, get_db, create_tables
 from auth.auth import authenticate_user, create_access_token, get_password_hash, get_current_user, verify_token
 from schemas.schemas import UserCreate, UserLogin, UserResponse, Token, UserUpdate
+from services.email_service import email_service
 import os
+import secrets
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,6 +38,13 @@ async def register_user(
 ):
     """Register a new user"""
     try:
+        # Validate password length (bcrypt has 72-byte limit)
+        if len(password.encode('utf-8')) > 72:
+            return templates.TemplateResponse("register.html", {
+                "request": request,
+                "error": "Password is too long. Please use a password with 72 characters or less."
+            })
+        
         # Check if user already exists
         existing_user = db.query(User).filter(User.email == email).first()
         if existing_user:
@@ -209,4 +218,148 @@ async def update_profile(
             "request": request,
             "user": current_user,
             "error": f"Update failed: {str(e)}"
+        })
+
+# Password Recovery Routes
+
+@router.get("/forgot-password", response_class=HTMLResponse)
+async def forgot_password_page(request: Request):
+    """Display forgot password page"""
+    return templates.TemplateResponse("forgot_password.html", {"request": request})
+
+@router.post("/forgot-password", response_class=HTMLResponse)
+async def forgot_password(
+    request: Request,
+    email: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Handle forgot password request"""
+    try:
+        # Check if user exists
+        user = db.query(User).filter(User.email == email).first()
+        if not user:
+            # Don't reveal if email exists or not for security
+            return templates.TemplateResponse("forgot_password.html", {
+                "request": request,
+                "success": "If an account with that email exists, you will receive password reset instructions."
+            })
+        
+        # Generate reset token
+        reset_token = secrets.token_urlsafe(32)
+        reset_token_expires = datetime.utcnow() + timedelta(hours=1)
+        
+        # Update user with reset token
+        user.reset_token = reset_token
+        user.reset_token_expires = reset_token_expires
+        db.commit()
+        
+        # Send reset email
+        print(f"DEBUG: Attempting to send email to {user.email}")
+        email_sent = email_service.send_password_reset_email(
+            to_email=user.email,
+            reset_token=reset_token,
+            user_name=f"{user.name} {user.surname}"
+        )
+        print(f"DEBUG: Email sending result: {email_sent}")
+        
+        if email_sent:
+            return templates.TemplateResponse("forgot_password.html", {
+                "request": request,
+                "success": "Password reset instructions have been sent to your email address."
+            })
+        else:
+            return templates.TemplateResponse("forgot_password.html", {
+                "request": request,
+                "error": "Failed to send reset email. Please try again later."
+            })
+            
+    except Exception as e:
+        return templates.TemplateResponse("forgot_password.html", {
+            "request": request,
+            "error": f"An error occurred: {str(e)}"
+        })
+
+@router.get("/reset-password", response_class=HTMLResponse)
+async def reset_password_page(request: Request, token: str = Query(...), db: Session = Depends(get_db)):
+    """Display reset password page"""
+    try:
+        # Validate token
+        user = db.query(User).filter(
+            User.reset_token == token,
+            User.reset_token_expires > datetime.utcnow()
+        ).first()
+        
+        if not user:
+            return templates.TemplateResponse("reset_password.html", {
+                "request": request,
+                "error": "Invalid or expired reset token. Please request a new password reset."
+            })
+        
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token
+        })
+        
+    except Exception as e:
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "error": f"An error occurred: {str(e)}"
+        })
+
+@router.post("/reset-password", response_class=HTMLResponse)
+async def reset_password(
+    request: Request,
+    token: str = Form(...),
+    password: str = Form(...),
+    confirm_password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """Handle password reset"""
+    try:
+        # Validate token
+        user = db.query(User).filter(
+            User.reset_token == token,
+            User.reset_token_expires > datetime.utcnow()
+        ).first()
+        
+        if not user:
+            return templates.TemplateResponse("reset_password.html", {
+                "request": request,
+                "error": "Invalid or expired reset token. Please request a new password reset."
+            })
+        
+        # Validate passwords match
+        if password != confirm_password:
+            return templates.TemplateResponse("reset_password.html", {
+                "request": request,
+                "error": "Passwords do not match. Please try again.",
+                "token": token
+            })
+        
+        # Validate password length
+        if len(password.encode('utf-8')) > 72:
+            return templates.TemplateResponse("reset_password.html", {
+                "request": request,
+                "error": "Password is too long. Please use a password with 72 characters or less.",
+                "token": token
+            })
+        
+        # Update password
+        user.hashed_password = get_password_hash(password)
+        user.reset_token = None
+        user.reset_token_expires = None
+        user.updated_at = datetime.utcnow()
+        
+        db.commit()
+        
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "success": "Password has been reset successfully! You can now log in with your new password."
+        })
+        
+    except Exception as e:
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "error": f"An error occurred: {str(e)}",
+            "token": token
         })

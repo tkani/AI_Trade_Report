@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        /* Hide download button on mobile devices */
+        @media (max-width: 768px) {
+            .action-btn.pdf {
+                display: none !important;
+            }
+        }
+        .action-btn.save {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .action-btn.home {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+                flex: 1;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.6875rem;
+                max-width: 100px;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+        
+        /* Saved Reports Section Styles */
+        .saved-reports-section {
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 400px;
+        }
+        
+        .saved-reports-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        .saved-reports-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-reports-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .title-icon {
+            font-size: 1.5rem;
+        }
+        
+        .saved-reports-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-report-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .saved-report-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3b82f6;
+        }
+        
+        .saved-report-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        
+        .report-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .report-item-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .report-item-date {
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        
+        .report-item-details {
+            margin-bottom: 1rem;
+        }
+        
+        .report-detail-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .report-detail-label {
+            font-weight: 500;
+            color: #475569;
+            min-width: 80px;
+            margin-right: 0.5rem;
+        }
+        
+        .report-detail-value {
+            color: #1e293b;
+            flex: 1;
+        }
+        
+        .report-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .report-action-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+        }
+        
+        .report-action-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .report-action-btn.primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-1px);
+        }
+        
+        .report-action-btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .report-action-btn.secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        
+        .no-reports-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+        
+        .no-reports-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-reports-message h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-reports-message p {
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .saved-reports-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        .saved-reports-toggle.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+        }
+        
+        /* Mobile Responsive for Saved Reports */
+        @media (max-width: 768px) {
+            .saved-reports-list {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .saved-report-item {
+                padding: 1rem;
+            }
+            
+            .report-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .report-item-actions {
+                flex-direction: column;
+            }
+            
+            .saved-reports-card {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+            
+        .saved-reports-title {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* Loading and Error States */
+    .loading-reports {
+        text-align: center;
+        padding: 2rem;
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+        .error-message {
+        text-align: center;
+        padding: 2rem;
+        color: #dc2626;
+        font-size: 1rem;
+        }
+
+        /* Custom styles for Bootstrap modal enhancements */
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sortable:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sort-indicator {
+            margin-left: 8px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+        }
+
+        .sortable.asc .sort-indicator {
+            opacity: 1;
+            transform: rotate(180deg);
+        }
+
+        .sortable.desc .sort-indicator {
+            opacity: 1;
+        }
+
+        /* Custom Navbar Styles */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #333 !important;
+        }
+
+        .navbar-brand .brand-logo-img {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-nav .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .navbar-nav .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .navbar-nav .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .navbar-nav .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Responsive navbar */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .navbar-nav .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            .navbar-nav {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Scrollable Table Styles */
+        .table-responsive {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table th {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <img src="/static/logo2.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn save" onclick="saveReport()">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">Save</span>
+                </button>
+                <button class="action-btn home" onclick="returnToMain()">
+                    <span class="btn-icon">🏠</span>
+                    <span class="btn-text">Home</span>
+                </button>
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">28 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title: Strategic Market Analysis Report for Brand “potato” – Fresh Potatoes</p>
+        <p>Analysis Date: 28 September 2025</p>
+        <p>Enterprise Size: Small Enterprise</p>
+        <p>Total Available Budget: 10000</p>
+        <br>
+        <p>Executive Summary</p>
+        <ul>
+            <li>Objective: Assess near-term market expansion options for fresh potatoes under the brand “potato,” with a constrained test budget of 10000. Focus is on identifying the lowest-friction, highest-probability markets to validate demand and set up repeatable distribution at small scale.</li>
+            <li>Key Findings: Within Europe, proximity markets with robust import throughput, established retail networks, and predictable food safety frameworks provide the most capital-efficient path to initial traction. Germany, Netherlands, Poland, and Spain combine high per capita potato consumption or trade depth with practical logistics. Outside Europe, small-batch pilots are feasible in high-price, import-dependent markets such as the Gulf Cooperation Council, but regulatory registration, cold-chain requirements, and airfreight costs significantly constrain ROI for a 10000 budget. North America and East Asia are attractive in absolute size but are not budget-aligned for initial shipments.</li>
+            <li>Primary Recommendation: Phase 1 focus on EU single market test launches centered on Germany and the Netherlands with parallel B2B trials in Poland and Spain. Defer non-European entry to a desk-research and partner-scouting sprint, reserving up to 25 percent of budget for partner development, compliance checks, and digital demand tests. Use a 90-day plan to secure buyers, verify unit economics, and establish compliant packhouse labeling. Scale only on confirmed margin and repeat orders.</li>
+        </ul>
+        <p>Market Overview</p>
+        <ul>
+            <li>Global production and trade context: The European Union, China, India, and Russia are among the largest producers of potatoes globally. The EU is a major producer and trader of fresh and processed potatoes, with intra-EU trade benefiting from the single market.</li>
+            <li>EU intra-market logistics: The EU single market enables cross-border movement of agricultural goods with harmonized sanitary and phytosanitary rules and standardized labeling requirements, facilitating small enterprise entry when partnered with EU-registered packers.</li>
+        </ul>
+        <p>Data sources note: Quantitative import volumes, consumption per capita, and price bands vary by subcategory and season. Publicly available aggregate statistics exist, but granular SKU-level market size for a small brand launch is limited in open sources. Therefore, market size estimates herein are conservatively framed and labeled as Estimate with reasoning.</p>
+        <br>
+        <p>Target Market Analysis</p>
+        <p>TAM, SAM, SOM (Estimate)</p>
+        <p>Reasoning:</p>
+        <ul>
+            <li>TAM: Addressable value of fresh table potatoes in retail and foodservice in selected markets, proxied by national household consumption expenditure and trade value indicators for fresh potatoes. For small enterprise planning, broad ranges reflect seasonal and price variability.</li>
+            <li>SAM: Share of TAM realistically reachable through chosen channels within 12 months, focusing on major urban regions and buyers reachable via distributors.</li>
+            <li>SOM Year 1: Attainable sales based on 10000 budget and realistic trial volumes, assuming modest marketing, sampling, and brokerage costs and using conservative volume targets per buyer.</li>
+        </ul>
+        <table>
+            <tr>
+                <td>Country or Region</td>
+                <td>TAM (Estimate)</td>
+                <td>SAM 12m (Estimate)</td>
+                <td>SOM Year 1 (Estimate)</td>
+            </tr>
+            <tr>
+                <th>-------------------</th>
+                <th>----------------</th>
+                <th>--------------------</th>
+                <th>-----------------------</th>
+            </tr>
+            <tr>
+                <td>Germany</td>
+                <td>2500-3500 EUR M</td>
+                <td>150-250 EUR M</td>
+                <td>0.05-0.15 EUR M</td>
+            </tr>
+            <tr>
+                <td>Netherlands</td>
+                <td>600-900 EUR M</td>
+                <td>40-70 EUR M</td>
+                <td>0.03-0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>Poland</td>
+                <td>900-1200 EUR M</td>
+                <td>50-90 EUR M</td>
+                <td>0.02-0.06 EUR M</td>
+            </tr>
+            <tr>
+                <td>Spain</td>
+                <td>800-1100 EUR M</td>
+                <td>60-100 EUR M</td>
+                <td>0.03-0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>UK</td>
+                <td>1500-2200 EUR M</td>
+                <td>100-180 EUR M</td>
+                <td>0.03-0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>France</td>
+                <td>2000-2800 EUR M</td>
+                <td>120-200 EUR M</td>
+                <td>0.03-0.08 EUR M</td>
+            </tr>
+            <tr>
+                <td>Italy</td>
+                <td>800-1100 EUR M</td>
+                <td>50-90 EUR M</td>
+                <td>0.02-0.06 EUR M</td>
+            </tr>
+            <tr>
+                <td>Gulf Cooperation Council</td>
+                <td>500-800 EUR M</td>
+                <td>30-60 EUR M</td>
+                <td>0.01-0.05 EUR M</td>
+            </tr>
+            <tr>
+                <td>North America</td>
+                <td>4000-6000 EUR M</td>
+                <td>150-300 EUR M</td>
+                <td>0.02-0.06 EUR M</td>
+            </tr>
+            <tr>
+                <td>East Asia key metros</td>
+                <td>3000-5000 EUR M</td>
+                <td>120-250 EUR M</td>
+                <td>0.02-0.05 EUR M</td>
+            </tr>
+        </table>
+        <p>Estimate notes:</p>
+        <ul>
+            <li>TAM ranges are directional, grounded in the presence of large national retail markets and import-export activity for potatoes. Exact numeric validation requires paid datasets or national statistical tables by CN code 0701.</li>
+            <li>SOM Year 1 range assumes 10000 budget limits to sampling, brokerage, compliance, and small production runs. Assumes average wholesale prices 0.25-0.60 EUR per kg in EU seasonally, with modest brand premium possible via varietal differentiation or sustainable packaging.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <ul>
+            <li>EU competition: Highly fragmented market of domestic growers, cooperatives, and packers, plus importers for off-season or specific varieties. Private label dominates retail shelves in many markets. Differentiation typically via variety, origin, sustainability, and cooking properties.</li>
+            <li>Non-EU competition: In import-dependent regions such as the Gulf, suppliers from Europe, Egypt, Pakistan, and India are present. Price sensitivity is high, but premium retail segments accept higher prices for branded European origin and specific varieties.</li>
+            <li>Buyer power: Large supermarket groups exercise strong bargaining power. Independent greengrocers, ethnic stores, and foodservice distributors allow faster trials but lower volumes.</li>
+        </ul>
+        <p>Competitive Landscape Matrix (Qualitative)</p>
+        <table>
+            <tr>
+                <td>Competitor Type</td>
+                <td>Market Share Directionality</td>
+                <td>Strengths</td>
+                <td>Weaknesses</td>
+            </tr>
+            <tr>
+                <th>-----------------</th>
+                <th>-----------------------------</th>
+                <th>-----------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Domestic grower cooperatives</td>
+                <td>High in EU</td>
+                <td>Scale, relationships, cost base</td>
+                <td>Limited brand storytelling</td>
+            </tr>
+            <tr>
+                <td>Retail private label</td>
+                <td>High in EU</td>
+                <td>Shelf control, pricing power</td>
+                <td>Low differentiation beyond value tiers</td>
+            </tr>
+            <tr>
+                <td>EU importers and packers</td>
+                <td>Medium</td>
+                <td>Year-round assortment, compliance readiness</td>
+                <td>Margin dependent on logistics and shrink</td>
+            </tr>
+            <tr>
+                <td>Non-EU suppliers in GCC</td>
+                <td>Medium to high</td>
+                <td>Cost advantage in certain seasons</td>
+                <td>Quality variability, lead times</td>
+            </tr>
+        </table>
+        <p>Regulatory Environment</p>
+        <ul>
+            <li>EU food safety and hygiene: Compliance under EU General Food Law Regulation (EC) No 178/2002, hygiene package including Regulation (EC) No 852/2004 on the hygiene of foodstuffs, and traceability requirements. Fresh produce operators must implement HACCP-based procedures.</li>
+            <li>Plant health and marketing standards: Marketing standards for fresh fruit and vegetables apply to potatoes, including quality, sizing, tolerances, and labeling of origin and class where applicable. Phytosanitary rules apply for non-EU imports.</li>
+            <li>Labeling and consumer information: Regulation (EU) No 1169/2011 on food information to consumers governs origin labeling and pack information. For unprocessed potatoes, allergen and nutrition panels are generally not mandatory unless claims are made, but origin and lot traceability are required.</li>
+            <li>CE marking: Not applicable to fresh potatoes since CE applies to specific product categories such as electronics and machinery.</li>
+            <li>GDPR: Relevant to consumer data processing for digital marketing and CRM. Requires lawful basis, transparency, and data minimization.</li>
+            <li>Non-EU import requirements: Markets such as GCC require phytosanitary certificates and may require supplier registration with local authorities or municipality approvals. US requires compliance with FDA registration for facilities handling food and Foreign Supplier Verification Program for importers. East Asia often requires import permits and adherence to quarantine standards.</li>
+        <p>Sources and dates:</p>
+            <li>European Commission, General Food Law Regulation and Hygiene Package, consolidated texts, accessed 2024.</li>
+            <li>Regulation (EU) No 1169/2011 on food information to consumers, consolidated, accessed 2024.</li>
+            <li>US FDA Food Safety Modernization Act materials, accessed 2024.</li>
+        <p>Note: Specific import tariff rates and seasonal restrictions vary by HS code 0701 and partner country and should be confirmed directly in TARIC or national customs databases before shipment.</p>
+        </ul>
+        <p>Consumer Analysis</p>
+        <ul>
+            <li>EU consumer behavior: Potatoes remain a staple with stable household penetration. Growth is seen in convenience formats and specific cooking-purpose varieties. Provenance, sustainability, and plastic-free or recyclable packaging influence premium segment purchasing.</li>
+            <li>Non-EU consumer behavior: In GCC and parts of East Asia, imported potatoes are common in modern retail. Premiumization is tied to perceived European quality, varietal attributes, and cleanliness. In North America, category is mature with strong domestic supply, making branded imports niche.</li>
+        </ul>
+        <p>Distribution Channels</p>
+        <ul>
+            <li>EU: Practical entry via wholesalers and fresh produce markets serving supermarkets and independents. Key hubs include Germany’s wholesale markets, the Netherlands’ Rotterdam logistics ecosystem, and Spain’s Mercas network. Working with an EU-based packer with BRCGS or IFS certification simplifies compliance.</li>
+            <li>Non-EU: Distributor-led entry is essential. In GCC, partner with cold-chain importers supplying Carrefour, Lulu, and Spinneys. For small budget pilots, start with 1 importer and limited SKU set. Airfreight is generally uneconomic for potatoes; reefer sea freight is standard but requires volume and longer cash cycles.</li>
+        </ul>
+        <p>Comparative Pricing Strategies and Cost Structures</p>
+        <ul>
+            <li>EU wholesale reference: Seasonal farm-gate to wholesale spreads typically 0.15-0.40 EUR per kg depending on variety and yield. Branded retail packs in Western EU can range around 0.90-2.00 EUR per kg in mainstream retail, with premiums for specialty varieties.</li>
+            <li>Non-EU import-dependent markets: Retail prices may be higher due to freight and duties, but importers demand competitive wholesale pricing and consistent quality. Logistics, shrink, and compliance costs compress exporter margin.</li>
+        </ul>
+        <p>Technology Trends and Innovation Opportunities</p>
+        <ul>
+            <li>Post-harvest handling: Smart temperature and humidity monitoring in storage and transport improves shelf life and reduces shrink.</li>
+            <li>Packaging: Recyclable paper or netting with minimal plastic and clear cooking-use icons enhance perceived value.</li>
+            <li>Traceability: Lot-level QR codes with origin and variety information support retailer compliance and consumer trust.</li>
+        </ul>
+        <p>Risk Assessment</p>
+        <p>Risk Assessment Matrix</p>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Price volatility and seasonal oversupply</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Contract partial volumes with indexed pricing, diversify varieties and markets</td>
+            </tr>
+            <tr>
+                <td>Quality loss and shrink in transit</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Pre-shipment quality checks, temperature loggers, select certified packers and reefer carriers</td>
+            </tr>
+            <tr>
+                <td>Buyer concentration risk</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Target mix of wholesalers, independents, and foodservice distributors</td>
+            </tr>
+            <tr>
+                <td>Regulatory non-compliance</td>
+                <td>Low to Medium</td>
+                <td>High</td>
+                <td>Use EU-certified packer, maintain documentation, engage customs brokers</td>
+            </tr>
+            <tr>
+                <td>Currency moves for non-EU sales</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Invoice in EUR where possible, short payment terms, simple hedging via forward agreement if scaling</td>
+            </tr>
+            <tr>
+                <td>Working capital constraints</td>
+                <td>High</td>
+                <td>Medium</td>
+                <td>Require deposits or use factoring when volumes grow, limit payment terms to 14-21 days in pilots</td>
+            </tr>
+        </table>
+        <p>Strategic Recommendations</p>
+        <ul>
+            <li>Primary market focus: Launch pilots in Germany and the Netherlands leveraging proximity, logistics depth, and buyer density. Secondary EU pilots in Poland and Spain where wholesaler networks allow fast onboarding.</li>
+            <li>Route to market: Partner with an EU-based BRCGS or IFS-certified packer for sorting, grading, and compliant labeling. Sell via 1 to 2 wholesalers per market with pre-agreed weekly call-offs. Avoid direct national retail tenders at this budget.</li>
+            <li>Offer design: Two SKUs to start. Example: 2 kg class I yellow-flesh all-purpose variety and 1.5 kg premium waxy salad variety in recyclable packaging with clear cooking icons. Small on-pack brand story tied to origin and storage guidance.</li>
+            <li>Pricing: Target wholesale ex-warehouse 0.45-0.70 EUR per kg depending on variety and season, aiming for gross margin after packing and logistics of 10-15 percent in pilots. Validate price elasticity through A/B with wholesaler partners.</li>
+            <li>Non-EU path: Limit to partnership scouting and desk validation for GCC importers. Proceed to shipments only after securing distributor commitment to container consolidation and shared promotional costs.</li>
+            <li>Evidence-led scaling: Advance from weekly pallets to multi-pallet flows only upon three consecutive repeat orders with acceptable return rates and shrink.</li>
+        </ul>
+        <p>Budget Allocation Recommendations</p>
+        <table>
+            <tr>
+                <td>Use of Funds</td>
+                <td>EU Allocation</td>
+                <td>Non-EU Allocation</td>
+                <td>Notes</td>
+            </tr>
+            <tr>
+                <th>--------------</th>
+                <th>---------------</th>
+                <th>-------------------</th>
+                <th>-------</th>
+            </tr>
+            <tr>
+                <td>Compliance and packaging set-up</td>
+                <td>1800</td>
+                <td>0</td>
+                <td>Pack copy, labels, traceability, QC tools</td>
+            </tr>
+            <tr>
+                <td>Sampling and trade market visits</td>
+                <td>1800</td>
+                <td>700</td>
+                <td>EU wholesale market visits and buyer samples; GCC remote tastings</td>
+            </tr>
+            <tr>
+                <td>Freight and first two pilot pallets</td>
+                <td>2500</td>
+                <td>0</td>
+                <td>Domestic or cross-border EU transport and reefer services</td>
+            </tr>
+            <tr>
+                <td>Brokerage and listing fees</td>
+                <td>1000</td>
+                <td>0</td>
+                <td>Where applicable for wholesalers</td>
+            </tr>
+            <tr>
+                <td>Digital demand testing</td>
+                <td>600</td>
+                <td>400</td>
+                <td>Geo-targeted ads to support B2B awareness and collect leads</td>
+            </tr>
+            <tr>
+                <td>Contingency and QC instruments</td>
+                <td>900</td>
+                <td>0</td>
+                <td>Temperature loggers, rejects buffer</td>
+            </tr>
+            <tr>
+                <td>Partner scouting and legal checks</td>
+                <td>0</td>
+                <td>1200</td>
+                <td>GCC distributor diligence and customs advice</td>
+            </tr>
+            <tr>
+                <td>Working capital buffer</td>
+                <td>1300</td>
+                <td>0</td>
+                <td>Short payment terms and production rounding</td>
+            </tr>
+        <p>Totals: EU 8900, Non-EU 2300. Rationale: Prioritize EU pilots for immediate learnings and cash-efficient scale. Non-EU spend capped to partner development and validation.</p>
+        </table>
+        <p>Implementation Plan</p>
+        <p>90-Day Action Plan</p>
+        <table>
+            <tr>
+                <td>Timeline</td>
+                <td>Workstream</td>
+                <td>Key Actions</td>
+                <td>Owner</td>
+                <td>Deliverables</td>
+            </tr>
+            <tr>
+                <th>----------</th>
+                <th>------------</th>
+                <th>------------</th>
+                <th>-------</th>
+                <th>--------------</th>
+            </tr>
+            <tr>
+                <td>Days 1-15</td>
+                <td>Compliance and packaging</td>
+                <td>Finalize pack designs with origin, class, variety, lot, storage advice. Confirm HACCP and traceability with packer.</td>
+                <td>Founder plus packer QA</td>
+                <td>Approved labels, HACCP records, lot coding SOP</td>
+            </tr>
+            <tr>
+                <td>Days 1-15</td>
+                <td>Buyer pipeline</td>
+                <td>Identify 8-12 wholesalers in Germany, Netherlands, Poland, Spain. Prepare short pitch deck and price list.</td>
+                <td>Founder</td>
+                <td>Target list, outreach assets</td>
+            </tr>
+            <tr>
+                <td>Days 10-25</td>
+                <td>Samples and pricing</td>
+                <td>Produce graded samples, send to 6+ buyers with spec sheets and proposed price bands.</td>
+                <td>Packer and sales</td>
+                <td>Sample shipments, feedback log</td>
+            </tr>
+            <tr>
+                <td>Days 20-35</td>
+                <td>Logistics setup</td>
+                <td>Contract reefer transport partners, arrange temperature loggers, finalize incoterms.</td>
+                <td>Operations</td>
+                <td>Confirmed transport slots and SOP</td>
+            </tr>
+            <tr>
+                <td>Days 30-50</td>
+                <td>First pilot shipments</td>
+                <td>Ship first pallet to 1 buyer in Germany and 1 in Netherlands. Monitor shrink and returns.</td>
+                <td>Operations and QA</td>
+                <td>Delivery notes, temp reports, CMRs</td>
+            </tr>
+            <tr>
+                <td>Days 45-65</td>
+                <td>Iteration and second pilots</td>
+                <td>Adjust grading or packaging based on feedback. Ship to Poland and Spain via chosen wholesalers.</td>
+                <td>Commercial lead</td>
+                <td>Second-wave POs and delivery</td>
+            </tr>
+            <tr>
+                <td>Days 60-80</td>
+                <td>Non-EU partner scouting</td>
+                <td>Shortlist 3 GCC importers, hold compliance calls, exchange product specs and MOQ expectations.</td>
+                <td>Founder</td>
+                <td>Distributor comparison matrix</td>
+            </tr>
+            <tr>
+                <td>Days 70-85</td>
+                <td>Digital lead generation</td>
+                <td>Launch geo-targeted LinkedIn and Google campaigns toward wholesale buyers in target cities.</td>
+                <td>Marketing</td>
+                <td>Lead list and engagement metrics</td>
+            </tr>
+            <tr>
+                <td>Days 80-90</td>
+                <td>Review and scale decision</td>
+                <td>Analyze margins, repeat orders, and shrink. Decide on continued weekly shipments, pricing tweaks, or market exit.</td>
+                <td>Board plus founder</td>
+                <td>90-day review with go or adjust plan</td>
+            </tr>
+        </table>
+        <p>Sources &amp; References</p>
+        <ul>
+            <li>European Commission, Regulation (EC) No 178/2002 General Food Law, consolidated text, accessed 2024. URL: European Commission law portal.</li>
+            <li>European Commission, Regulation (EC) No 852/2004 on the hygiene of foodstuffs, consolidated, accessed 2024. URL: European Commission law portal.</li>
+            <li>European Commission, Regulation (EU) No 1169/2011 on the provision of food information to consumers, consolidated, accessed 2024. URL: European Commission law portal.</li>
+            <li>World Trade Organization, HS chapter references for 07 Edible vegetables and certain roots and tubers, accessed 2024. URL: WTO Tariff Download Facility.</li>
+            <li>European Commission TARIC Consultation, HS 0701 Potatoes, accessed 2024. URL: EU TARIC.</li>
+            <li>US Food and Drug Administration, FSMA overview and importer obligations including FSVP, accessed 2024. URL: FDA.</li>
+            <li>OECD and FAO, background on agri-food trade and perishables logistics, accessed 2023-2024. URL: OECD and FAO publications.</li>
+        </ul>
+        <p>Data limitations and transparency</p>
+        <ul>
+            <li>Exact country-level TAM, SAM, and retail price distributions for fresh potatoes by variety and pack are not fully available in open public sources without paid databases. Estimates provided are directional for planning and must be validated with national statistics by HS code 0701 and with buyer quotes during pilots.</li>
+            <li>Individual competitor market shares are not reliably published in open sources for fresh potatoes at brand level due to private label prevalence and cooperative structures. The competitive matrix is therefore qualitative.</li>
+        </ul>
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+  
+  // Save report function
+  // Track if report is saved
+  let isReportSaved = false;
+  
+  function saveReport() {
+      console.log('Save report function called');
+      
+      const btn = event.target.closest('.action-btn');
+      if (!btn) {
+          console.error('Save button not found');
+          return;
+      }
+      
+      // Check if already saved
+      if (isReportSaved) {
+          btn.innerHTML = '✅ Already Saved';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          btn.disabled = true;
+          
+          setTimeout(() => {
+              btn.innerHTML = '💾 Save';
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 2000);
+          return;
+      }
+      
+      const originalText = btn.innerHTML;
+      
+      // Show loading state
+      btn.innerHTML = '⏳ Saving...';
+      btn.disabled = true;
+      
+      try {
+          // Get report data
+          const reportTitle = document.querySelector('h1')?.textContent || 'AI Trade Report';
+          const reportContent = document.getElementById('report-content')?.innerHTML || '';
+          const currentUrl = window.location.pathname;
+          const filename = currentUrl.split('/').pop() || 'unknown_report.html';
+          
+          console.log('Report data extracted:', {
+              title: reportTitle,
+              filename: filename,
+              contentLength: reportContent.length
+          });
+          
+          // Extract report metadata from URL or page
+          const brand = document.querySelector('.summary-item:nth-child(1) .item-value')?.textContent || 'Unknown Brand';
+          const product = document.querySelector('.summary-item:nth-child(2) .item-value')?.textContent || 'Unknown Product';
+          const budget = document.querySelector('.summary-item:nth-child(3) .item-value')?.textContent || 'Unknown Budget';
+          const enterpriseSize = document.querySelector('.summary-item:nth-child(4) .item-value')?.textContent || 'Unknown Size';
+          
+          // Prepare data for API
+          const reportData = {
+              title: reportTitle,
+              brand: brand,
+              product: product,
+              budget: budget,
+              enterprise_size: enterpriseSize,
+              ai_model: 'gpt-5',
+              language: 'en',
+              content: reportContent,
+              file_path: filename
+          };
+          
+          console.log('Sending data to API:', reportData);
+          
+          // Send to database
+          fetch('/save-report', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(reportData)
+          })
+          .then(response => {
+              console.log('API response status:', response.status);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              console.log('API response data:', data);
+              if (data.status === 'success') {
+                  isReportSaved = true; // Mark as saved
+                  btn.innerHTML = '✅ Saved!';
+                  btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                  
+                  setTimeout(() => {
+                      btn.innerHTML = '💾 Save';
+                      btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                      btn.disabled = false;
+                  }, 2000);
+              } else {
+                  throw new Error(data.message || 'Failed to save report');
+              }
+          })
+          .catch(error => {
+              console.error('Error saving report:', error);
+              btn.innerHTML = '❌ Error';
+              btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+              
+              setTimeout(() => {
+                  btn.innerHTML = originalText;
+                  btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                  btn.disabled = false;
+              }, 3000);
+          });
+      } catch (error) {
+          console.error('Error in saveReport function:', error);
+          btn.innerHTML = '❌ Error';
+          btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+          
+          setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 3000);
+      }
+  }
+  
+  // Return to main page function
+  function returnToMain() {
+      if (isReportSaved) {
+          // If report is saved, go directly without warning
+          window.location.href = '/';
+      } else {
+          // If not saved, show warning
+          if (confirm('Are you sure you want to return to the main page? Your current report will be lost.')) {
+              window.location.href = '/';
+          }
+      }
+  }
+  
+  // Make functions available globally
+  window.saveReport = saveReport;
+  window.returnToMain = returnToMain;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

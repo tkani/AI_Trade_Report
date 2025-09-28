@@ -20,6 +20,9 @@ class User(Base):
     company_name = Column(String(255), nullable=False)
     hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
+    # Password recovery fields
+    reset_token = Column(String(255), nullable=True, unique=True, index=True)
+    reset_token_expires = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -37,6 +40,27 @@ class ProductTerm(Base):
     
     def __repr__(self):
         return f"<ProductTerm(id={self.id}, term='{self.term[:50]}...')>"
+
+class Report(Base):
+    __tablename__ = "reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    title = Column(String(500), nullable=False)
+    brand = Column(String(200), nullable=False)
+    product = Column(String(500), nullable=False)
+    budget = Column(String(100), nullable=False)
+    enterprise_size = Column(String(50), nullable=False)
+    ai_model = Column(String(100), nullable=True)
+    language = Column(String(10), default="en")
+    content = Column(Text, nullable=False)  # HTML content
+    file_path = Column(String(500), nullable=True)  # Path to saved file
+    is_saved = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    def __repr__(self):
+        return f"<Report(id={self.id}, title='{self.title[:50]}...', user_id={self.user_id})>"
 
 # Database configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ai_trade_report.db")

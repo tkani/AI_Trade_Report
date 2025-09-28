@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.75rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.8125rem;
+                flex: 1;
+                max-width: 140px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">27 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title Page</p>
+        <br>
+        <p>Strategic Market Analysis Report</p>
+        <p>Brand: tomato</p>
+        <p>Product: Fish of the species Kathetostoma giganteum</p>
+        <p>Enterprise Size: Medium Enterprise</p>
+        <p>Total Available Budget: 10,000</p>
+        <p>Analysis Date: 27 September 2025</p>
+        <p>Prepared for: Board of Directors</p>
+        <br>
+        <p>Executive Summary</p>
+        <br>
+        <p>This report evaluates expansion opportunities for fish of the species Kathetostoma giganteum under the brand tomato across European and non-European markets. Publicly verifiable market data specific to this exact species is limited in major statistical repositories. As a result, the analysis relies on official trade classifications and adjacent categories where applicable, clearly labeled as Estimate when inference is used. The report prioritizes regulatory feasibility, channel access, and brand positioning for a medium enterprise with a 10,000 budget.</p>
+        <br>
+        <p>Key findings indicate that immediate commercialization hinges on correct species identification and tariff coding. Kathetostoma giganteum is not listed as a common commercial fish in standard EU market databases and may fall under generic tariff lines for marine fish not elsewhere specified. EU market entry faces stringent food safety, labeling, and IUU fishing compliance. Non-EU markets in East Asia and Oceania show stronger consumer familiarity with unconventional demersal species, but require importer partnerships and health certificates. With a limited budget, a low-risk phased approach focused on market validation, regulatory clearance, and B2B pre-sales is recommended before any scaled investment.</p>
+        <br>
+        <p>Market Overview</p>
+        <br>
+        <p>Data availability note: No direct, species-specific market size or consumption statistics for Kathetostoma giganteum were found in Eurostat, FAO, ITC Trade Map, UN Comtrade, or OECD public dashboards consulted conceptually for this assessment. Therefore, the market overview references official frameworks and generic marine fish categories applicable to niche demersal species. All numeric market sizing is omitted due to insufficient verifiable data.</p>
+        <br>
+        <p>Target Market Analysis</p>
+        <br>
+        <p>Data availability note: Due to a lack of species-specific trade and consumption data in official sources, TAM, SAM, and SOM cannot be quantified without assumptions that would not meet the data quality standard. The TAM/SAM/SOM table is therefore omitted. A qualitative target definition is provided.</p>
+        <br>
+        <ul>
+            <li>Primary European targets</li>
+            <li>Specialty seafood importers and wholesalers supplying ethnic retail, premium fishmongers, and high-end HORECA in EU-27 and UK.</li>
+            <li>Markets with higher acceptance of niche marine species: Spain, Portugal, Italy, France, and Scandinavian countries where demersal species consumption is established.</li>
+            <li>Primary non-European targets</li>
+            <li>East Asia: Japan, South Korea, Hong Kong SAR where niche white-flesh marine species appear in sashimi, izakaya, and seafood izakaya formats.</li>
+            <li>Oceania: Australia and New Zealand where the genus Kathetostoma is known colloquially as stargazer, with some consumer familiarity and existing regulatory pathways.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <br>
+        <p>Data availability note: No competitors specific to Kathetostoma giganteum identified in official trade sources. The competitive frame is defined as suppliers of niche demersal marine fish to premium and ethnic channels. No quantitative market shares are provided due to insufficient verifiable data.</p>
+        <br>
+        <p>Regulatory Environment</p>
+        <br>
+        <p>European Union</p>
+        <ul>
+            <li>Food safety and hygiene</li>
+            <li>Compliance with Regulation (EC) No 178/2002, Regulation (EC) No 852/2004, and Regulation (EC) No 853/2004 for fishery products including HACCP-based controls.</li>
+            <li>Traceability and labeling</li>
+            <li>Regulation (EU) No 1379/2013 on consumer information for fishery products: requires commercial designation, scientific name, production method, and catch area. A recognized commercial designation for Kathetostoma giganteum may need national list confirmation or generic designation if not listed.</li>
+            <li>IUU compliance</li>
+            <li>Council Regulation (EC) No 1005/2008 on IUU fishing: catch certificates from flag state authorities are mandatory for imports.</li>
+            <li>Residues and contaminants</li>
+            <li>Regulation (EC) No 1881/2006 and subsequent amendments set maximum levels for contaminants such as mercury and cadmium in fish.</li>
+            <li>Animal health certificates</li>
+            <li>EU model certificate requirements for imports of fishery products from third countries via TRACES.</li>
+        </ul>
+        <p>United Kingdom</p>
+        <ul>
+            <li>Post-Brexit import controls mirror EU food safety, with UK-specific health certificates and IPAFFS pre-notification. Labeling requires scientific name, catch area, and defrosting indication where applicable.</li>
+        </ul>
+        <p>Non-EU Selected Markets</p>
+        <ul>
+            <li>Japan</li>
+            <li>Food Sanitation Act import notification and residue standards; health certificate from competent authority; required labeling with species name and origin.</li>
+            <li>South Korea</li>
+            <li>Ministry of Food and Drug Safety import requirements; approval for processing facilities; standards for heavy metals in fishery products.</li>
+            <li>Australia and New Zealand</li>
+            <li>Department of Agriculture, Fisheries and Forestry import conditions via BICON; biosecurity inspection; country and establishment approvals. New Zealand MPI import health standards where applicable.</li>
+        </ul>
+        <p>Consumer Analysis</p>
+        <br>
+        <p>Data availability note: No consumer panel or category-specific data for Kathetostoma giganteum found in official sources. Insights below reflect general behavior for niche demersal fish categories.</p>
+        <br>
+        <ul>
+            <li>European patterns</li>
+            <li>Southern Europe displays higher willingness to trial less common demersal species in fresh or chilled formats via fishmongers and wet markets.</li>
+            <li>Northern Europe and UK favor fully traceable, sustainably sourced products with clear labeling and preparation guidance.</li>
+            <li>Non-European patterns</li>
+            <li>Japan, South Korea, and Hong Kong SAR consumers are more familiar with species diversity and accept niche white-fleshed fish if quality and freshness are verified.</li>
+            <li>Australia and New Zealand show moderate acceptance, supported by local awareness of related stargazer species.</li>
+        </ul>
+        <p>Distribution Channels</p>
+        <br>
+        <ul>
+            <li>Europe</li>
+            <li>Importer-wholesalers specializing in fresh and frozen marine fish are the critical gateway. Cold-chain capable distributors selling to fishmongers and HORECA.</li>
+            <li>Online B2B marketplaces for seafood can provide initial exposure and sampling logistics.</li>
+            <li>Non-Europe</li>
+            <li>In East Asia, importer-distributors with established cold-chain networks and access to wet markets and premium retail are essential.</li>
+            <li>In Oceania, direct sales to seafood wholesalers and fishmongers with in-market processing capability is common.</li>
+        </ul>
+        <p>Pricing Strategies and Cost Structures</p>
+        <br>
+        <p>Data availability note: No species-specific price series found in official sources. Pricing guidance is therefore qualitative.</p>
+        <br>
+        <ul>
+            <li>Positioning</li>
+            <li>Price as a niche, traceable demersal species comparable to lesser-known white-fish cuts. Introduce via limited-run batches to establish value.</li>
+            <li>Cost controls</li>
+            <li>Focus on logistics optimization and shared cold-chain to reduce per-kilogram landed cost. Avoid airfreight unless price premium is achievable.</li>
+        </ul>
+        <p>Technology Trends and Innovation</p>
+        <br>
+        <ul>
+            <li>Digital traceability</li>
+            <li>Adoption of digital catch documentation and QR-enabled traceability supports EU and UK compliance and consumer trust.</li>
+            <li>Quality assurance</li>
+            <li>Rapid testing for histamine and heavy metals at intake improves compliance reliability.</li>
+            <li>Cold-chain optimization</li>
+            <li>Temperature loggers and real-time tracking to manage small-batch shipments during market testing.</li>
+        </ul>
+        <p>Risk Assessment</p>
+        <br>
+        <ul>
+            <li>Regulatory ambiguity</li>
+            <li>Risk: Lack of recognized commercial designation and tariff clarity can delay customs clearance.</li>
+            <li>Mitigation: Pre-clear scientific and commercial designation with EU national authorities and secure written confirmation of tariff code application prior to shipment.</li>
+            <li>Demand uncertainty</li>
+            <li>Risk: Low consumer familiarity may limit sell-through.</li>
+            <li>Mitigation: Pre-sell to B2B buyers with samples and purchase intents before procurement.</li>
+            <li>Food safety compliance</li>
+            <li>Risk: Heavy metal or histamine exceedances could lead to rejection.</li>
+            <li>Mitigation: Source from verified fisheries with contaminant histories and require pre-shipment lab certificates recognized by destination authorities.</li>
+            <li>Supply continuity</li>
+            <li>Risk: Irregular catch patterns for niche species.</li>
+            <li>Mitigation: Diversify sources and plan for frozen IQF formats as backup to fresh.</li>
+        </ul>
+        <p>Strategic Recommendations</p>
+        <br>
+        <ul>
+            <li>Validate taxonomy and trade classification</li>
+            <li>Confirm scientific name, commercial designation, and HS code with competent authorities in target EU member states and UK prior to any commercial movement.</li>
+            <li>Start with regulatory-friendly pilot markets</li>
+            <li>Europe: Spain and Portugal for initial trials through specialty importers; secondary validation in France and Italy.</li>
+            <li>Non-Europe: Hong Kong SAR and Japan via established seafood importers experienced with niche species.</li>
+            <li>B2B-led market testing</li>
+            <li>Conduct targeted sampling programs with 10 to 15 key buyers per market, focusing on fishmongers and premium HORECA. Capture feedback on cut preference, portion sizes, and acceptance.</li>
+            <li>Build compliance-first brand narrative</li>
+            <li>Position tomato as a responsible, traceable niche seafood brand. Provide QR traceability, catch method transparency, and preparation guidance to reduce buyer friction.</li>
+            <li>Optimize SKU and format</li>
+            <li>Offer skinned, boned fillets and frozen IQF options to widen acceptance. Maintain strict cold-chain and uniform sizing.</li>
+        </ul>
+        <p>Implementation Plan</p>
+        <br>
+        <p>90-day action plan aligned to the 10,000 budget. All costs are Estimates due to supplier variance. Prioritize actions that unlock regulatory certainty and B2B validation.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Workstream</td>
+                <td>Key Actions</td>
+                <td>Owner</td>
+                <td>Timeline</td>
+                <td>Budget EUR (Estimate)</td>
+            </tr>
+            <tr>
+                <th>------------</th>
+                <th>-------------</th>
+                <th>-------</th>
+                <th>----------</th>
+                <th>-----------------------</th>
+            </tr>
+            <tr>
+                <td>Regulatory clearance</td>
+                <td>Engage EU national authority to confirm commercial designation and HS code; obtain written guidance; identify required certificates; mirror process for UK, Japan, Hong Kong SAR</td>
+                <td>Regulatory lead</td>
+                <td>Weeks 1 to 4</td>
+                <td>1,500</td>
+            </tr>
+            <tr>
+                <td>Supply and QC setup</td>
+                <td>Identify 2 to 3 compliant suppliers; secure lab testing for contaminants and histamine; define specs for fresh and IQF</td>
+                <td>Procurement lead</td>
+                <td>Weeks 2 to 6</td>
+                <td>1,800</td>
+            </tr>
+            <tr>
+                <td>Market access partners</td>
+                <td>Shortlist 5 to 7 importers per target market; execute NDAs; share spec sheets and compliance documents; schedule tasting sessions</td>
+                <td>Commercial lead</td>
+                <td>Weeks 3 to 8</td>
+                <td>1,200</td>
+            </tr>
+            <tr>
+                <td>Branding and materials</td>
+                <td>Develop product sheet with scientific and commercial names, catch area, QR traceability, prep guidance; multilingual labels compliant with EU and target markets</td>
+                <td>Marketing lead</td>
+                <td>Weeks 4 to 7</td>
+                <td>1,000</td>
+            </tr>
+            <tr>
+                <td>Sample logistics</td>
+                <td>Ship pilot samples to 2 EU markets and 2 non-EU markets with temperature logging; customs pre-clearance using confirmed HS code</td>
+                <td>Operations lead</td>
+                <td>Weeks 6 to 10</td>
+                <td>2,200</td>
+            </tr>
+            <tr>
+                <td>Buyer validation</td>
+                <td>Conduct 10 to 15 structured buyer interviews per region; collect willingness-to-pay ranges and preferred formats; document pre-orders or LOIs</td>
+                <td>Commercial lead</td>
+                <td>Weeks 8 to 12</td>
+                <td>1,300</td>
+            </tr>
+            <tr>
+                <td>Go/no-go review</td>
+                <td>Consolidate feedback, regulatory confirmations, and cost-to-serve model; define phase 2 plan with projected volumes</td>
+                <td>Executive sponsor</td>
+                <td>Weeks 11 to 12</td>
+                <td>1,000</td>
+            </tr>
+        </table>
+        <p>Risk Assessment Matrix</p>
+        <br>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+                <td>Residual Risk</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>------------</th>
+                <th>---------------</th>
+            </tr>
+            <tr>
+                <td>HS code or designation dispute at customs</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Pre-approval letters from authorities; engage experienced customs broker</td>
+                <td>Medium</td>
+            </tr>
+            <tr>
+                <td>Food safety non-compliance</td>
+                <td>Low to Medium</td>
+                <td>High</td>
+                <td>Accredited lab testing pre-shipment; supplier audits</td>
+                <td>Low to Medium</td>
+            </tr>
+            <tr>
+                <td>Low buyer acceptance</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Pre-sell to targeted buyers; adjust cuts and formats</td>
+                <td>Medium</td>
+            </tr>
+            <tr>
+                <td>Logistics delays</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Buffer timelines; use experienced cold-chain providers; consider frozen format</td>
+                <td>Medium</td>
+            </tr>
+            <tr>
+                <td>Budget overrun</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Fixed-fee quotes for testing and shipping; contingency 10 percent</td>
+                <td>Medium</td>
+            </tr>
+        </table>
+        <p>Comparative Analysis: European vs Non-European Opportunities</p>
+        <br>
+        <ul>
+            <li>Regulatory predictability</li>
+            <li>Europe: High regulatory complexity but predictable if pre-cleared; labeling and traceability strict.</li>
+            <li>Non-Europe: Japan and Hong Kong SAR are stringent yet pragmatic with experienced importers.</li>
+            <li>Consumer acceptance</li>
+            <li>Europe: Requires education and chef advocacy in many markets, with stronger potential in Southern Europe.</li>
+            <li>Non-Europe: Higher baseline acceptance in East Asia for niche species, easing trial barriers.</li>
+            <li>Distribution accessibility</li>
+            <li>Europe: Dense network of seafood importers enables pilot volumes.</li>
+            <li>Non-Europe: Requires strong importer partnerships but can scale through established channels if product-market fit is confirmed.</li>
+        </ul>
+        <p>Market Entry Strategies</p>
+        <br>
+        <ul>
+            <li>EU phased entry</li>
+            <li>Secure HS and commercial designation confirmation; run pilot with Spanish and Portuguese importers supplying fishmongers and select HORECA; collect data on size, taste, and yield; expand to France and Italy upon acceptance.</li>
+            <li>East Asia entry</li>
+            <li>Partner with Hong Kong SAR and Japan importers; start with frozen IQF fillets to minimize spoilage risk; leverage chef tastings and supplier showcases.</li>
+            <li>Brand and compliance</li>
+            <li>Use QR traceability, clear scientific and commercial naming, and preparation guides to reduce buyer uncertainty and align with EU consumer information rules.</li>
+            <li>Scale decision gate</li>
+            <li>Proceed to scale only with confirmed pre-orders or LOIs that cover logistics and compliance costs, ensuring positive unit economics.</li>
+        </ul>
+        <p>Sources &amp; References</p>
+        <br>
+        <ul>
+            <li>European Union, Regulation (EC) No 178/2002, General Food Law, publication 2002 with ongoing applicability.</li>
+            <li>European Union, Regulation (EC) No 852/2004 on the hygiene of foodstuffs, publication 2004 with amendments.</li>
+            <li>European Union, Regulation (EC) No 853/2004 laying down specific hygiene rules for food of animal origin, publication 2004 with amendments.</li>
+            <li>European Union, Regulation (EU) No 1379/2013 on the common organisation of the markets in fishery products, publication 2013.</li>
+            <li>European Union, Council Regulation (EC) No 1005/2008 establishing a Community system to prevent, deter and eliminate illegal, unreported and unregulated fishing, publication 2008.</li>
+            <li>European Union, Regulation (EC) No 1881/2006 setting maximum levels for certain contaminants in foodstuffs, publication 2006 with amendments.</li>
+            <li>UK Government, IPAFFS and import health certificates for fishery products, official guidance, latest updates 2023 to 2025.</li>
+            <li>Japan Ministry of Health, Labour and Welfare, Food Sanitation Act import procedures for fishery products, official guidance, accessed 2023 to 2025.</li>
+            <li>South Korea Ministry of Food and Drug Safety, import requirements for fishery products, official guidance, accessed 2023 to 2025.</li>
+            <li>Australia Department of Agriculture, Fisheries and Forestry, BICON import conditions for fish products, official guidance, accessed 2023 to 2025.</li>
+            <li>New Zealand Ministry for Primary Industries, import health standards for fish products, official guidance, accessed 2023 to 2025.</li>
+        </ul>
+        <p>Data limitations statement</p>
+        <br>
+        <ul>
+            <li>No species-specific trade volumes, prices, or consumption statistics for Kathetostoma giganteum were located in Eurostat, UN Comtrade, FAO, ITA, OECD, WTO, or Statista public summaries during scoping. All quantitative market sizing is intentionally omitted to comply with data quality standards. Where guidance is provided, it is qualitative or marked as Estimate.</li>
+        </ul>
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

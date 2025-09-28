@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Trade Report - Professional Market Analysis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        html, body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+            width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100vw;
+            min-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 40px;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18pt;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            font-weight: bold;
+            font-size: 16pt;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h4 {
+            color: #7f8c8d;
+            font-weight: bold;
+            font-size: 12pt;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        /* Professional bullet points */
+        ul li {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        ul ul li {
+            list-style-type: circle;
+        }
+        ul ul ul li {
+            list-style-type: square;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .summary-box {
+            background-color: #d4edda;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .code-block {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        /* Professional Report Header */
+        .report-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        .header-brand .brand-icon {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        .action-btn.print {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .action-btn.pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        /* Hide download button on mobile devices */
+        @media (max-width: 768px) {
+            .action-btn.pdf {
+                display: none !important;
+            }
+        }
+        .action-btn.save {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .action-btn.home {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        .btn-icon {
+            font-size: 1rem;
+        }
+        .btn-text {
+            font-size: 0.875rem;
+        }
+        
+        /* Report Title Section */
+        .report-title-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-top: 6rem;
+        }
+        .title-underline {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+        
+        /* Enhanced Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid #bae6fd;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 1.125rem;
+        }
+        .summary-icon {
+            font-size: 1.25rem;
+        }
+        .summary-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .item-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .item-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+                 @media print {
+             body { 
+                 background-color: white !important; 
+                 color: black !important;
+                 font-size: 12pt;
+                 line-height: 1.4;
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 width: 100% !important;
+             }
+             .container { 
+                 box-shadow: none !important; 
+                 background: white !important;
+                 padding: 20px !important;
+                 margin: 0 !important;
+                 width: 100% !important;
+                 min-width: 100% !important;
+                 max-width: none !important;
+                 box-sizing: border-box !important;
+                 height: auto !important;
+                 min-height: 100vh !important;
+             }
+             .report-header { display: none !important; }
+             .action-buttons { display: none !important; }
+             h1, h2, h3, h4 { 
+                 color: black !important; 
+                 page-break-after: avoid;
+                 page-break-inside: avoid;
+             }
+             table { 
+                 page-break-inside: avoid; 
+                 border-collapse: collapse !important;
+             }
+             .summary-box, .highlight, .warning-box {
+                 background: #f8f9fa !important;
+                 border: 1px solid #ddd !important;
+                 color: black !important;
+                 page-break-inside: avoid;
+             }
+             p, li {
+                 page-break-inside: avoid;
+                 orphans: 3;
+                 widows: 3;
+             }
+             .footer {
+                 page-break-inside: avoid;
+             }
+         }
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .header-content {
+                padding: 0 1.5rem;
+            }
+            .container {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Mobile Header */
+            .report-header {
+                padding: 0.75rem 0;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: center;
+            }
+            .header-brand {
+                font-size: 1.125rem;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+            .action-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+                flex: 1;
+                max-width: 120px;
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+            }
+            .btn-text {
+                font-size: 0.8125rem;
+                display: inline !important;
+            }
+            
+            /* Mobile Container */
+            .container {
+                padding: 20px 15px;
+                margin-top: 120px; /* Account for taller mobile header */
+            }
+            
+            /* Mobile Typography */
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 20px;
+            }
+            h2 {
+                font-size: 1.375rem;
+                margin-top: 25px;
+                margin-bottom: 15px;
+            }
+            h3 {
+                font-size: 1.125rem;
+                margin-top: 20px;
+                margin-bottom: 12px;
+            }
+            h4 {
+                font-size: 1rem;
+                margin-top: 15px;
+                margin-bottom: 8px;
+            }
+            p {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            
+            /* Mobile Tables */
+            table {
+                font-size: 0.875rem;
+                margin: 15px 0;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            th, td {
+                padding: 8px 6px;
+                min-width: 80px;
+            }
+            th {
+                font-size: 0.8125rem;
+            }
+            
+            /* Mobile Lists */
+            ul, ol {
+                padding-left: 20px;
+                margin-bottom: 12px;
+            }
+            li {
+                font-size: 0.9375rem;
+                margin-bottom: 6px;
+                line-height: 1.5;
+            }
+            
+            /* Mobile Boxes */
+            .summary-box, .highlight, .warning-box {
+                padding: 15px;
+                margin: 15px 0;
+                border-radius: 8px;
+            }
+            .summary-content {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .summary-item {
+                padding: 8px 0;
+            }
+            .item-label {
+                font-size: 0.8125rem;
+            }
+            .item-value {
+                font-size: 0.9375rem;
+            }
+            
+            /* Mobile Code Blocks */
+            .code-block {
+                padding: 12px;
+                font-size: 0.8125rem;
+                margin: 12px 0;
+                border-radius: 6px;
+            }
+            
+            /* Mobile Footer */
+            .footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                font-size: 0.8125rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .container {
+                padding: 15px 10px;
+                margin-top: 140px;
+            }
+            
+            .header-content {
+                padding: 0 0.75rem;
+            }
+            .header-brand {
+                font-size: 1rem;
+            }
+            .action-btn {
+                padding: 0.375rem 0.5rem;
+                font-size: 0.6875rem;
+                max-width: 100px;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+            .btn-text {
+                font-size: 0.75rem;
+                display: inline !important;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            h3 {
+                font-size: 1.0625rem;
+            }
+            
+            table {
+                font-size: 0.8125rem;
+            }
+            th, td {
+                padding: 6px 4px;
+                min-width: 70px;
+            }
+            
+            .summary-box, .highlight, .warning-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+            
+            .code-block {
+                padding: 10px;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Mobile Print Optimizations */
+        @media print and (max-width: 768px) {
+            .container {
+                padding: 15px !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            h1, h2, h3, h4 {
+                page-break-after: avoid;
+                font-size: 1.2em;
+            }
+            table {
+                font-size: 0.8em;
+                page-break-inside: avoid;
+            }
+            .summary-box, .highlight, .warning-box {
+                page-break-inside: avoid;
+                margin: 10px 0;
+            }
+        }
+        @media screen {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        }
+        
+        /* Saved Reports Section Styles */
+        .saved-reports-section {
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 400px;
+        }
+        
+        .saved-reports-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        .saved-reports-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-reports-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .title-icon {
+            font-size: 1.5rem;
+        }
+        
+        .saved-reports-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-report-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .saved-report-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3b82f6;
+        }
+        
+        .saved-report-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        
+        .report-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .report-item-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .report-item-date {
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        
+        .report-item-details {
+            margin-bottom: 1rem;
+        }
+        
+        .report-detail-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .report-detail-label {
+            font-weight: 500;
+            color: #475569;
+            min-width: 80px;
+            margin-right: 0.5rem;
+        }
+        
+        .report-detail-value {
+            color: #1e293b;
+            flex: 1;
+        }
+        
+        .report-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .report-action-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+        }
+        
+        .report-action-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .report-action-btn.primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-1px);
+        }
+        
+        .report-action-btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .report-action-btn.secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        
+        .no-reports-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+        
+        .no-reports-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-reports-message h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-reports-message p {
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .saved-reports-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        .saved-reports-toggle.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+        }
+        
+        /* Mobile Responsive for Saved Reports */
+        @media (max-width: 768px) {
+            .saved-reports-list {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .saved-report-item {
+                padding: 1rem;
+            }
+            
+            .report-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .report-item-actions {
+                flex-direction: column;
+            }
+            
+            .saved-reports-card {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+            
+        .saved-reports-title {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* Loading and Error States */
+    .loading-reports {
+        text-align: center;
+        padding: 2rem;
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+        .error-message {
+        text-align: center;
+        padding: 2rem;
+        color: #dc2626;
+        font-size: 1rem;
+        }
+
+        /* Custom styles for Bootstrap modal enhancements */
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sortable:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sort-indicator {
+            margin-left: 8px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+        }
+
+        .sortable.asc .sort-indicator {
+            opacity: 1;
+            transform: rotate(180deg);
+        }
+
+        .sortable.desc .sort-indicator {
+            opacity: 1;
+        }
+
+        /* Custom Navbar Styles */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #333 !important;
+        }
+
+        .navbar-brand .brand-logo-img {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-nav .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .navbar-nav .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .navbar-nav .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .navbar-nav .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Responsive navbar */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .navbar-nav .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            .navbar-nav {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Scrollable Table Styles */
+        .table-responsive {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table th {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Report Header -->
+    <header class="report-header">
+        <div class="header-content">
+            <div class="header-brand">
+                <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <img src="/static/logo2.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <span class="brand-text">AI Trade Report</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn save" onclick="saveReport()">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">Save</span>
+                </button>
+                <button class="action-btn home" onclick="returnToMain()">
+                    <span class="btn-icon">🏠</span>
+                    <span class="btn-text">Home</span>
+                </button>
+                <button class="action-btn print" onclick="window.print()">
+                    <span class="btn-icon">🖨️</span>
+                    <span class="btn-text">Print</span>
+                </button>
+                <button class="action-btn pdf" onclick="downloadPDF()">
+                    <span class="btn-icon">📄</span>
+                    <span class="btn-text">Download PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container" id="report-content">
+        <div class="report-title-section">
+            <h1>AI Trade Report</h1>
+            <div class="title-underline"></div>
+        </div>
+        <div class="summary-box">
+            <div class="summary-header">
+                <span class="summary-icon">📋</span>
+                <span class="summary-title">Report Overview</span>
+            </div>
+            <div class="summary-content">
+                <div class="summary-item">
+                    <span class="item-label">Generated by:</span>
+                    <span class="item-value">AI-Powered Market Research</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Date:</span>
+                    <span class="item-value">28 September 2025</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Report Type:</span>
+                    <span class="item-value">Comprehensive Market Analysis</span>
+                </div>
+            </div>
+        </div>
+        <p>Title Page</p>
+        <p>Strategic Market Analysis Report</p>
+        <p>Product: Fresh Tomatoes</p>
+        <p>Brand: tomato</p>
+        <p>Enterprise Size: Medium Enterprise</p>
+        <p>Total Budget: 10,000</p>
+        <p>Analysis Date: 28 September 2025</p>
+        <p>Prepared for: Board of Directors</p>
+        <br>
+        <p>Executive Summary</p>
+        <p>This report provides a concise, data-driven assessment of market expansion opportunities for fresh tomatoes under the brand tomato with a total budget of 10,000. Given the limited budget, near-term expansion should prioritize low-cost, high-reach channels and leverage existing distribution networks rather than capex-heavy infrastructure. The European Union single market offers the most practical short-term pathway due to harmonized food laws, predictable standards, and lower cross-border frictions. Outside Europe, regulatory variation, quality controls at borders, and logistics costs increase execution risk relative to budget.</p>
+        <br>
+        <p>Data from FAO, Eurostat, and ITC indicates that the largest European import markets for fresh tomatoes by value include Germany, France, the Netherlands, the UK, and Poland, supported by strong supermarket penetration and year-round demand. Non-EU demand is significant in the United States, the Gulf Cooperation Council, and selected Asia-Pacific markets; however, the cost and compliance burden for a medium enterprise under a 10,000 budget would constrain direct market entry. The recommended approach is a phased EU-first strategy focused on Germany, the Netherlands, and Poland, using wholesale and retail aggregator platforms, participation in one trade fair, and targeted listings with regional distributors. Non-EU opportunities should be tested through export consolidators and B2B platforms rather than direct entry.</p>
+        <br>
+        <p>Market Overview</p>
+        <p>Note: Only high-level insights are included where supported by public sources. Exact market sizes by country are not provided due to source limitations within this report. Where estimates are used, they are labeled and reasoned.</p>
+        <br>
+        <ul>
+            <li>European demand patterns: Northern and Central Europe rely heavily on imports during off-season months. The EU is both a major producer and importer of fresh tomatoes, with Spain, the Netherlands, Italy, and Morocco acting as key suppliers into EU markets. Source: Eurostat, Agricultural production and trade statistics, 2023 publication; ITC Trade Map, tomatoes trade, HS 0702, accessed 2024.</li>
+            <li>Non-European demand patterns: The United States imports substantial volumes of fresh tomatoes, primarily from Mexico. GCC markets import the majority of fresh produce and maintain premium niches for high-quality and specialty varieties. Source: ITC Trade Map, HS 0702, accessed 2024; USDA Economic Research Service, Vegetables and Pulses, 2024 update.</li>
+        </ul>
+        <p>Target Market Analysis</p>
+        <p>Note: TAM, SAM, and SOM are provided as directional ranges due to limited current brand presence and the modest budget. Method uses import value as a proxy for accessible demand in target channels and applies conservative penetration assumptions for a new entrant working via distributors.</p>
+        <br>
+        <p>Assumptions for estimates:</p>
+        <ul>
+            <li>TAM: Annual import value of fresh tomatoes (HS 0702) in target country. Proxy for total purchasable demand for non-domestic suppliers. Source basis: ITC Trade Map, 2023 data, accessed 2024.</li>
+            <li>SAM: Portion of TAM reasonably accessible via wholesale and retail distributor networks that accept new suppliers without private label consolidation. Estimate at 30 to 45 percent of TAM depending on market structure. Rationale: share of organized retail and wholesale channels open to external suppliers.</li>
+            <li>SOM Year 1: Share achievable by a new brand using distributors and limited trade marketing within 12 months, estimated at 0.01 to 0.05 percent of SAM due to limited budget and no national brand equity.</li>
+        </ul>
+        <p>All figures below are directional ranges and labeled as estimates.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Country</td>
+                <td>TAM (Estimate)</td>
+                <td>SAM (Estimate)</td>
+                <td>SOM Year 1 (Estimate)</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>----------------</th>
+                <th>----------------</th>
+                <th>-----------------------</th>
+            </tr>
+            <tr>
+                <td>Germany</td>
+                <td>1,800-2,400 EUR M (Estimate; proxy ITC import value 2023)</td>
+                <td>540-1,080 EUR M (Estimate, 30-45 percent of TAM)</td>
+                <td>0.1-0.5 EUR M (Estimate, 0.01-0.05 percent of SAM)</td>
+            </tr>
+            <tr>
+                <td>France</td>
+                <td>1,100-1,600 EUR M (Estimate)</td>
+                <td>330-720 EUR M (Estimate)</td>
+                <td>0.05-0.3 EUR M (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Netherlands</td>
+                <td>900-1,300 EUR M (Estimate; transshipment hub)</td>
+                <td>270-585 EUR M (Estimate)</td>
+                <td>0.05-0.25 EUR M (Estimate)</td>
+            </tr>
+            <tr>
+                <td>UK</td>
+                <td>1,000-1,400 EUR M (Estimate)</td>
+                <td>300-630 EUR M (Estimate)</td>
+                <td>0.05-0.3 EUR M (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Poland</td>
+                <td>350-550 EUR M (Estimate)</td>
+                <td>105-248 EUR M (Estimate)</td>
+                <td>0.02-0.12 EUR M (Estimate)</td>
+            </tr>
+            <tr>
+                <td>USA</td>
+                <td>2,800-3,600 EUR M (Estimate; large import market)</td>
+                <td>840-1,620 EUR M (Estimate)</td>
+                <td>0.1-0.6 EUR M (Estimate)</td>
+            </tr>
+            <tr>
+                <td>UAE</td>
+                <td>250-400 EUR M (Estimate)</td>
+                <td>75-180 EUR M (Estimate)</td>
+                <td>0.01-0.09 EUR M (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Singapore</td>
+                <td>120-200 EUR M (Estimate)</td>
+                <td>36-90 EUR M (Estimate)</td>
+                <td>0.005-0.045 EUR M (Estimate)</td>
+            </tr>
+        </table>
+        <p>Important limitations:</p>
+        <ul>
+            <li>These are directional estimates based on typical import values and channel accessibility assumptions; exact figures should be validated from ITC Trade Map 2023 or 2024 releases before commitments.</li>
+            <li>The Netherlands figures include re-exports via Rotterdam and wholesale hubs, which may inflate TAM relative to domestic consumption.</li>
+        </ul>
+        <p>Competitive Landscape</p>
+        <p>Note: This section references structural competitors and channel dynamics rather than specific competitors by name due to data constraints.</p>
+        <br>
+        <ul>
+            <li>EU supply structure: Spain, the Netherlands, and Morocco are leading suppliers to EU markets, with significant volumes from domestic greenhouse producers in NL and Spain, and seasonal imports from Morocco. Source: Eurostat 2023; ITC Trade Map 2023.</li>
+            <li>Retail power: Large supermarket groups in Germany, France, and the UK exert strong buying power and often favor long-term programs and private labels. This creates high barriers for new brands without differentiation or certified quality schemes.</li>
+            <li>Wholesale hubs: The Netherlands functions as a consolidation and redistribution hub for Europe, while Rungis International Market in France and central markets in Germany remain critical for independent retail and foodservice access.</li>
+        </ul>
+        <p>Regulatory Environment</p>
+        <ul>
+            <li>EU food safety framework: General Food Law Regulation (EC) No 178/2002 sets principles for food safety. Hygiene Package includes Regulations (EC) No 852/2004 and 853/2004. Traceability and withdrawal requirements apply to fresh produce. Source: European Commission, food safety legislation portal, consolidated 2023.</li>
+            <li>Marketing standards for fruits and vegetables: Commission Implementing Regulation (EU) No 543/2011 establishes marketing standards including quality classes, labeling, size, and presentation for tomatoes. Source: European Commission, 2011, consolidated amendments through 2023.</li>
+            <li>Pesticide residues: Regulation (EC) No 396/2005 on maximum residue levels applies. Source: EU MRL Database, accessed 2024.</li>
+            <li>Plant health: Regulation (EU) 2016/2031 and Implementing Regulation (EU) 2019/2072 on protective measures against plant pests govern phytosanitary requirements at import. Source: European Commission, consolidated 2023.</li>
+            <li>Packaging and labeling: Regulation (EU) 1169/2011 on food information to consumers mandates origin, class, and lot identification for fresh produce at retail. Source: European Commission, consolidated 2023.</li>
+            <li>GDPR: Applies to customer data handling for B2B marketing and digital channels. Source: Regulation (EU) 2016/679, 2018 entry into application.</li>
+            <li>UK post-Brexit: UK retains similar food standards with UK specific SPS checks and labelling. Import processes via DEFRA and IPAFFS pre-notification apply. Source: UK Government, Border Target Operating Model, 2024.</li>
+            <li>Non-EU import examples:</li>
+            <li>USA: USDA APHIS phytosanitary requirements and FDA produce safety rule under FSMA. Prior notice for imports required. Source: FDA FSMA Produce Safety Rule, 2024; USDA APHIS import manual, 2024.</li>
+            <li>GCC: Gulf Standards Organization marketing and labeling standards, plus national food authorities for import approvals; consignments require phytosanitary certificates. Source: GSO references, UAE MOCCAE guidance, 2023.</li>
+            <li>Singapore: Singapore Food Agency licensing for importers and phytosanitary documentation. Source: SFA, Importing fruits and vegetables, 2024.</li>
+        </ul>
+        <p>Consumer Analysis</p>
+        <ul>
+            <li>EU: High supermarket share in grocery, strong preference for vine tomatoes, cherry tomatoes for snacking, and increasing interest in origin, taste, and sustainability certifications. Source: OECD-FAO Agricultural Outlook 2023; European Consumer Markets, Eurostat Household Budget Survey references 2023.</li>
+            <li>Non-EU: US consumers buy mainly through supermarkets with price sensitivity and year-round availability; premium niches for heirloom and on-the-vine. GCC and Singapore consumers exhibit high willingness to pay for premium quality, air-freighted freshness, and clear origin labeling. Source: USDA ERS Vegetables and Pulses 2024; ITC market information notes 2023.</li>
+        </ul>
+        <p>Distribution Channels</p>
+        <ul>
+            <li>EU:</li>
+            <li>Wholesale markets: Rungis (FR), Edeka and REWE regional wholesale channels (DE), Greenery and auctions in NL, and central markets in Madrid and Milan.</li>
+            <li>Retail: National chains (Germany, France, UK, Italy, Spain) dominate volumes; private label remains prevalent. Entry typically via approved category suppliers.</li>
+            <li>Cross-border: EU single market allows free movement of goods meeting EU standards, simplifying multi-country distribution from a single EU logistics base. Source: European Commission, Single Market factsheet, 2024.</li>
+            <li>Non-EU:</li>
+            <li>Consolidators/export agents for GCC and Singapore often handle mixed pallets and airfreight.</li>
+            <li>US entry typically via importer-distributors operating ripening and cold chain facilities, especially in border states.</li>
+        </ul>
+        <p>Comparative Analysis: Pricing and Cost Structure</p>
+        <p>Note: Specific retail prices fluctuate by season and variety and are not presented to avoid unverifiable data. Structural insights:</p>
+        <ul>
+            <li>EU retail pricing exhibits strong seasonal volatility, with greenhouse production smoothing peaks. Producer returns are sensitive to quality grade and waste losses.</li>
+            <li>Logistics: Road transport across EU is cost-efficient for palletized loads; cold chain maintenance is critical. Airfreight for distant markets increases landed costs substantially, limiting competitiveness for standard-grade tomatoes.</li>
+        </ul>
+        <p>Technology Trends and Innovation</p>
+        <ul>
+            <li>Greenhouse technology, integrated pest management, and improved post-harvest handling reduce shrink and improve shelf life.</li>
+            <li>Digital traceability and QR-origin labeling are increasingly used by EU retailers and can support differentiation. Source: OECD-FAO Agricultural Outlook 2023.</li>
+        </ul>
+        <p>Risk Assessment</p>
+        <p>Key risks identified with mitigation aligned to a 10,000 budget.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Risk</td>
+                <td>Likelihood</td>
+                <td>Impact</td>
+                <td>Mitigation</td>
+            </tr>
+            <tr>
+                <th>------</th>
+                <th>------------</th>
+                <th>--------</th>
+                <th>------------</th>
+            </tr>
+            <tr>
+                <td>Retail buyer access constraints in EU</td>
+                <td>High</td>
+                <td>High</td>
+                <td>Use wholesale and distributor route; pilot with 2 to 3 regional distributors before national tenders</td>
+            </tr>
+            <tr>
+                <td>Quality non-conformity at import (MRL, grading)</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Pre-shipment third-party inspections; align with EU marketing standards and MRL checks</td>
+            </tr>
+            <tr>
+                <td>Seasonal oversupply price pressure</td>
+                <td>High</td>
+                <td>Medium</td>
+                <td>Focus on shoulder seasons; emphasize specialty SKUs like cherry or vine for value</td>
+            </tr>
+            <tr>
+                <td>Cold chain breaks in transit</td>
+                <td>Medium</td>
+                <td>High</td>
+                <td>Use reputable logistics partners; continuous temperature loggers</td>
+            </tr>
+            <tr>
+                <td>Currency volatility for non-EU sales</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Invoice in EUR where possible; short payment terms</td>
+            </tr>
+            <tr>
+                <td>Working capital strain from slow-paying buyers</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Trade credit insurance or factoring via distributor; small order pilots</td>
+            </tr>
+            <tr>
+                <td>Regulatory changes at UK border</td>
+                <td>Medium</td>
+                <td>Medium</td>
+                <td>Use UK-experienced importer; monitor BTOM updates</td>
+            </tr>
+        </table>
+        <p>Strategic Recommendations</p>
+        <ul>
+            <li>Prioritize EU-first expansion through Germany, the Netherlands, and Poland.</li>
+            <li>Germany: Large import-dependent demand with robust wholesale and regional distributor networks.</li>
+            <li>Netherlands: Utilize as logistics and redistribution hub to reach DE, BE, and Nordics from a single point.</li>
+            <li>Poland: Growing modern retail penetration with openness to competitively priced imports.</li>
+            <li>Positioning: Emphasize consistent quality, vine and cherry formats, and credible traceability. Offer mixed-pallet flexibility to reduce buyer risk for trials.</li>
+            <li>Route to market: Engage 2 to 3 established distributors per target country and list on B2B wholesale platforms to expand reach at low cost. Evaluate private label supply as a fast-track entry where feasible.</li>
+            <li>Compliance: Standardize to EU Class I or Extra Class with documented MRL compliance, lot-level traceability, and packaging that meets EU marketing standards and FIC requirements.</li>
+            <li>Non-EU: Limit to opportunistic trials with GCC and Singapore via consolidators to test premium niches; defer US direct entry given scale and importer requirements.</li>
+        </ul>
+        <p>Implementation Plan</p>
+        <p>90-day action plan aligned to 10,000 budget ceiling. All amounts in EUR. Costs are estimates based on typical market rates for SMEs.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Workstream</td>
+                <td>Actions</td>
+                <td>Owner</td>
+                <td>Timeline</td>
+                <td>Budget Allocation</td>
+            </tr>
+            <tr>
+                <th>------------</th>
+                <th>---------</th>
+                <th>-------</th>
+                <th>----------</th>
+                <th>-------------------</th>
+            </tr>
+            <tr>
+                <td>Compliance and QA</td>
+                <td>Confirm adherence to EU Class I specifications, pre-shipment quality checklist, engage third-party inspection for first 3 consignments</td>
+                <td>QA Lead</td>
+                <td>Weeks 1-3</td>
+                <td>1,200 (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Regulatory and Documentation</td>
+                <td>Review EU marketing standards, MRLs, and labeling; prepare product specs, lot coding, traceability SOPs; UK import readiness optional</td>
+                <td>Regulatory Manager</td>
+                <td>Weeks 1-2</td>
+                <td>300 (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Distributor Sourcing</td>
+                <td>Build a target list of 20 EU distributors and 5 wholesale platforms; outreach with product sheets and pricing</td>
+                <td>Commercial Lead</td>
+                <td>Weeks 2-6</td>
+                <td>0 internal plus 500 for translation and materials (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Trade Marketing</td>
+                <td>Design simple brand toolkit: box labels, spec sheets, QR traceability landing page</td>
+                <td>Marketing</td>
+                <td>Weeks 2-5</td>
+                <td>1,000 (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Logistics Setup</td>
+                <td>Negotiate lanes with 2 EU chilled carriers; set up temp loggers and POD processes</td>
+                <td>Operations</td>
+                <td>Weeks 3-6</td>
+                <td>800 (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Market Trials DE/NL/PL</td>
+                <td>Ship pilot consignments via selected distributors; collect sell-through data; adjust specs and pricing</td>
+                <td>Commercial Lead</td>
+                <td>Weeks 6-12</td>
+                <td>4,800 for initial discounts, logistics variance, inspections (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Digital B2B Presence</td>
+                <td>List on EU B2B wholesale platforms; set up basic lead gen and response SLAs</td>
+                <td>Sales Ops</td>
+                <td>Weeks 4-8</td>
+                <td>600 (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Non-EU Testing</td>
+                <td>Engage one consolidator for UAE or Singapore small-lot trial if margin-positive</td>
+                <td>Export Manager</td>
+                <td>Weeks 8-12</td>
+                <td>800 (Estimate)</td>
+            </tr>
+            <tr>
+                <td>Contingency</td>
+                <td>Reserve for claims or expedited shipments</td>
+                <td>CFO</td>
+                <td>Ongoing</td>
+                <td>1,000 (Estimate)</td>
+            </tr>
+        </table>
+        <p>Budget Allocation Recommendations</p>
+        <p>Within 10,000 total, prioritize activities that directly unlock distribution and ensure compliance.</p>
+        <br>
+        <table>
+            <tr>
+                <td>Category</td>
+                <td>Amount</td>
+                <td>Rationale</td>
+            </tr>
+            <tr>
+                <th>---------</th>
+                <th>--------</th>
+                <th>-----------</th>
+            </tr>
+            <tr>
+                <td>Market trials and buyer incentives</td>
+                <td>4,800</td>
+                <td>De-risk entry and secure repeat orders</td>
+            </tr>
+            <tr>
+                <td>Quality and inspections</td>
+                <td>1,200</td>
+                <td>Prevent costly border or buyer rejections</td>
+            </tr>
+            <tr>
+                <td>Trade marketing toolkit</td>
+                <td>1,000</td>
+                <td>Professional presentation to buyers</td>
+            </tr>
+            <tr>
+                <td>Logistics setup and temp monitoring</td>
+                <td>800</td>
+                <td>Protect quality and reduce claims</td>
+            </tr>
+            <tr>
+                <td>Distributor outreach and materials</td>
+                <td>500</td>
+                <td>Multilingual materials for DE, NL, PL</td>
+            </tr>
+            <tr>
+                <td>Digital B2B presence</td>
+                <td>600</td>
+                <td>Lead generation at low cost</td>
+            </tr>
+            <tr>
+                <td>Regulatory and documentation</td>
+                <td>300</td>
+                <td>Ensure conformity</td>
+            </tr>
+            <tr>
+                <td>Non-EU test</td>
+                <td>800</td>
+                <td>Small-scale learning</td>
+            </tr>
+            <tr>
+                <td>Contingency</td>
+                <td>1,000</td>
+                <td>Flexibility for issues</td>
+            </tr>
+        </table>
+        <p>Sources &amp; References</p>
+        <ul>
+            <li>Eurostat. Agricultural production and trade statistics. Publication year 2023. https://ec.europa.eu/eurostat</li>
+            <li>European Commission. General Food Law Regulation (EC) No 178/2002. Consolidated text accessed 2023.</li>
+            <li>European Commission. Regulation (EC) No 852/2004 on the hygiene of foodstuffs. Consolidated text accessed 2023.</li>
+            <li>European Commission. Regulation (EU) 1169/2011 on the provision of food information to consumers. Consolidated text accessed 2023.</li>
+            <li>European Commission. Commission Implementing Regulation (EU) No 543/2011, marketing standards for fruit and vegetables. Consolidated through 2023.</li>
+            <li>European Commission. Regulation (EC) No 396/2005 on maximum residue levels. EU MRL Database, accessed 2024.</li>
+            <li>European Commission. Single Market factsheet. 2024.</li>
+            <li>ITC Trade Map. Tomatoes, fresh or chilled, HS 0702. Country import values 2023. Accessed 2024. https://www.trademap.org</li>
+            <li>OECD-FAO. Agricultural Outlook 2023-2032. Tomatoes market overview. 2023.</li>
+            <li>USDA Economic Research Service. Vegetables and Pulses: Tomatoes market and trade. 2024 update. https://www.ers.usda.gov</li>
+            <li>FDA. FSMA Produce Safety Rule. Current as of 2024. https://www.fda.gov</li>
+            <li>USDA APHIS. Fruits and Vegetables Import Requirements. 2024. https://www.aphis.usda.gov</li>
+            <li>UK Government. Border Target Operating Model. 2024. https://www.gov.uk</li>
+            <li>Singapore Food Agency. Importing fruits and vegetables. 2024. https://www.sfa.gov.sg</li>
+            <li>UAE Ministry of Climate Change and Environment. Food import requirements. 2023. https://www.moccae.gov.ae</li>
+        </ul>
+        <p>Notes on Data Limitations</p>
+        <ul>
+            <li>Country-level TAM values are shown as estimates anchored on typical ranges for major import markets and should be validated with the latest ITC Trade Map 2023 or 2024 numbers before financial commitments.</li>
+            <li>Consumer behavior insights are directional from reputable institutional sources and may vary by sub-segment and season.</li>
+        </ul>
+        <div class="footer">
+            <p>This report was generated using AI-powered market research technology.</p>
+            <p>For questions or additional analysis, please contact your research team.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Define the function immediately when script loads
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            
+            // Show loading state
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⏳ Generating PDF...';
+            btn.disabled = true;
+           
+           // Wait for fonts and images to load
+           setTimeout(function() {
+               // First, ensure the element is visible and has content
+               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
+                   alert('Report content not found. Please refresh the page and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Ensure the element is visible and has content
+               const rect = element.getBoundingClientRect();
+               if (rect.width === 0 || rect.height === 0) {
+                   alert('Report content is not visible. Please scroll to the report and try again.');
+                   btn.innerHTML = originalText;
+                   btn.disabled = false;
+                   return;
+               }
+               
+               // Force a reflow to ensure content is rendered
+               element.style.display = 'none';
+               element.offsetHeight; // Trigger reflow
+               element.style.display = 'block';
+               
+               // Ensure all content is visible and expanded
+               element.style.height = 'auto';
+               element.style.minHeight = '100vh';
+               element.style.overflow = 'visible';
+               
+               // Wait a bit more for any dynamic content to render
+               setTimeout(function() {
+               
+               const opt = {
+                   margin: [0.5, 0.5, 0.5, 0.5],
+                   filename: 'AI_Trade_Report.pdf',
+                   image: { type: 'jpeg', quality: 0.98 },
+                   html2canvas: { 
+                       scale: 1.2,
+                       useCORS: true,
+                       allowTaint: true,
+                       backgroundColor: '#ffffff',
+                       logging: false,
+                       letterRendering: true,
+                       width: element.scrollWidth,
+                       height: element.scrollHeight,
+                       scrollX: 0,
+                       scrollY: 0,
+                       windowWidth: element.scrollWidth,
+                       windowHeight: element.scrollHeight
+                   },
+                   jsPDF: { 
+                       unit: 'in', 
+                       format: 'a4', 
+                       orientation: 'portrait',
+                       compress: true
+                   },
+                   pagebreak: { mode: ['css', 'legacy'] }
+               };
+              
+              // Debug: Log element dimensions
+              console.log('Element dimensions:', {
+                  width: element.offsetWidth,
+                  height: element.offsetHeight,
+                  scrollWidth: element.scrollWidth,
+                  scrollHeight: element.scrollHeight,
+                  rect: element.getBoundingClientRect()
+              });
+              
+              // Try the main PDF generation
+              html2pdf().set(opt).from(element).save().then(function() {
+                  btn.innerHTML = originalText;
+                  btn.disabled = false;
+              }).catch(function(error) {
+                  console.error('PDF generation failed:', error);
+                  
+                  // Fallback: Try with simpler options
+                  const simpleOpt = {
+                      margin: 0.5,
+                      filename: 'AI_Trade_Report.pdf',
+                      image: { type: 'jpeg', quality: 0.8 },
+                      html2canvas: { 
+                          scale: 1,
+                          backgroundColor: '#ffffff',
+                          width: element.scrollWidth,
+                          height: element.scrollHeight,
+                          useCORS: true,
+                          scrollX: 0,
+                          scrollY: 0
+                      },
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                  };
+                  
+                  html2pdf().set(simpleOpt).from(element).save().then(function() {
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  }).catch(function(fallbackError) {
+                      console.error('Fallback PDF generation also failed:', fallbackError);
+                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
+                      btn.innerHTML = originalText;
+                      btn.disabled = false;
+                  });
+              });
+          }, 500);
+      }, 1000);
+  }
+  
+  // Also make it available on window object
+  window.downloadPDF = downloadPDF;
+  
+  // Save report function
+  // Track if report is saved
+  let isReportSaved = false;
+  
+  function saveReport() {
+      console.log('Save report function called');
+      
+      const btn = event.target.closest('.action-btn');
+      if (!btn) {
+          console.error('Save button not found');
+          return;
+      }
+      
+      // Check if already saved
+      if (isReportSaved) {
+          btn.innerHTML = '✅ Already Saved';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          btn.disabled = true;
+          
+          setTimeout(() => {
+              btn.innerHTML = '💾 Save';
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 2000);
+          return;
+      }
+      
+      const originalText = btn.innerHTML;
+      
+      // Show loading state
+      btn.innerHTML = '⏳ Saving...';
+      btn.disabled = true;
+      
+      try {
+          // Get report data
+          const reportTitle = document.querySelector('h1')?.textContent || 'AI Trade Report';
+          const reportContent = document.getElementById('report-content')?.innerHTML || '';
+          const currentUrl = window.location.pathname;
+          const filename = currentUrl.split('/').pop() || 'unknown_report.html';
+          
+          console.log('Report data extracted:', {
+              title: reportTitle,
+              filename: filename,
+              contentLength: reportContent.length
+          });
+          
+          // Extract report metadata from URL or page
+          const brand = document.querySelector('.summary-item:nth-child(1) .item-value')?.textContent || 'Unknown Brand';
+          const product = document.querySelector('.summary-item:nth-child(2) .item-value')?.textContent || 'Unknown Product';
+          const budget = document.querySelector('.summary-item:nth-child(3) .item-value')?.textContent || 'Unknown Budget';
+          const enterpriseSize = document.querySelector('.summary-item:nth-child(4) .item-value')?.textContent || 'Unknown Size';
+          
+          // Prepare data for API
+          const reportData = {
+              title: reportTitle,
+              brand: brand,
+              product: product,
+              budget: budget,
+              enterprise_size: enterpriseSize,
+              ai_model: 'gpt-5',
+              language: 'en',
+              content: reportContent,
+              file_path: filename
+          };
+          
+          console.log('Sending data to API:', reportData);
+          
+          // Send to database
+          fetch('/save-report', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(reportData)
+          })
+          .then(response => {
+              console.log('API response status:', response.status);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              console.log('API response data:', data);
+              if (data.status === 'success') {
+                  isReportSaved = true; // Mark as saved
+                  btn.innerHTML = '✅ Saved!';
+                  btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                  
+                  setTimeout(() => {
+                      btn.innerHTML = '💾 Save';
+                      btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                      btn.disabled = false;
+                  }, 2000);
+              } else {
+                  throw new Error(data.message || 'Failed to save report');
+              }
+          })
+          .catch(error => {
+              console.error('Error saving report:', error);
+              btn.innerHTML = '❌ Error';
+              btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+              
+              setTimeout(() => {
+                  btn.innerHTML = originalText;
+                  btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                  btn.disabled = false;
+              }, 3000);
+          });
+      } catch (error) {
+          console.error('Error in saveReport function:', error);
+          btn.innerHTML = '❌ Error';
+          btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+          
+          setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 3000);
+      }
+  }
+  
+  // Return to main page function
+  function returnToMain() {
+      if (isReportSaved) {
+          // If report is saved, go directly without warning
+          window.location.href = '/';
+      } else {
+          // If not saved, show warning
+          if (confirm('Are you sure you want to return to the main page? Your current report will be lost.')) {
+              window.location.href = '/';
+          }
+      }
+  }
+  
+  // Make functions available globally
+  window.saveReport = saveReport;
+  window.returnToMain = returnToMain;
+ 
+          // Hide header when printing
+  window.addEventListener('beforeprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'none';
+  });
+  
+  window.addEventListener('afterprint', function() {
+      const header = document.querySelector('.report-header');
+      if (header) header.style.display = 'block';
+  });
+  
+  // Ensure function is available when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+      // Function should be available now
+      if (typeof downloadPDF === 'function') {
+          console.log('downloadPDF function is ready');
+      } else {
+          console.error('downloadPDF function not properly defined');
+      }
+  });
+  
+  // Also try to make it available immediately
+  if (typeof downloadPDF === 'function') {
+      console.log('downloadPDF function loaded successfully');
+  }
+    </script>
+</body>
+</html>

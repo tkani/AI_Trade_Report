@@ -20,15 +20,66 @@ from sqlalchemy.orm import Session
 load_dotenv()
 
 from generate_prompt import InputSpec, build_prompt, call_openai_chat
-from database.models import User, ProductTerm, get_db, create_tables
+from database.models import User, ProductTerm, Report, get_db, create_tables
 from auth.auth import get_current_user, verify_token
 from auth.auth_routes import router as auth_router
 
-app = FastAPI(title="AI Trade Report", description="Professional AI-powered market analysis generator")
+# App will be initialized later with lifespan
 
 # Job status tracking for async report generation
 job_status: Dict[str, Dict] = {}
 job_lock = threading.Lock()
+
+# These will be configured after app initialization
+
+# Create database tables
+create_tables()
+
+# Add lifespan context manager for proper startup/shutdown handling
+from contextlib import asynccontextmanager
+import asyncio
+import signal
+import sys
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Handle application startup and shutdown"""
+    # Startup
+    try:
+        create_tables()
+        print("Database tables created successfully")
+    except Exception as e:
+        print(f"Error creating database tables: {e}")
+    
+    # Set up signal handlers for graceful shutdown
+    def signal_handler(signum, frame):
+        print(f"Received signal {signum}, shutting down gracefully...")
+        sys.exit(0)
+    
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    
+    yield
+    
+    # Shutdown
+    print("Application shutting down...")
+    try:
+        # Cancel any pending tasks
+        tasks = [task for task in asyncio.all_tasks() if not task.done()]
+        if tasks:
+            print(f"Cancelling {len(tasks)} pending tasks...")
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+    except Exception as e:
+        print(f"Error during shutdown: {e}")
+
+# Initialize app with lifespan
+app = FastAPI(
+    title="AI Trade Report", 
+    description="Professional AI-powered market analysis generator",
+    lifespan=lifespan
+)
 
 # Add CORS middleware
 app.add_middleware(
@@ -45,9 +96,6 @@ templates = Jinja2Templates(directory="templates")
 
 # Include authentication routes
 app.include_router(auth_router)
-
-# Create database tables
-create_tables()
 
 os.makedirs("reports", exist_ok=True)
 
@@ -99,15 +147,22 @@ def generate_report_background(job_id: str, brand: str, product: str, budget: st
             f.write(report_text)
         
         # Create HTML version
-        html_path = create_html_report(report_text, report_filename_pdf, language)
+        form_data = {
+            'brand': brand,
+            'product': product,
+            'budget': budget,
+            'enterprise_size': enterprise_size
+        }
+        html_path = create_html_report(report_text, report_filename_pdf, language, form_data)
         actual_filename = f"{report_filename_pdf}.html"
         
         # Update job status to completed
         with job_lock:
+            form_data_params = f"?brand={brand}&product={product}&budget={budget}&enterprise_size={enterprise_size}"
             job_status[job_id] = {
                 "status": "completed",
                 "progress": 100,
-                "redirect_url": f"/report/{actual_filename}",
+                "redirect_url": f"/report/{actual_filename}{form_data_params}",
                 "report_name": actual_filename
             }
             
@@ -120,12 +175,12 @@ def generate_report_background(job_id: str, brand: str, product: str, budget: st
                 "error": str(e)
             }
 
-def create_html_report(content: str, filename: str, language: str = "en") -> str:
+def create_html_report(content: str, filename: str, language: str = "en", form_data: dict = None) -> str:
     """Create an HTML report from text content"""
     html_path = f"reports/{filename}.html"
     
     # Create HTML content
-    html_content = create_html_document(content, language)
+    html_content = create_html_document(content, language, form_data)
     
     # Write HTML file
     with open(html_path, 'w', encoding='utf-8') as f:
@@ -133,7 +188,7 @@ def create_html_report(content: str, filename: str, language: str = "en") -> str
     
     return html_path
 
-def create_html_document(content: str, language: str = "en") -> str:
+def create_html_document(content: str, language: str = "en", form_data: dict = None) -> str:
     """Convert text content to HTML format"""
     
     # Language-specific translations
@@ -150,7 +205,14 @@ def create_html_document(content: str, language: str = "en") -> str:
             "footer_text1": "This report was generated using AI-powered market research technology.",
             "footer_text2": "For questions or additional analysis, please contact your research team.",
             "print": "Print",
-            "download_pdf": "Download PDF"
+            "download_pdf": "Download PDF",
+            "save": "Save",
+            "return_home": "Home",
+            "saved_reports_title": "Your Saved Reports",
+            "saved_reports_subtitle": "Access and manage your previously generated reports",
+            "saved_reports_nav": "Saved Reports",
+            "no_reports_title": "No Saved Reports Yet",
+            "no_reports_description": "Generate your first report to see it saved here for easy access."
         },
         "it": {
             "title": "AI Trade Report - Analisi di Mercato Professionale",
@@ -164,7 +226,14 @@ def create_html_document(content: str, language: str = "en") -> str:
             "footer_text1": "Questo report è stato generato utilizzando tecnologia di ricerca di mercato basata su AI.",
             "footer_text2": "Per domande o analisi aggiuntive, contatta il tuo team di ricerca.",
             "print": "Stampa",
-            "download_pdf": "Scarica PDF"
+            "download_pdf": "Scarica PDF",
+            "save": "Salva",
+            "return_home": "Home",
+            "saved_reports_title": "I Tuoi Report Salvati",
+            "saved_reports_subtitle": "Accedi e gestisci i tuoi report generati in precedenza",
+            "saved_reports_nav": "Report Salvati",
+            "no_reports_title": "Nessun Report Salvato Ancora",
+            "no_reports_description": "Genera il tuo primo report per vederlo salvato qui per un accesso facile."
         }
     }
     
@@ -401,6 +470,19 @@ def create_html_document(content: str, language: str = "en") -> str:
         .action-btn.pdf {
             background: linear-gradient(135deg, #ef4444, #dc2626);
         }
+        
+        /* Hide download button on mobile devices */
+        @media (max-width: 768px) {
+            .action-btn.pdf {
+                display: none !important;
+            }
+        }
+        .action-btn.save {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .action-btn.home {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
         .btn-icon {
             font-size: 1rem;
         }
@@ -540,17 +622,17 @@ def create_html_document(content: str, language: str = "en") -> str:
             .header-actions {
                 width: 100%;
                 justify-content: center;
-                gap: 0.75rem;
+                gap: 0.5rem;
                 flex-wrap: wrap;
             }
             .action-btn {
-                padding: 0.625rem 1.25rem;
-                font-size: 0.8125rem;
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
                 flex: 1;
-                max-width: 140px;
+                max-width: 120px;
                 display: flex;
                 align-items: center;
-                gap: 0.5rem;
+                gap: 0.375rem;
             }
             .btn-text {
                 font-size: 0.8125rem;
@@ -667,12 +749,12 @@ def create_html_document(content: str, language: str = "en") -> str:
                 font-size: 1rem;
             }
             .action-btn {
-                padding: 0.5rem 1rem;
-                font-size: 0.75rem;
-                max-width: 120px;
+                padding: 0.375rem 0.5rem;
+                font-size: 0.6875rem;
+                max-width: 100px;
                 display: flex;
                 align-items: center;
-                gap: 0.375rem;
+                gap: 0.25rem;
             }
             .btn-text {
                 font-size: 0.75rem;
@@ -734,6 +816,400 @@ def create_html_document(content: str, language: str = "en") -> str:
                 padding: 0;
             }
         }
+        
+        /* Saved Reports Section Styles */
+        .saved-reports-section {
+            padding: 2rem 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 400px;
+        }
+        
+        .saved-reports-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        .saved-reports-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-reports-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .title-icon {
+            font-size: 1.5rem;
+        }
+        
+        .saved-reports-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .saved-report-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .saved-report-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: #3b82f6;
+        }
+        
+        .saved-report-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        
+        .report-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .report-item-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .report-item-date {
+            font-size: 0.875rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        
+        .report-item-details {
+            margin-bottom: 1rem;
+        }
+        
+        .report-detail-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .report-detail-label {
+            font-weight: 500;
+            color: #475569;
+            min-width: 80px;
+            margin-right: 0.5rem;
+        }
+        
+        .report-detail-value {
+            color: #1e293b;
+            flex: 1;
+        }
+        
+        .report-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .report-action-btn {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.375rem;
+        }
+        
+        .report-action-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        
+        .report-action-btn.primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-1px);
+        }
+        
+        .report-action-btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .report-action-btn.secondary:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        
+        .no-reports-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+        
+        .no-reports-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .no-reports-message h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        
+        .no-reports-message p {
+            font-size: 1rem;
+            margin: 0;
+        }
+        
+        .saved-reports-toggle {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .saved-reports-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+        
+        .saved-reports-toggle.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        
+        .nav-icon {
+            font-size: 1rem;
+        }
+        
+        /* Mobile Responsive for Saved Reports */
+        @media (max-width: 768px) {
+            .saved-reports-list {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .saved-report-item {
+                padding: 1rem;
+            }
+            
+            .report-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .report-item-actions {
+                flex-direction: column;
+            }
+            
+            .saved-reports-card {
+                padding: 1.5rem;
+                margin: 0 1rem;
+            }
+            
+        .saved-reports-title {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* Loading and Error States */
+    .loading-reports {
+        text-align: center;
+        padding: 2rem;
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+        .error-message {
+        text-align: center;
+        padding: 2rem;
+        color: #dc2626;
+        font-size: 1rem;
+        }
+
+        /* Custom styles for Bootstrap modal enhancements */
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sortable:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sort-indicator {
+            margin-left: 8px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+        }
+
+        .sortable.asc .sort-indicator {
+            opacity: 1;
+            transform: rotate(180deg);
+        }
+
+        .sortable.desc .sort-indicator {
+            opacity: 1;
+        }
+
+        /* Custom Navbar Styles */
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #333 !important;
+        }
+
+        .navbar-brand .brand-logo-img {
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .navbar-nav .btn {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-nav .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .navbar-nav .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .navbar-nav .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .navbar-nav .btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* Responsive navbar */
+        @media (max-width: 768px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            .navbar-nav .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            
+            .navbar-nav {
+                margin-top: 1rem;
+            }
+        }
+
+        /* Scrollable Table Styles */
+        .table-responsive {
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table th {
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -742,9 +1218,18 @@ def create_html_document(content: str, language: str = "en") -> str:
         <div class="header-content">
             <div class="header-brand">
                 <img src="/static/logo_trade_on_chain.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
+                <img src="/static/logo2.png" alt="AI Trade Report" class="brand-logo" style="height: 32px; width: auto; margin-right: 12px;">
                 <span class="brand-text">AI Trade Report</span>
             </div>
             <div class="header-actions">
+                <button class="action-btn save" onclick="saveReport()">
+                    <span class="btn-icon">💾</span>
+                    <span class="btn-text">""" + t['save'] + """</span>
+                </button>
+                <button class="action-btn home" onclick="returnToMain()">
+                    <span class="btn-icon">🏠</span>
+                    <span class="btn-text">""" + t['return_home'] + """</span>
+                </button>
                 <button class="action-btn print" onclick="window.print()">
                     <span class="btn-icon">🖨️</span>
                     <span class="btn-text">""" + t['print'] + """</span>
@@ -779,7 +1264,45 @@ def create_html_document(content: str, language: str = "en") -> str:
                 <div class="summary-item">
                     <span class="item-label">""" + t['report_type'] + """</span>
                     <span class="item-value">""" + t['comprehensive_analysis'] + """</span>
+                </div>"""
+    
+    # Add form data if available
+    if form_data:
+        print(f"DEBUG: Adding form data to HTML: {form_data}")
+        html += """
+                <div class="summary-item">
+                    <span class="item-label">Brand Name</span>
+                    <span class="item-value">""" + form_data.get('brand', 'N/A') + """</span>
                 </div>
+                <div class="summary-item">
+                    <span class="item-label">Product/Service</span>
+                    <span class="item-value">""" + form_data.get('product', 'N/A') + """</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Investment Budget</span>
+                    <span class="item-value">""" + form_data.get('budget', 'N/A') + """</span>
+                </div>
+                <div class="summary-item">
+                    <span class="item-label">Enterprise Size</span>
+                    <span class="item-value">""" + form_data.get('enterprise_size', 'N/A') + """</span>
+                </div>"""
+        
+        # Add hidden form data for JavaScript to extract
+        html += f"""
+        <script>
+        // Store form data for save function
+        window.formData = {{
+            brand: '{form_data.get('brand', '')}',
+            product: '{form_data.get('product', '')}',
+            budget: '{form_data.get('budget', '')}',
+            enterprise_size: '{form_data.get('enterprise_size', '')}'
+        }};
+        console.log('Form data stored:', window.formData);
+        </script>"""
+    else:
+        print("DEBUG: No form data provided to HTML generation")
+    
+    html += """
             </div>
         </div>
 """
@@ -1016,6 +1539,176 @@ def create_html_document(content: str, language: str = "en") -> str:
   
   // Also make it available on window object
   window.downloadPDF = downloadPDF;
+  
+  // Save report function
+  // Track if report is saved
+  let isReportSaved = false;
+  
+  function saveReport() {
+      console.log('Save report function called');
+      
+      const btn = event.target.closest('.action-btn');
+      if (!btn) {
+          console.error('Save button not found');
+          return;
+      }
+      
+      // Check if already saved
+      if (isReportSaved) {
+          btn.innerHTML = '✅ Already Saved';
+          btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+          btn.disabled = true;
+          
+          setTimeout(() => {
+              btn.innerHTML = '💾 Save';
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 2000);
+          return;
+      }
+      
+      const originalText = btn.innerHTML;
+      
+      // Show loading state
+      btn.innerHTML = '⏳ Saving...';
+      btn.disabled = true;
+      
+      try {
+          // Get report data
+          const reportTitle = document.querySelector('h1')?.textContent || 'AI Trade Report';
+          const reportContent = document.getElementById('report-content')?.innerHTML || '';
+          const currentUrl = window.location.pathname;
+          const filename = currentUrl.split('/').pop() || 'unknown_report.html';
+          
+          console.log('Report data extracted:', {
+              title: reportTitle,
+              filename: filename,
+              contentLength: reportContent.length
+          });
+          
+          // Extract form data from embedded JavaScript variable
+          let brand = 'Unknown Brand';
+          let product = 'Unknown Product';
+          let budget = 'Unknown Budget';
+          let enterpriseSize = 'Unknown Size';
+          
+          // Try to get from embedded form data first
+          if (window.formData) {
+              console.log('Found window.formData:', window.formData);
+              brand = window.formData.brand || 'Unknown Brand';
+              product = window.formData.product || 'Unknown Product';
+              budget = window.formData.budget || 'Unknown Budget';
+              enterpriseSize = window.formData.enterprise_size || 'Unknown Size';
+              console.log('Extracted form data from embedded variable:', { brand, product, budget, enterpriseSize });
+          } else {
+              console.log('No window.formData found, trying URL parameters...');
+              // Fallback to URL parameters
+              const urlParams = new URLSearchParams(window.location.search);
+              console.log('Current URL:', window.location.href);
+              console.log('URL search params:', window.location.search);
+              console.log('URL params object:', Object.fromEntries(urlParams));
+              
+              brand = urlParams.get('brand') || 'Unknown Brand';
+              product = urlParams.get('product') || 'Unknown Product';
+              budget = urlParams.get('budget') || 'Unknown Budget';
+              enterpriseSize = urlParams.get('enterprise_size') || 'Unknown Size';
+              
+              console.log('Extracted form data from URL (fallback):', { brand, product, budget, enterpriseSize });
+          }
+          
+          // Prepare data for API
+          const reportData = {
+              title: reportTitle,
+              brand: brand,
+              product: product,
+              budget: budget,
+              enterprise_size: enterpriseSize,
+              ai_model: 'gpt-5',
+              language: 'en',
+              content: reportContent,
+              file_path: filename
+          };
+          
+          console.log('Sending data to API:', reportData);
+          console.log('Final data being sent:', {
+              title: reportData.title,
+              brand: reportData.brand,
+              product: reportData.product,
+              budget: reportData.budget,
+              enterprise_size: reportData.enterprise_size
+          });
+          
+          // Send to database
+          fetch('/save-report', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(reportData)
+          })
+          .then(response => {
+              console.log('API response status:', response.status);
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              console.log('API response data:', data);
+              if (data.status === 'success') {
+                  isReportSaved = true; // Mark as saved
+                  btn.innerHTML = '✅ Saved!';
+                  btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                  
+                  setTimeout(() => {
+                      btn.innerHTML = '💾 Save';
+                      btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                      btn.disabled = false;
+                  }, 2000);
+              } else {
+                  throw new Error(data.message || 'Failed to save report');
+              }
+          })
+          .catch(error => {
+              console.error('Error saving report:', error);
+              btn.innerHTML = '❌ Error';
+              btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+              
+              setTimeout(() => {
+                  btn.innerHTML = originalText;
+                  btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+                  btn.disabled = false;
+              }, 3000);
+          });
+      } catch (error) {
+          console.error('Error in saveReport function:', error);
+          btn.innerHTML = '❌ Error';
+          btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+          
+          setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.background = 'linear-gradient(135deg, #8b5cf6, #7c3aed)';
+              btn.disabled = false;
+          }, 3000);
+      }
+  }
+  
+  // Return to main page function
+  function returnToMain() {
+      if (isReportSaved) {
+          // If report is saved, go directly without warning
+          window.location.href = '/';
+      } else {
+          // If not saved, show warning
+          if (confirm('Are you sure you want to return to the main page? Your current report will be lost.')) {
+              window.location.href = '/';
+          }
+      }
+  }
+  
+  // Make functions available globally
+  window.saveReport = saveReport;
+  window.returnToMain = returnToMain;
  
           // Hide header when printing
   window.addEventListener('beforeprint', function() {
@@ -1074,10 +1767,89 @@ def home(request: Request, current_user: User = Depends(get_current_user_from_co
 def health_check():
     return {"status": "healthy", "version": "1.0.0", "service": "AI Trade Report"}
 
+@app.get("/debug/db")
+def debug_database(db: Session = Depends(get_db)):
+    """Debug endpoint to check database status"""
+    try:
+        reports = db.query(Report).all()
+        return {
+            "status": "success",
+            "total_reports": len(reports),
+            "reports": [
+                {
+                    "id": r.id,
+                    "title": r.title,
+                    "is_saved": r.is_saved,
+                    "created_at": r.created_at.isoformat() if r.created_at else None
+                } for r in reports
+            ]
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/test-save")
+async def test_save_report(report_data: dict, db: Session = Depends(get_db)):
+    """Test endpoint to save report without authentication"""
+    try:
+        # Create a test report
+        test_report = Report(
+            user_id=1,  # Use a test user ID
+            title=report_data.get("title", "Test Report"),
+            brand=report_data.get("brand", "Test Brand"),
+            product=report_data.get("product", "Test Product"),
+            budget=report_data.get("budget", "Test Budget"),
+            enterprise_size=report_data.get("enterprise_size", "Test Size"),
+            ai_model=report_data.get("ai_model", "gpt-5"),
+            language=report_data.get("language", "en"),
+            content=report_data.get("content", "Test content"),
+            file_path=report_data.get("file_path", "test.html"),
+            is_saved=True
+        )
+        
+        db.add(test_report)
+        db.commit()
+        db.refresh(test_report)
+        
+        return JSONResponse({
+            "status": "success",
+            "message": "Test report saved successfully",
+            "report_id": test_report.id
+        })
+        
+    except Exception as e:
+        print(f"Error in test save: {e}")
+        db.rollback()
+        return JSONResponse({
+            "status": "error",
+            "message": f"Failed to save test report: {str(e)}"
+        }, status_code=500)
+
 @app.get("/debug/select2")
 def debug_select2(request: Request):
     """Debug endpoint to test Select2 functionality"""
     return templates.TemplateResponse("debug_select2.html", {"request": request})
+
+@app.get("/test-save")
+def test_save_page():
+    """Test page for save functionality"""
+    with open("test_save.html", "r", encoding="utf-8") as f:
+        return HTMLResponse(f.read())
+
+@app.get("/debug/auth")
+def debug_auth(current_user: User = Depends(get_current_user_from_cookie)):
+    """Debug endpoint to check authentication status"""
+    if current_user:
+        return {
+            "status": "authenticated",
+            "user_id": current_user.id,
+            "user_name": f"{current_user.name} {current_user.surname}",
+            "user_email": current_user.email
+        }
+    else:
+        return {
+            "status": "not_authenticated",
+            "message": "User not logged in"
+        }
 
 @app.get("/api/search-terms")
 def search_terms(q: str = "", limit: int = 20, db: Session = Depends(get_db)):
@@ -1151,10 +1923,11 @@ async def generate_report(
     enterprise_size: str = Form(...),
     ai_model: str = Form("gpt-5"),
     language: str = Form("en"),
-    current_user: User = Depends(get_current_user_from_cookie)
+    current_user: User = Depends(get_current_user_from_cookie),
+    db: Session = Depends(get_db)
 ):
     if not current_user:
-        return HTMLResponse("<h1>Authentication required</h1>", status_code=401)
+        return JSONResponse({"status": "error", "message": "Authentication required. Please log in to generate reports."}, status_code=401)
     
     try:
         # Debug: Log received values
@@ -1199,13 +1972,48 @@ async def generate_report(
             f.write(report_text)
 
         # Create HTML version
-        html_path = create_html_report(report_text, report_filename_pdf, language)
+        form_data = {
+            'brand': brand,
+            'product': product,
+            'budget': budget,
+            'enterprise_size': enterprise_size
+        }
+        html_path = create_html_report(report_text, report_filename_pdf, language, form_data)
         actual_filename = f"{report_filename_pdf}.html"
 
-        # Return JSON with redirect URL for AJAX handling
+        # Save report metadata to database
+        try:
+            print(f"DEBUG: Saving report to database with form data:")
+            print(f"  Brand: '{brand}'")
+            print(f"  Product: '{product}'")
+            print(f"  Budget: '{budget}'")
+            print(f"  Enterprise Size: '{enterprise_size}'")
+            
+            report_record = Report(
+                user_id=user_id,
+                title=f"AI Trade Report - {brand}",
+                brand=brand,
+                product=product,
+                budget=budget,
+                enterprise_size=enterprise_size,
+                ai_model=ai_model,
+                language=language,
+                content=report_text,  # Store the text content
+                file_path=actual_filename,
+                is_saved=False  # Not saved by user yet
+            )
+            db.add(report_record)
+            db.commit()
+            db.refresh(report_record)
+            print(f"DEBUG: Report saved successfully with ID: {report_record.id}")
+        except Exception as e:
+            print(f"Warning: Could not save report metadata to database: {e}")
+
+        # Return JSON with redirect URL for AJAX handling, including form data
+        form_data_params = f"?brand={brand}&product={product}&budget={budget}&enterprise_size={enterprise_size}"
         return JSONResponse({
             "status": "success",
-            "redirect_url": f"/report/{actual_filename}",
+            "redirect_url": f"/report/{actual_filename}{form_data_params}",
             "report_name": actual_filename
         })
         
@@ -1245,3 +2053,172 @@ def download_report(filename: str):
         
         return FileResponse(filepath, media_type=media_type, filename=filename)
     return {"status": "error", "message": "File not found"}
+
+@app.post("/save-report")
+async def save_report_to_db(
+    request: Request,
+    report_data: dict,
+    current_user: User = Depends(get_current_user_from_cookie),
+    db: Session = Depends(get_db)
+):
+    """Save report to database"""
+    try:
+        print(f"Save report request received. User: {current_user}")
+        print(f"Report data: {report_data}")
+        
+        if not current_user:
+            print("No authenticated user found")
+            return JSONResponse({"status": "error", "message": "Authentication required"}, status_code=401)
+        
+        # Extract report data with validation
+        title = report_data.get("title", "AI Trade Report")
+        brand = report_data.get("brand", "")
+        product = report_data.get("product", "")
+        budget = report_data.get("budget", "")
+        enterprise_size = report_data.get("enterprise_size", "")
+        ai_model = report_data.get("ai_model", "gpt-5")
+        language = report_data.get("language", "en")
+        content = report_data.get("content", "")
+        file_path = report_data.get("file_path", "")
+        
+        print(f"Extracted data - Title: {title}, Brand: {brand}, Product: {product}")
+        
+        # Validate required fields
+        if not title or not content:
+            return JSONResponse({
+                "status": "error",
+                "message": "Title and content are required"
+            }, status_code=400)
+        
+        # Create new report record
+        new_report = Report(
+            user_id=current_user.id,
+            title=title[:500],  # Limit title length
+            brand=brand[:200],  # Limit brand length
+            product=product[:500],  # Limit product length
+            budget=budget[:100],  # Limit budget length
+            enterprise_size=enterprise_size[:50],  # Limit size length
+            ai_model=ai_model[:100],  # Limit model length
+            language=language[:10],  # Limit language length
+            content=content,  # Content can be large
+            file_path=file_path[:500],  # Limit file path length
+            is_saved=True
+        )
+        
+        print(f"Creating report for user {current_user.id}")
+        db.add(new_report)
+        db.commit()
+        db.refresh(new_report)
+        
+        print(f"Report saved successfully with ID: {new_report.id}")
+        
+        return JSONResponse({
+            "status": "success",
+            "message": "Report saved successfully",
+            "report_id": new_report.id
+        })
+        
+    except Exception as e:
+        print(f"Error saving report: {e}")
+        import traceback
+        traceback.print_exc()
+        db.rollback()
+        return JSONResponse({
+            "status": "error",
+            "message": f"Failed to save report: {str(e)}"
+        }, status_code=500)
+
+@app.get("/my-reports")
+async def get_user_reports(
+    current_user: User = Depends(get_current_user_from_cookie),
+    db: Session = Depends(get_db)
+):
+    """Get user's saved reports"""
+    try:
+        if not current_user:
+            return JSONResponse({"status": "error", "message": "Authentication required"}, status_code=401)
+        
+        reports = db.query(Report).filter(
+            Report.user_id == current_user.id,
+            Report.is_saved == True
+        ).order_by(Report.created_at.desc()).all()
+        
+        # Ensure all required fields are present
+        reports_data = []
+        for report in reports:
+            try:
+                reports_data.append({
+                    "id": report.id,
+                    "title": report.title or "Untitled Report",
+                    "brand": report.brand or "Unknown Brand",
+                    "product": report.product or "Unknown Product",
+                    "budget": report.budget or "Unknown Budget",
+                    "enterprise_size": report.enterprise_size or "Unknown Size",
+                    "ai_model": report.ai_model or "gpt-5",
+                    "language": report.language or "en",
+                    "created_at": report.created_at.isoformat() if report.created_at else "",
+                    "file_path": report.file_path or ""
+                })
+            except Exception as e:
+                print(f"Error processing report {report.id}: {e}")
+                continue
+        
+        return JSONResponse({
+            "status": "success",
+            "reports": reports_data
+        })
+        
+    except Exception as e:
+        print(f"Error fetching user reports: {e}")
+        return JSONResponse({
+            "status": "error",
+            "message": f"Failed to fetch reports: {str(e)}"
+        }, status_code=500)
+
+@app.delete("/delete-report/{report_id}")
+async def delete_report(
+    report_id: int,
+    current_user: User = Depends(get_current_user_from_cookie),
+    db: Session = Depends(get_db)
+):
+    """Delete a saved report"""
+    try:
+        if not current_user:
+            return JSONResponse({"status": "error", "message": "Authentication required"}, status_code=401)
+        
+        # Validate report_id
+        if not isinstance(report_id, int) or report_id <= 0:
+            return JSONResponse({
+                "status": "error",
+                "message": "Invalid report ID"
+            }, status_code=400)
+        
+        # Find the report
+        report = db.query(Report).filter(
+            Report.id == report_id,
+            Report.user_id == current_user.id,
+            Report.is_saved == True
+        ).first()
+        
+        if not report:
+            return JSONResponse({
+                "status": "error",
+                "message": "Report not found or you don't have permission to delete it"
+            }, status_code=404)
+        
+        # Delete the report
+        db.delete(report)
+        db.commit()
+        
+        return JSONResponse({
+            "status": "success",
+            "message": "Report deleted successfully"
+        })
+        
+    except Exception as e:
+        print(f"Error deleting report {report_id}: {e}")
+        db.rollback()
+        return JSONResponse({
+            "status": "error",
+            "message": f"Failed to delete report: {str(e)}"
+        }, status_code=500)

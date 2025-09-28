@@ -17,11 +17,11 @@ class InputSpec:
     enterprise_size: str
 
 def validate_input(spec: InputSpec):
-    if not spec.brand or not spec.product or not spec.budget or not spec.enterprise_size:
-        raise ValueError("brand, product, budget and enterprise_size must be provided")
+    if not spec.brand or not spec.product or not spec.enterprise_size:
+        raise ValueError("brand, product and enterprise_size must be provided")
     if len(spec.brand) > 120 or len(spec.product) > 120:
         raise ValueError("brand/product too long")
-    if len(spec.budget) > 40:
+    if spec.budget and len(spec.budget) > 40:
         raise ValueError("budget string too long")
     if spec.enterprise_size not in ["small", "medium", "large"]:
         raise ValueError("enterprise_size must be small, medium, or large")
@@ -92,20 +92,42 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
         }
         enterprise_size_it = enterprise_size_map.get(spec.enterprise_size, spec.enterprise_size)
         
+        # Handle empty or zero budget
+        budget_text = ""
+        if not spec.budget or spec.budget.strip() == "" or spec.budget == "0":
+            budget_text = "**IMPORTANTE:** Il cliente non ha specificato un budget. Analizza il mercato e suggerisci un budget appropriato basato sulla dimensione aziendale, il prodotto e i mercati target. Includi una sezione dedicata 'Raccomandazioni di Budget' con una giustificazione dettagliata.\n\n"
+        else:
+            budget_text = f"con un budget totale disponibile di **{spec.budget}**.\n"
+        
         user_instruction = (
             f"Ricerca e analizza le opportunità di espansione del mercato per *{spec.product}* "
-            f"sotto il brand *{spec.brand}* con un budget totale disponibile di **{spec.budget}**.\n"
+            f"sotto il brand *{spec.brand}* {budget_text}"
             f"**Dimensione Azienda:** {enterprise_size_it}\n\n"
-            "Conduci una ricerca di mercato completa focalizzandoti su:\n"
-            "- Identificazione e dimensionamento del mercato target (TAM, SAM, SOM)\n"
-            "- Analisi del panorama competitivo\n"
-            "- Requisiti normativi e di conformità\n"
-            "- Comportamento del consumatore e modelli di acquisto\n"
-            "- Canali di distribuzione e barriere all'ingresso\n"
-            "- Strategie di pricing e strutture dei costi\n"
-            "- Tendenze tecnologiche e opportunità di innovazione\n"
-            "- Valutazione del rischio e strategie di mitigazione\n\n"
-            "Fornisci insights azionabili e raccomandazioni strategiche per un ingresso di successo nel mercato.\n"
+            "Conduci una ricerca di mercato completa focalizzandoti su MERCATI EUROPEI E NON-EUROPEI:\n\n"
+            "**ANALISI MERCATI EUROPEI:**\n"
+            "- Paesi europei con maggiore potenziale (Germania, Francia, Regno Unito, Italia, Spagna, Paesi Bassi, Polonia, ecc.)\n"
+            "- Ambiente normativo UE e requisiti di conformità (marcatura CE, GDPR, normative sulla sicurezza alimentare)\n"
+            "- Comportamento del consumatore europeo e modelli di acquisto\n"
+            "- Canali di distribuzione UE e reti di vendita al dettaglio\n"
+            "- Opportunità di commercio transfrontaliero nel mercato unico UE\n"
+            "- Panorama competitivo europeo e posizionamento di mercato\n"
+            "- Opportunità di finanziamento UE e programmi di supporto\n\n"
+            "**ANALISI MERCATI NON-EUROPEI:**\n"
+            "- Mercati chiave non-europei (Nord America, Asia-Pacifico, America Latina, Medio Oriente, Africa)\n"
+            "- Requisiti di ingresso nel mercato e quadri normativi fuori dall'Europa\n"
+            "- Differenze culturali e comportamentali nei mercati non-europei\n"
+            "- Canali di distribuzione internazionali e partnership\n"
+            "- Considerazioni valutarie e rischi di cambio\n"
+            "- Accordi commerciali e implicazioni tariffarie\n"
+            "- Competizione locale e dinamiche di mercato\n\n"
+            "**ANALISI COMPARATIVA:**\n"
+            "- Identificazione e dimensionamento del mercato target (TAM, SAM, SOM) per mercati europei e non-europei\n"
+            "- Analisi del panorama competitivo in tutte le regioni target\n"
+            "- Confronto delle strategie di pricing e strutture dei costi\n"
+            "- Tendenze tecnologiche e opportunità di innovazione a livello globale\n"
+            "- Valutazione del rischio e strategie di mitigazione per l'espansione internazionale\n"
+            "- Raccomandazioni di allocazione del budget tra mercati europei e non-europei\n\n"
+            "Fornisci insights azionabili e raccomandazioni strategiche per un ingresso di successo nei mercati europei e non-europei.\n"
         )
     else:
         # Map enterprise size to English
@@ -116,20 +138,48 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
         }
         enterprise_size_en = enterprise_size_map.get(spec.enterprise_size, spec.enterprise_size)
         
+        # Handle empty or zero budget
+        budget_text = ""
+        if not spec.budget or spec.budget.strip() == "" or spec.budget == "0":
+            budget_text = "**IMPORTANT:** The client has not specified a budget. Analyze the market and suggest an appropriate budget based on enterprise size, product, and target markets. Include a dedicated 'Budget Recommendations' section with detailed justification.\n\n"
+        else:
+            budget_text = f"with a total available budget of **{spec.budget}**.\n"
+        
         user_instruction = (
             f"Research and analyze the market expansion opportunities for *{spec.product}* "
-            f"under the brand *{spec.brand}* with a total available budget of **{spec.budget}**.\n"
+            f"under the brand *{spec.brand}* {budget_text}"
             f"**Enterprise Size:** {enterprise_size_en}\n\n"
-            "Conduct comprehensive market research focusing on:\n"
-            "- Target market identification and sizing (TAM, SAM, SOM)\n"
-            "- Competitive landscape analysis\n"
-            "- Regulatory and compliance requirements\n"
-            "- Consumer behavior and purchasing patterns\n"
-            "- Distribution channels and entry barriers\n"
-            "- Pricing strategies and cost structures\n"
-            "- Technology trends and innovation opportunities\n"
-            "- Risk assessment and mitigation strategies\n\n"
-            "Provide actionable insights and strategic recommendations for successful market entry.\n"
+            "Conduct comprehensive market research focusing on BOTH European and non-European markets:\n\n"
+            "**EUROPEAN MARKETS ANALYSIS:**\n"
+            "- Target European countries with highest potential (Germany, France, UK, Italy, Spain, Netherlands, Poland, etc.)\n"
+            "- EU regulatory environment and compliance requirements (CE marking, GDPR, food safety regulations)\n"
+            "- European consumer behavior and purchasing patterns\n"
+            "- EU distribution channels and retail networks (MANDATORY - provide detailed distribution analysis for EU countries)\n"
+            "- Cross-border trade opportunities within the EU single market\n"
+            "- European competitive landscape and market positioning\n"
+            "- EU funding opportunities and support programs\n\n"
+            "**NON-EUROPEAN MARKETS ANALYSIS:**\n"
+            "- Key non-European markets (North America, Asia-Pacific, Latin America, Middle East, Africa)\n"
+            "- Market entry requirements and regulatory frameworks outside Europe\n"
+            "- Cultural and consumer behavior differences in non-European markets\n"
+            "- International distribution channels and partnerships\n"
+            "- Currency considerations and exchange rate risks\n"
+            "- Trade agreements and tariff implications\n"
+            "- Local competition and market dynamics\n\n"
+            "**COMPARATIVE ANALYSIS:**\n"
+            "- Target market identification and sizing (TAM, SAM, SOM) for both European and non-European markets\n"
+            "- Competitive landscape analysis across all target regions\n"
+            "- Pricing strategies and cost structures comparison\n"
+            "- Technology trends and innovation opportunities globally\n"
+            "- Risk assessment and mitigation strategies for international expansion\n"
+            "- Budget allocation recommendations between European and non-European markets\n\n"
+            "**IMPORTANT:** Ensure the Distribution Channels section includes detailed analysis for:\n"
+            "- EU: Specific distribution channels, retail networks, and entry strategies for each target European country\n"
+            "- North America: Distribution partnerships, retail chains, and market entry approaches\n"
+            "- Asia-Pacific: Local distribution networks, cultural considerations, and partnership opportunities\n"
+            "- Middle East: Modern trade groups, HORECA distributors, and market entry strategies\n"
+            "- Other regions: Relevant distribution channels and market entry approaches\n\n"
+            "Provide actionable insights and strategic recommendations for successful market entry in both European and non-European markets.\n"
         )
 
     if analysis_date:
@@ -169,22 +219,23 @@ PROFESSIONAL REPORT FORMATTING REQUIREMENTS:
 2. **Report Structure (MANDATORY)**
    - **Title Page** (if space permits)
    - **Executive Summary** (2-3 paragraphs maximum)
-   - **Market Overview** (only if sufficient data available)
-   - **Target Market Analysis** (TAM, SAM, SOM - only if data available)
-   - **Competitive Landscape** (only if competitors identified)
-   - **Regulatory Environment** (only if regulations exist)
-   - **Consumer Analysis** (only if consumer data available)
-   - **Distribution Channels** (only if channel data available)
-   - **Financial Projections** (only if budget data available)
-   - **Risk Assessment** (only if risks identified)
+   - **Market Overview** (MANDATORY - provide general market insights)
+   - **Target Market Analysis** (MANDATORY - include TAM, SAM, SOM estimates)
+   - **Competitive Landscape** (MANDATORY - identify key competitors)
+   - **Regulatory Environment** (MANDATORY - include relevant regulations)
+   - **Consumer Analysis** (MANDATORY - provide consumer insights)
+   - **Distribution Channels** (MANDATORY - detail distribution strategies)
+   - **Financial Projections** (MANDATORY - include budget recommendations)
+   - **Risk Assessment** (MANDATORY - identify key risks)
    - **Strategic Recommendations** (MANDATORY)
    - **Implementation Plan** (90-day action plan - MANDATORY)
    - **Sources & References** (MANDATORY)
 
 3. **Data Quality Standards**
-   - ONLY include sections with verifiable, sufficient data
-   - If a section lacks data, OMIT it completely
+   - Provide comprehensive analysis for all sections
+   - Use market research and industry knowledge to fill gaps
    - Clearly label all estimates with "(Estimate)" and reasoning
+   - Include relevant insights even if specific data is limited
    - Use only official sources: Eurostat, Comtrade, OECD, Statista, World Bank, UN DATA, WTO, ITA
    - Include publication dates for all sources
    - Recent data preferred (2023-2025)
@@ -246,14 +297,17 @@ PROFESSIONAL REPORT FORMATTING REQUIREMENTS:
    - Use professional business terminology
    - Ensure clarity and precision in all statements
 
-10. **Market Research Focus Areas** (only if data available)
-   - Current market sizes and growth rates
-   - Regulatory environment and compliance requirements
-   - Consumer behavior and purchasing patterns
-   - Distribution channels and entry barriers
-   - Competitive positioning and market share
-   - Pricing strategies and cost structures
-   - Technology trends and innovation opportunities
+10. **Market Research Focus Areas** (MANDATORY - provide comprehensive analysis)
+   - **European Markets:** Current market sizes and growth rates in key EU countries
+   - **Non-European Markets:** Market potential in North America, Asia-Pacific, Latin America, Middle East, Africa
+   - **Regulatory Environment:** EU regulations (CE marking, GDPR, food safety) vs. international compliance requirements
+   - **Consumer Behavior:** European vs. non-European consumer patterns and cultural differences
+   - **Distribution Channels:** EU single market opportunities vs. international distribution networks
+   - **Competitive Positioning:** European competitors vs. global market leaders
+   - **Pricing Strategies:** EU pricing structures vs. international pricing models
+   - **Technology Trends:** European innovation hubs vs. global technology opportunities
+   - **Trade Agreements:** EU trade benefits vs. international trade agreements and tariffs
+   - **Currency Considerations:** Euro stability vs. international currency risks
 """
     
     # Use the research task API format
