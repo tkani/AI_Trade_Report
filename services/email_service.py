@@ -11,6 +11,13 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+smtp_server = "smtp.gmail.com"
+smtp_port = "465"
+smtp_username = "tkani1337@gmail.com"
+smtp_password = "nkky yhfx gwjh ohfe"
+FROM_EMAIL="noreply@aitradereport.com"
+FROM_NAME="AI Trade Report"
+
 class EmailService:
     def __init__(self):
         self.smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
