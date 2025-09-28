@@ -106,37 +106,37 @@ class EmailService:
             msg.attach(text_part)
             msg.attach(html_part)
             
-        # Send email
-        if self.smtp_username and self.smtp_password:
-            try:
-                print(f"🔧 SMTP Config: Server={self.smtp_server}, Port={self.smtp_port}, Username={self.smtp_username}")
-                print(f"🔧 Attempting SMTP_SSL connection...")
-                
-                # Use the same method that worked in the test
-                with smtplib.SMTP_SSL(self.smtp_server, 465, timeout=10) as server:
-                    print(f"🔧 SMTP_SSL connection established")
-                    server.login(self.smtp_username, self.smtp_password)
-                    print(f"🔧 SMTP login successful")
-                    server.send_message(msg, self.smtp_username, [to_email])
-                    print(f"🔧 Email message sent")
-                
-                logger.info(f"Password reset email sent to {to_email}")
-                print(f"✅ Email sent successfully to {to_email}")
-                return True
-            except smtplib.SMTPAuthenticationError as e:
-                logger.error(f"SMTP Authentication failed: {e}")
-                print(f"❌ SMTP Authentication failed: {e}")
-                print(f"🔄 Falling back to console output...")
-            except smtplib.SMTPException as e:
-                logger.error(f"SMTP error: {e}")
-                print(f"❌ SMTP error: {e}")
-                print(f"🔄 Falling back to console output...")
-            except Exception as e:
-                logger.error(f"Email sending failed: {e}")
-                print(f"❌ Email sending failed: {e}")
-                print(f"🔄 Falling back to console output...")
-                # Fall through to console output
-                pass
+            # Send email
+            if self.smtp_username and self.smtp_password:
+                try:
+                    print(f"🔧 SMTP Config: Server={self.smtp_server}, Port={self.smtp_port}, Username={self.smtp_username}")
+                    print(f"🔧 Attempting SMTP_SSL connection...")
+                    
+                    # Use the same method that worked in the test
+                    with smtplib.SMTP_SSL(self.smtp_server, 465, timeout=10) as server:
+                        print(f"🔧 SMTP_SSL connection established")
+                        server.login(self.smtp_username, self.smtp_password)
+                        print(f"🔧 SMTP login successful")
+                        server.send_message(msg, self.smtp_username, [to_email])
+                        print(f"🔧 Email message sent")
+                    
+                    logger.info(f"Password reset email sent to {to_email}")
+                    print(f"✅ Email sent successfully to {to_email}")
+                    return True
+                except smtplib.SMTPAuthenticationError as e:
+                    logger.error(f"SMTP Authentication failed: {e}")
+                    print(f"❌ SMTP Authentication failed: {e}")
+                    print(f"🔄 Falling back to console output...")
+                except smtplib.SMTPException as e:
+                    logger.error(f"SMTP error: {e}")
+                    print(f"❌ SMTP error: {e}")
+                    print(f"🔄 Falling back to console output...")
+                except Exception as e:
+                    logger.error(f"Email sending failed: {e}")
+                    print(f"❌ Email sending failed: {e}")
+                    print(f"🔄 Falling back to console output...")
+                    # Fall through to console output
+                    pass
             
             # Fallback: Show reset link in console
             logger.info(f"Password reset link for {to_email}: {reset_link}")
