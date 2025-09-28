@@ -1919,7 +1919,7 @@ async def generate_report(
     request: Request,
     brand: str = Form(...),
     product: str = Form(...),
-    budget: str = Form(...),
+    budget: str = Form(""),
     enterprise_size: str = Form(...),
     ai_model: str = Form("gpt-5"),
     language: str = Form("en"),
