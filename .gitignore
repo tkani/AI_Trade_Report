@@ -55,7 +55,7 @@ Thumbs.db
 logs/
 
 # Reports directory (optional - uncomment if you don't want to track generated reports)
-# reports/
+reports/
 
 # Database
 # *.db
