@@ -107,75 +107,111 @@ $(document).ready(function () {
         // Add the AI model selection to form data
         formData += '&ai_model=' + encodeURIComponent(selectedModel);
 
-        // Set a timeout for the request
+        // Set a timeout for the request (increased to 15 minutes)
         const requestTimeout = setTimeout(function() {
             $('#splash-screen').css('display', 'none');
-            alert('Report generation is taking longer than expected. Please try again.');
-        }, 120000); // 2 minutes timeout
+            alert('Report generation is taking longer than expected. This can happen with complex reports. Please try again or contact support if the issue persists.');
+        }, 900000); // 15 minutes timeout
 
         // Show progress updates
         let progressCounter = 0;
         const progressInterval = setInterval(function() {
-            progressCounter += 10;
-            if (progressCounter <= 90) {
+            progressCounter += 2; // Slower progress to be more realistic
+            if (progressCounter <= 85) { // Stop at 85% to avoid showing 100% before completion
                 console.log('Generating report... ' + progressCounter + '%');
+                // Update loading description with more specific messages
+                const messages = [
+                    'Our AI is analyzing market data, competitive landscape, and strategic opportunities for your business expansion.',
+                    'Processing market research data and generating insights...',
+                    'Analyzing competitive landscape and market trends...',
+                    'Generating strategic recommendations and implementation plan...',
+                    'Finalizing report structure and formatting...',
+                    'Almost done! Preparing your comprehensive market analysis...'
+                ];
+                const messageIndex = Math.min(Math.floor(progressCounter / 15), messages.length - 1);
+                $('.loading-description').text(messages[messageIndex]);
             }
-        }, 10000); // Update every 10 seconds
+        }, 20000); // Update every 20 seconds for more realistic progress
 
-        // Submit form data via AJAX
-        $.ajax({
-            url: '/generate',
-            type: 'POST',
-            data: formData,
-            timeout: 120000, // 2 minutes timeout
-            success: function (response, status, xhr) {
-                clearTimeout(requestTimeout);
-                clearInterval(progressInterval);
-                
-                // Complete all steps
-                completeAllSteps();
-                
-                // Check if we got a successful response
-                if (response.status === 'success') {
-                    // Small delay before redirect for better UX
-                    setTimeout(function() {
-                        $('#splash-screen').css('display', 'none');
-                        window.location.href = response.redirect_url;
-                    }, 1000);
-                } else {
-                    // If no success, hide splash screen and show error
-                    setTimeout(function() {
-                        $('#splash-screen').css('display', 'none');
-                        alert('Error: ' + (response.message || 'Unknown error occurred'));
-                    }, 1000);
-                }
-            },
-            error: function (xhr, status, error) {
-                clearTimeout(requestTimeout);
-                clearInterval(progressInterval);
-                $('#splash-screen').css('display', 'none');
-                
-                if (status === 'timeout') {
-                    alert('Request timed out. Please try again.');
-                } else if (xhr.status === 401) {
-                    // Authentication required - redirect to login
-                    alert('You need to log in to generate reports. Redirecting to login page...');
-                    window.location.href = '/login';
-                } else {
-                    // Try to parse error response
-                    let errorMessage = error;
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.message) {
-                            errorMessage = response.message;
-                        }
-                    } catch (e) {
-                        // If parsing fails, use the original error
+        // Submit form data via AJAX with retry mechanism
+        function submitReport(retryCount = 0) {
+            $.ajax({
+                url: '/generate',
+                type: 'POST',
+                data: formData,
+                timeout: 900000, // 15 minutes timeout
+                success: function (response, status, xhr) {
+                    clearTimeout(requestTimeout);
+                    clearInterval(progressInterval);
+                    
+                    // Complete all steps
+                    completeAllSteps();
+                    
+                    // Check if we got a successful response
+                    if (response.status === 'success') {
+                        // Small delay before redirect for better UX
+                        setTimeout(function() {
+                            $('#splash-screen').css('display', 'none');
+                            window.location.href = response.redirect_url;
+                        }, 1000);
+                    } else {
+                        // If no success, hide splash screen and show error
+                        setTimeout(function() {
+                            $('#splash-screen').css('display', 'none');
+                            alert('Error: ' + (response.message || 'Unknown error occurred'));
+                        }, 1000);
                     }
-                    alert('An error occurred while generating the report: ' + errorMessage);
+                },
+                error: function (xhr, status, error) {
+                    clearTimeout(requestTimeout);
+                    clearInterval(progressInterval);
+                    
+                    console.error('Report generation error:', {xhr, status, error, retryCount});
+                    
+                    // Retry logic for certain errors
+                    if (retryCount < 2 && (status === 'timeout' || xhr.status === 500 || xhr.status === 0)) {
+                        console.log(`Retrying report generation (attempt ${retryCount + 1}/3)...`);
+                        $('#splash-screen .loading-description').text(`Retrying report generation (attempt ${retryCount + 1}/3)...`);
+                        setTimeout(() => {
+                            submitReport(retryCount + 1);
+                        }, 5000); // Wait 5 seconds before retry
+                        return;
+                    }
+                    
+                    $('#splash-screen').css('display', 'none');
+                    
+                    if (status === 'timeout') {
+                        alert('Report generation is taking longer than expected. This can happen with complex reports. Please try again in a few minutes.');
+                    } else if (xhr.status === 401) {
+                        // Authentication required - redirect to login
+                        alert('You need to log in to generate reports. Redirecting to login page...');
+                        window.location.href = '/login';
+                    } else if (xhr.status === 500) {
+                        // Server error
+                        alert('Server error occurred. Please try again in a few minutes. If the problem persists, contact support.');
+                    } else if (xhr.status === 0) {
+                        // Network error
+                        alert('Network error. Please check your internet connection and try again.');
+                    } else {
+                        // Try to parse error response
+                        let errorMessage = 'Unknown error occurred';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                errorMessage = response.message;
+                            }
+                        } catch (e) {
+                            // If parsing fails, use a generic message
+                            errorMessage = `Server returned status ${xhr.status}. Please try again.`;
+                        }
+                        alert('An error occurred while generating the report: ' + errorMessage);
+                    }
                 }
-            }
-        });
+            });
+        }
+        
+        // Start the report generation
+        submitReport();
     });
     
     // Loading steps animation

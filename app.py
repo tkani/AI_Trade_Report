@@ -81,6 +81,25 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Configure request timeout
+import asyncio
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class TimeoutMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        try:
+            # Set a 15-minute timeout for all requests
+            return await asyncio.wait_for(call_next(request), timeout=900)
+        except asyncio.TimeoutError:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(
+                status_code=504,
+                content={"status": "error", "message": "Request timeout. Please try again."}
+            )
+
+app.add_middleware(TimeoutMiddleware)
+
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -129,9 +148,22 @@ def generate_report_background(job_id: str, brand: str, product: str, budget: st
             else:
                 report_text = prompt_text
         
-        # Ensure report_text is not None
-        if report_text is None:
-            report_text = "Error: Unable to generate report content. Please try again."
+        # Ensure report_text is not None and not empty
+        if report_text is None or report_text.strip() == "":
+            report_text = f"""# AI Trade Report - {brand}
+
+**Error:** Unable to generate report content. Please try again.
+
+## Troubleshooting
+
+If you continue to experience issues, please:
+1. Check your internet connection
+2. Verify your OpenAI API key is valid
+3. Try again in a few minutes
+4. Contact support if the problem persists
+
+---
+*Report generated on {datetime.now().strftime('%d %B %Y')}*"""
         
         # Update progress
         with job_lock:
@@ -1767,6 +1799,21 @@ def home(request: Request, current_user: User = Depends(get_current_user_from_co
 def health_check():
     return {"status": "healthy", "version": "1.0.0", "service": "AI Trade Report"}
 
+@app.get("/status")
+def status_check():
+    """Check server status and configuration"""
+    return {
+        "status": "healthy", 
+        "version": "1.0.0", 
+        "service": "AI Trade Report",
+        "timeout_settings": {
+            "client_timeout": "15 minutes",
+            "server_timeout": "15 minutes",
+            "keep_alive": "30 seconds"
+        },
+        "timestamp": datetime.now().isoformat()
+    }
+
 @app.get("/debug/db")
 def debug_database(db: Session = Depends(get_db)):
     """Debug endpoint to check database status"""
@@ -1950,22 +1997,70 @@ async def generate_report(
         
         # Generate report with timeout
         try:
+            print(f"DEBUG: Starting report generation at {datetime.now()}")
             if ai_model != "none" and ai_model != "undefined":
+                print(f"DEBUG: Generating report with AI model: {ai_model}")
+                print(f"DEBUG: Prompt length: {len(prompt_text)} characters")
                 report_text = call_openai_chat(prompt_text, model=ai_model)
+                print(f"DEBUG: AI generation completed successfully at {datetime.now()}")
+                print(f"DEBUG: Generated report length: {len(report_text) if report_text else 0} characters")
             else:
                 if ai_model == "undefined":
                     print("DEBUG: AI model was 'undefined', using gpt-5 as fallback")
                     report_text = call_openai_chat(prompt_text, model="gpt-5")
                 else:
+                    print("DEBUG: Using prompt text as fallback")
                     report_text = prompt_text
         except Exception as ai_error:
             print(f"AI generation error: {ai_error}")
-            # Fallback to prompt text if AI fails
-            report_text = prompt_text
+            # Provide a more informative fallback
+            report_text = f"""# AI Trade Report - {brand}
 
-        # Ensure report_text is not None
-        if report_text is None:
-            report_text = "Error: Unable to generate report content. Please try again."
+**Note:** AI generation encountered an error: {str(ai_error)}
+
+## Market Analysis
+
+This is a basic market analysis template. For a full AI-generated report, please try again or contact support.
+
+### Product: {product}
+### Brand: {brand}
+### Enterprise Size: {enterprise_size}
+### Budget: {budget if budget else 'Not specified'}
+
+## Analysis
+
+The AI system encountered an error during report generation. This could be due to:
+- High server load
+- Network connectivity issues
+- API rate limiting
+
+Please try generating the report again in a few minutes.
+
+## Next Steps
+
+1. Verify your internet connection
+2. Try again with the same parameters
+3. If the issue persists, contact support
+
+---
+*Report generated on {datetime.now().strftime('%d %B %Y')}*"""
+
+        # Ensure report_text is not None and not empty
+        if report_text is None or report_text.strip() == "":
+            report_text = f"""# AI Trade Report - {brand}
+
+**Error:** Unable to generate report content. Please try again.
+
+## Troubleshooting
+
+If you continue to experience issues, please:
+1. Check your internet connection
+2. Verify your OpenAI API key is valid
+3. Try again in a few minutes
+4. Contact support if the problem persists
+
+---
+*Report generated on {datetime.now().strftime('%d %B %Y')}*"""
 
         # Save text version
         with open(report_filename_txt, "w", encoding="utf-8") as f:

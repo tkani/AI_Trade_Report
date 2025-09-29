@@ -310,58 +310,30 @@ PROFESSIONAL REPORT FORMATTING REQUIREMENTS:
    - **Currency Considerations:** Euro stability vs. international currency risks
 """
     
-    # Use the research task API format
+    # Use the standard chat completion API
     try:
-        response = client.responses.create(
-            model=model,
-            input=prompt,
-            instructions=research_instructions,
-            reasoning={
-                "effort": "minimal"
-            }
-        )
+        messages = [
+            {"role": "system", "content": research_instructions},
+            {"role": "user", "content": prompt},
+        ]
         
-        # Extract text content safely
-        if hasattr(response, 'output_text') and response.output_text:
-            return response.output_text
+        api_params = {
+            "model": model,
+            "messages": messages,
+        }
         
-        # Try alternative extraction methods
-        if hasattr(response, 'output') and response.output:
-            # Look for message content in the output
-            for item in response.output:
-                if hasattr(item, 'content') and item.content:
-                    for content_item in item.content:
-                        if hasattr(content_item, 'text') and content_item.text:
-                            return content_item.text
+        # Add appropriate parameters based on model
+        if model == "gpt-5":
+            # GPT-5 only supports default temperature (1) and no custom token limits
+            pass  # Let GPT-5 use its default settings
+        else:
+            api_params["temperature"] = temperature
+            api_params["max_tokens"] = 4000
         
-        # If still no content, raise an error to trigger fallback
-        raise ValueError("No text content found in response")
+        response = client.chat.completions.create(**api_params)
+        return response.choices[0].message.content
         
     except Exception as e:
-        print(f"Research API error: {e}")
-        # Fallback to regular chat completion if research API is not available
-        try:
-            messages = [
-                {"role": "system", "content": research_instructions},
-                {"role": "user", "content": prompt},
-            ]
-            
-            api_params = {
-                "model": model,
-                "messages": messages,
-            }
-            
-            # Add appropriate parameters based on model
-            if model == "gpt-5":
-                # GPT-5 only supports default temperature (1) and no custom token limits
-                pass  # Let GPT-5 use its default settings
-            else:
-                api_params["temperature"] = temperature
-                api_params["max_tokens"] = 4000
-            
-            response = client.chat.completions.create(**api_params)
-            return response.choices[0].message.content
-        except Exception as fallback_error:
-            print(f"Fallback API error: {fallback_error}")
-            # Return a default error message if all else fails
-            return f"Error generating report: {str(e)}. Please try again or contact support."
+        print(f"OpenAI API error: {e}")
+        # Return a more helpful error message
+        return f"Error generating report: {str(e)}. Please try again or contact support."

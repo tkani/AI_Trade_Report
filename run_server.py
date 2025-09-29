@@ -41,8 +41,8 @@ def main():
         "http": "httptools",  # Use httptools for better performance
         "ws": "websockets",
         "lifespan": "on",
-        "timeout_keep_alive": 5,
-        "timeout_graceful_shutdown": 10,
+        "timeout_keep_alive": 30,
+        "timeout_graceful_shutdown": 30,
         "limit_concurrency": 1000,
         "limit_max_requests": 10000,
     }
