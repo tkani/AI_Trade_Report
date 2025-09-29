@@ -99,10 +99,27 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
         else:
             budget_text = f"con un budget totale disponibile di **{spec.budget}**.\n"
         
+        # Handle multiple products for Italian
+        products = [p.strip() for p in spec.product.split(',') if p.strip()]
+        if len(products) > 1:
+            product_text = f"i seguenti prodotti/servizi: {', '.join(products)}"
+            product_analysis_text = f"""
+**ANALISI PORTAFOGLIO PRODOTTI:**
+- **Prodotto/Servizio Principale:** {products[0]}
+- **Prodotti/Servizi Aggiuntivi:** {', '.join(products[1:])}
+- **Strategia del Portafoglio:** Analizza ogni prodotto individualmente e come portafoglio coeso
+- **Opportunità di Cross-selling:** Identifica sinergie tra i prodotti
+- **Posizionamento di Mercato:** Come il portafoglio prodotti posiziona il brand nei mercati target
+"""
+        else:
+            product_text = f"*{spec.product}*"
+            product_analysis_text = ""
+        
         user_instruction = (
-            f"Ricerca e analizza le opportunità di espansione del mercato per *{spec.product}* "
+            f"Ricerca e analizza le opportunità di espansione del mercato per {product_text} "
             f"sotto il brand *{spec.brand}* {budget_text}"
             f"**Dimensione Azienda:** {enterprise_size_it}\n\n"
+            f"{product_analysis_text}"
             "Conduci una ricerca di mercato completa focalizzandoti su MERCATI EUROPEI E NON-EUROPEI:\n\n"
             "**ANALISI MERCATI EUROPEI:**\n"
             "- Paesi europei con maggiore potenziale (Germania, Francia, Regno Unito, Italia, Spagna, Paesi Bassi, Polonia, ecc.)\n"
@@ -145,10 +162,27 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
         else:
             budget_text = f"with a total available budget of **{spec.budget}**.\n"
         
+        # Handle multiple products
+        products = [p.strip() for p in spec.product.split(',') if p.strip()]
+        if len(products) > 1:
+            product_text = f"the following products/services: {', '.join(products)}"
+            product_analysis_text = f"""
+**PRODUCT PORTFOLIO ANALYSIS:**
+- **Primary Product/Service:** {products[0]}
+- **Additional Products/Services:** {', '.join(products[1:])}
+- **Portfolio Strategy:** Analyze each product individually and as a cohesive portfolio
+- **Cross-selling Opportunities:** Identify synergies between products
+- **Market Positioning:** How the product portfolio positions the brand in target markets
+"""
+        else:
+            product_text = f"*{spec.product}*"
+            product_analysis_text = ""
+        
         user_instruction = (
-            f"Research and analyze the market expansion opportunities for *{spec.product}* "
+            f"Research and analyze the market expansion opportunities for {product_text} "
             f"under the brand *{spec.brand}* {budget_text}"
             f"**Enterprise Size:** {enterprise_size_en}\n\n"
+            f"{product_analysis_text}"
             "Conduct comprehensive market research focusing on BOTH European and non-European markets:\n\n"
             "**EUROPEAN MARKETS ANALYSIS:**\n"
             "- Target European countries with highest potential (Germany, France, UK, Italy, Spain, Netherlands, Poland, etc.)\n"

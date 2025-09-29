@@ -2014,6 +2014,14 @@ async def generate_report(
         except Exception as ai_error:
             print(f"AI generation error: {ai_error}")
             # Provide a more informative fallback
+            # Handle multiple products in error message
+            products = [p.strip() for p in product.split(',') if p.strip()]
+            if len(products) > 1:
+                product_list = "\n".join([f"- {p}" for p in products])
+                product_section = f"### Products/Services:\n{product_list}"
+            else:
+                product_section = f"### Product: {product}"
+            
             report_text = f"""# AI Trade Report - {brand}
 
 **Note:** AI generation encountered an error: {str(ai_error)}
@@ -2022,7 +2030,7 @@ async def generate_report(
 
 This is a basic market analysis template. For a full AI-generated report, please try again or contact support.
 
-### Product: {product}
+{product_section}
 ### Brand: {brand}
 ### Enterprise Size: {enterprise_size}
 ### Budget: {budget if budget else 'Not specified'}
@@ -2047,9 +2055,22 @@ Please try generating the report again in a few minutes.
 
         # Ensure report_text is not None and not empty
         if report_text is None or report_text.strip() == "":
+            # Handle multiple products in empty report message
+            products = [p.strip() for p in product.split(',') if p.strip()]
+            if len(products) > 1:
+                product_list = "\n".join([f"- {p}" for p in products])
+                product_section = f"## Products/Services:\n{product_list}"
+            else:
+                product_section = f"## Product: {product}"
+            
             report_text = f"""# AI Trade Report - {brand}
 
 **Error:** Unable to generate report content. Please try again.
+
+{product_section}
+## Brand: {brand}
+## Enterprise Size: {enterprise_size}
+## Budget: {budget if budget else 'Not specified'}
 
 ## Troubleshooting
 
