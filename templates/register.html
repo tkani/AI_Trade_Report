@@ -137,6 +137,9 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s ease;
       }
+      .brand-logo-img.logo2 {
+        border-radius: 9px;
+      }
       .brand-logo-img:hover {
         transform: scale(1.05);
       }
@@ -163,7 +166,7 @@
             <img
               src="/static/logo2.png"
               alt="AI Trade Report"
-              class="brand-logo-img"
+              class="brand-logo-img logo2"
             />
           </div>
           <h1 class="auth-title">Create Account</h1>
@@ -223,16 +226,28 @@
 
           <div class="form-group">
             <label class="form-label" for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              class="form-input"
-              required
-              minlength="6"
-              maxlength="72"
-              title="Password must be between 6 and 72 characters"
-            />
+            <div class="password-input-container" style="position: relative;">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-input"
+                required
+                minlength="6"
+                maxlength="72"
+                title="Password must be between 6 and 72 characters"
+                style="padding-right: 3rem;"
+              />
+              <button
+                type="button"
+                id="togglePassword"
+                class="password-toggle-btn"
+                style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0.25rem; color: #6b7280; font-size: 1.25rem;"
+                onclick="togglePasswordVisibility()"
+              >
+                👁️
+              </button>
+            </div>
             <small class="form-help">Password must be 6-72 characters long</small>
           </div>
 
@@ -240,6 +255,22 @@
         </form>
 
         <script>
+          // Password visibility toggle function
+          function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+              passwordInput.type = 'text';
+              toggleButton.innerHTML = '🙈';
+              toggleButton.title = 'Hide password';
+            } else {
+              passwordInput.type = 'password';
+              toggleButton.innerHTML = '👁️';
+              toggleButton.title = 'Show password';
+            }
+          }
+
           // Client-side password validation
           document.getElementById('password').addEventListener('input', function() {
             const password = this.value;
@@ -258,6 +289,21 @@
               helpText.style.color = '#6b7280';
               helpText.textContent = 'Password must be 6-72 characters long';
             }
+          });
+
+          // Add hover effects for the toggle button
+          document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('togglePassword');
+            
+            toggleButton.addEventListener('mouseenter', function() {
+              this.style.color = '#2563eb';
+              this.style.transform = 'translateY(-50%) scale(1.1)';
+            });
+            
+            toggleButton.addEventListener('mouseleave', function() {
+              this.style.color = '#6b7280';
+              this.style.transform = 'translateY(-50%) scale(1)';
+            });
           });
         </script>
 

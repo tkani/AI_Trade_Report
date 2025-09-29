@@ -626,6 +626,17 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
              .footer {
                  page-break-inside: avoid;
              }
+             .report-logos {
+                 page-break-inside: avoid;
+                 margin: 15px 0 !important;
+                 padding: 10px !important;
+                 background: #f8f9fa !important;
+                 border: 1px solid #dee2e6 !important;
+             }
+             .report-logos img {
+                 height: 35px !important;
+                 opacity: 0.9 !important;
+             }
          }
         /* ===== MOBILE RESPONSIVE DESIGN ===== */
         @media (max-width: 1200px) {
@@ -1284,6 +1295,15 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 <span class="summary-icon">📋</span>
                 <span class="summary-title">""" + t['report_overview'] + """</span>
             </div>
+            <div class="report-logos" style="text-align: center; margin: 20px 0; padding: 15px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    <img src="/static/logo_trade_on_chain.png" alt="Trade On Chain" style="height: 40px; width: auto; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <img src="/static/logo2.png" alt="AI Trade Report" style="height: 40px; width: auto; border-radius: 9px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9em; color: #64748b; font-weight: 500;">
+                    Professional Market Analysis • Powered by AI Technology
+                </div>
+            </div>
             <div class="summary-content">
                 <div class="summary-item">
                     <span class="item-label">""" + t['generated_by'] + """</span>
@@ -1447,6 +1467,15 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
     
     # End HTML document
     html += """        <div class="footer">
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <img src="/static/logo_trade_on_chain.png" alt="Trade On Chain" style="height: 30px; width: auto; opacity: 0.8;">
+                    <img src="/static/logo2.png" alt="AI Trade Report" style="height: 30px; width: auto; opacity: 0.8;">
+                </div>
+                <div style="font-size: 0.85em; color: #94a3b8; font-weight: 500; margin-bottom: 10px;">
+                    AI Trade Report • Professional Market Analysis
+                </div>
+            </div>
             <p>""" + t['footer_text1'] + """</p>
             <p>""" + t['footer_text2'] + """</p>
         </div>

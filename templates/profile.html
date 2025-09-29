@@ -116,6 +116,19 @@
         font-weight: 700;
         color: #1f2937;
       }
+      .brand-logo-img {
+        height: 48px;
+        width: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+      }
+      .brand-logo-img.logo2 {
+        border-radius: 9px;
+      }
+      .brand-logo-img:hover {
+        transform: scale(1.05);
+      }
     </style>
   </head>
   <body>
@@ -131,7 +144,7 @@
             <img
               src="/static/logo2.png"
               alt="AI Trade Report"
-              class="brand-logo-img"
+              class="brand-logo-img logo2"
             />
             <span class="brand-text">AI Trade Report</span>
           </div>
