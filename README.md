@@ -13,7 +13,7 @@ A professional, multilingual AI-powered market analysis generator that creates c
 - **Print Support**: Print-friendly report layouts
 - **Mobile Responsive**: Fully optimized for desktop, tablet, and mobile devices
 
-### User Experience
+### User Experience 
 
 - **Language Selection Modal**: Choose language on first visit (no cookies stored)
 - **Modern UI/UX**: Professional design with gradient backgrounds and animations
