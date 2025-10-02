@@ -708,10 +708,10 @@ h1.hero-title {
   width: 0;
 }
 
-/* Brand input styling to match Select2 */
+/* Brand textarea styling to match Select2 */
 .brand-input {
-  min-height: 60px !important;
-  height: 60px !important;
+  min-height: 80px !important;
+  height: 80px !important;
   border: 2px solid #e5e7eb !important;
   border-radius: 0.75rem !important;
   background: #f9fafb !important;
@@ -723,6 +723,8 @@ h1.hero-title {
   box-sizing: border-box !important;
   width: 100% !important;
   display: block !important;
+  resize: vertical !important;
+  line-height: 1.5 !important;
 }
 
 .brand-input:focus {
@@ -731,6 +733,10 @@ h1.hero-title {
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
   transform: translateY(-1px) !important;
   outline: none !important;
+}
+
+.brand-input:focus + .input-focus-line {
+  width: 100% !important;
 }
 
 .brand-input::placeholder {
@@ -957,7 +963,8 @@ h1.hero-title {
 }
 
 .form-input,
-.form-select {
+.form-select,
+.form-textarea {
   width: 100%;
   padding: var(--space-lg);
   border: 2px solid var(--gray-200);
@@ -969,15 +976,23 @@ h1.hero-title {
   position: relative;
 }
 
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
 .form-input:focus,
-.form-select:focus {
+.form-select:focus,
+.form-textarea:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
   transform: translateY(-1px);
 }
 
-.form-input::placeholder {
+.form-input::placeholder,
+.form-textarea::placeholder {
   color: var(--gray-400);
 }
 
@@ -991,7 +1006,8 @@ h1.hero-title {
   transition: var(--transition-normal);
 }
 
-.form-input:focus + .input-focus-line {
+.form-input:focus + .input-focus-line,
+.form-textarea:focus + .input-focus-line {
   width: 100%;
 }
 
@@ -1450,9 +1466,16 @@ h1.hero-title {
     font-size: 0.9375rem;
     margin-bottom: 0.5rem;
   }
-  .form-input, .form-select {
+  .form-input, .form-select, .form-textarea {
     padding: 0.875rem;
     font-size: 1rem;
+  }
+  
+  .brand-input {
+    min-height: 70px !important;
+    height: 70px !important;
+    padding: 16px 18px !important;
+    font-size: 1rem !important;
   }
   .select-wrapper {
     margin-bottom: 0.5rem;
@@ -1567,9 +1590,16 @@ h1.hero-title {
     font-size: 0.875rem;
   }
   
-  .form-input, .form-select {
+  .form-input, .form-select, .form-textarea {
     padding: 0.75rem;
     font-size: 0.9375rem;
+  }
+  
+  .brand-input {
+    min-height: 60px !important;
+    height: 60px !important;
+    padding: 14px 16px !important;
+    font-size: 0.9375rem !important;
   }
   .submit-button {
     padding: 0.875rem 1.5rem;

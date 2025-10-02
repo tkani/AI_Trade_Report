@@ -121,7 +121,7 @@ os.makedirs("reports", exist_ok=True)
 # Security scheme
 security = HTTPBearer(auto_error=False)
 
-def generate_report_background(job_id: str, brand: str, product: str, budget: str, enterprise_size: str, ai_model: str, language: str, user_id: int):
+def generate_report_background(job_id: str, brand: str, product: str, budget: str, enterprise_size: str, other_info: str, ai_model: str, language: str, user_id: int):
     """Background task for report generation"""
     try:
         with job_lock:
@@ -132,7 +132,7 @@ def generate_report_background(job_id: str, brand: str, product: str, budget: st
             job_status[job_id]["progress"] = 25
         
         # Build prompt
-        spec = InputSpec(brand=brand.strip(), product=product.strip(), budget=budget.strip(), enterprise_size=enterprise_size.strip())
+        spec = InputSpec(brand=brand.strip(), product=product.strip(), budget=budget.strip(), enterprise_size=enterprise_size.strip(), other_info=other_info.strip())
         prompt_text = build_prompt(spec, analysis_date=datetime.now().strftime("%d %B %Y"), language=language)
         
         # Update progress
@@ -183,7 +183,8 @@ If you continue to experience issues, please:
             'brand': brand,
             'product': product,
             'budget': budget,
-            'enterprise_size': enterprise_size
+            'enterprise_size': enterprise_size,
+            'other_info': other_info
         }
         html_path = create_html_report(report_text, report_filename_pdf, language, form_data)
         actual_filename = f"{report_filename_pdf}.html"
@@ -1297,7 +1298,6 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
             </div>
             <div class="report-logos" style="text-align: center; margin: 20px 0; padding: 15px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 8px; border: 1px solid #e2e8f0;">
                 <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;">
-                    <img src="/static/logo_trade_on_chain.png" alt="Trade On Chain" style="height: 40px; width: auto; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <img src="/static/logo2.png" alt="AI Trade Report" style="height: 40px; width: auto; border-radius: 9px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                 </div>
                 <div style="margin-top: 10px; font-size: 0.9em; color: #64748b; font-weight: 500;">
@@ -1339,6 +1339,14 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                     <span class="item-value">""" + form_data.get('enterprise_size', 'N/A') + """</span>
                 </div>"""
         
+        # Add other information if provided
+        if form_data.get('other_info') and form_data.get('other_info').strip():
+            html += """
+                <div class="summary-item">
+                    <span class="item-label">Other Information</span>
+                    <span class="item-value">""" + form_data.get('other_info', 'N/A') + """</span>
+                </div>"""
+        
         # Add hidden form data for JavaScript to extract
         html += f"""
         <script>
@@ -1347,7 +1355,8 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
             brand: '{form_data.get('brand', '')}',
             product: '{form_data.get('product', '')}',
             budget: '{form_data.get('budget', '')}',
-            enterprise_size: '{form_data.get('enterprise_size', '')}'
+            enterprise_size: '{form_data.get('enterprise_size', '')}',
+            other_info: '{form_data.get('other_info', '')}'
         }};
         console.log('Form data stored:', window.formData);
         </script>"""
@@ -1465,12 +1474,37 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
     if in_list:
         html += f"        </{list_type}>\n"
     
+    # Add Other Information section if provided and not already in content
+    if form_data and form_data.get('other_info') and form_data.get('other_info').strip():
+        other_info_content = form_data.get('other_info', '').strip()
+        # Check if Other Information section already exists in content
+        content_lower = content.lower()
+        if not any(keyword in content_lower for keyword in ['other information', 'additional client requirements', 'altre informazioni', 'requisiti aggiuntivi']):
+            # Add fallback Other Information section
+            if language == "it":
+                html += f"""
+        <h2>Altre Informazioni</h2>
+        <p>Il cliente ha fornito le seguenti informazioni aggiuntive che devono essere considerate nell'analisi:</p>
+        <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 15px 0;">
+            <p style="margin: 0; font-style: italic;">"{other_info_content}"</p>
+        </div>
+        <p>Queste informazioni dovrebbero essere integrate nell'analisi di mercato e nelle raccomandazioni strategiche.</p>
+"""
+            else:
+                html += f"""
+        <h2>Other Information</h2>
+        <p>The client has provided the following additional information that should be considered in the analysis:</p>
+        <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin: 15px 0;">
+            <p style="margin: 0; font-style: italic;">"{other_info_content}"</p>
+        </div>
+        <p>This information should be integrated into the market analysis and strategic recommendations.</p>
+"""
+    
     # End HTML document
     html += """        <div class="footer">
             <div style="margin-bottom: 20px;">
                 <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px;">
-                    <img src="/static/logo_trade_on_chain.png" alt="Trade On Chain" style="height: 30px; width: auto; opacity: 0.8;">
-                    <img src="/static/logo2.png" alt="AI Trade Report" style="height: 30px; width: auto; opacity: 0.8;">
+                    <img src="/static/logo2.png" alt="AI Trade Report" style="height: 30px; width: auto; opacity: 0.8; border-radius: 9px;">
                 </div>
                 <div style="font-size: 0.85em; color: #94a3b8; font-weight: 500; margin-bottom: 10px;">
                     AI Trade Report • Professional Market Analysis
@@ -1997,6 +2031,7 @@ async def generate_report(
     product: str = Form(...),
     budget: str = Form(""),
     enterprise_size: str = Form(...),
+    other_info: str = Form(""),
     ai_model: str = Form("gpt-5"),
     language: str = Form("en"),
     current_user: User = Depends(get_current_user_from_cookie),
@@ -2011,9 +2046,10 @@ async def generate_report(
         print(f"DEBUG: Received product: '{product}'")
         print(f"DEBUG: Received budget: '{budget}'")
         print(f"DEBUG: Received enterprise_size: '{enterprise_size}'")
+        print(f"DEBUG: Received other_info: '{other_info}'")
         
         # Build prompt
-        spec = InputSpec(brand=brand.strip(), product=product.strip(), budget=budget.strip(), enterprise_size=enterprise_size.strip())
+        spec = InputSpec(brand=brand.strip(), product=product.strip(), budget=budget.strip(), enterprise_size=enterprise_size.strip(), other_info=other_info.strip())
         prompt_text = build_prompt(spec, analysis_date=datetime.now().strftime("%d %B %Y"), language=language)
 
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -2121,7 +2157,8 @@ If you continue to experience issues, please:
             'brand': brand,
             'product': product,
             'budget': budget,
-            'enterprise_size': enterprise_size
+            'enterprise_size': enterprise_size,
+            'other_info': other_info
         }
         html_path = create_html_report(report_text, report_filename_pdf, language, form_data)
         actual_filename = f"{report_filename_pdf}.html"

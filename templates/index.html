@@ -81,11 +81,11 @@
           </button>
           <a href="/profile" class="btn btn-outline-secondary me-2">
             <i class="bi bi-person me-1"></i>
-            Profile
+            <span data-translate="profile_nav">Profile</span>
           </a>
           <a href="/logout" class="btn btn-outline-danger">
             <i class="bi bi-box-arrow-right me-1"></i>
-            Logout
+            <span data-translate="logout_nav">Logout</span>
           </a>
         </div>
       </div>
@@ -155,16 +155,18 @@
                   <span class="label-icon">🏢</span>
                   <span data-translate="brand_label">Brand Name</span>
                 </label>
-                <input
-                  type="text"
-                  name="brand"
-                  class="form-input brand-input"
-                  data-placeholder-en="Enter your brand name"
-                  data-placeholder-it="Inserisci il nome del tuo brand"
-                  placeholder="Enter your brand name"
-                  required
-                />
-                <div class="input-focus-line"></div>
+                <div class="input-wrapper">
+                  <textarea
+                    name="brand"
+                    class="form-textarea brand-input"
+                    data-placeholder-en="Enter your brand name"
+                    data-placeholder-it="Inserisci il nome del tuo brand"
+                    placeholder="Enter your brand name"
+                    rows="2"
+                    required
+                  ></textarea>
+                  <div class="input-focus-line"></div>
+                </div>
               </div>
 
               <div class="form-group">
@@ -182,6 +184,12 @@
                   required
                 ></select>
                 <div class="input-focus-line"></div>
+                <div class="model-info">
+                  <span class="info-icon">📦</span>
+                  <span class="info-text" data-translate="product_info"
+                    >Select your products or services for market analysis</span
+                  >
+                </div>
               </div>
 
               <div class="form-group">
@@ -252,6 +260,24 @@
                     >Choose your company size for tailored analysis</span
                   >
                 </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                <span class="label-icon">💡</span>
+                <span data-translate="other_info_label">Other Information</span>
+              </label>
+              <div class="input-wrapper">
+                <textarea
+                  name="other_info"
+                  id="other_info"
+                  class="form-textarea"
+                  rows="3"
+                  placeholder="Enter any special questions or additional information you'd like the AI to consider in the analysis..."
+                  data-translate-placeholder="other_info_placeholder"
+                ></textarea>
+                <div class="input-focus-line"></div>
               </div>
             </div>
 

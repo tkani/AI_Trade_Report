@@ -14,6 +14,9 @@ const translations = {
         brand_label: "Brand Name",
         product_label: "Product/Service",
         product_placeholder: "Search and select your product or service",
+        product_info: "Select your products or services for market analysis",
+        other_info_label: "Other Information",
+        other_info_placeholder: "Enter any special questions or additional information you'd like the AI to consider in the analysis...",
         budget_label: "Investment Budget",
         ai_model_label: "AI Model",
         ai_model_info: "Advanced AI with latest market data and insights",
@@ -22,7 +25,10 @@ const translations = {
         loading_description: "Our AI is analyzing market data, competitive landscape, and strategic opportunities for your business expansion.",
         step_1: "🔍 Market Research",
         step_2: "📊 Data Analysis",
-        step_3: "📝 Report Generation"
+        step_3: "📝 Report Generation",
+        saved_reports_nav: "Saved Reports",
+        profile_nav: "Profile",
+        logout_nav: "Logout"
     },
     it: {
         brand_name: "AI Trade Report",
@@ -38,6 +44,9 @@ const translations = {
         brand_label: "Nome del Brand",
         product_label: "Prodotto/Servizio",
         product_placeholder: "Cerca e seleziona il tuo prodotto o servizio",
+        product_info: "Seleziona i tuoi prodotti o servizi per l'analisi di mercato",
+        other_info_label: "Altre Informazioni",
+        other_info_placeholder: "Inserisci eventuali domande specifiche o informazioni aggiuntive che vorresti che l'AI consideri nell'analisi...",
         budget_label: "Budget di Investimento",
         ai_model_label: "Modello AI",
         ai_model_info: "AI avanzata con i dati di mercato e insights più recenti",
@@ -46,7 +55,10 @@ const translations = {
         loading_description: "La nostra AI sta analizzando i dati di mercato, il panorama competitivo e le opportunità strategiche per l'espansione della tua azienda.",
         step_1: "🔍 Ricerca di Mercato",
         step_2: "📊 Analisi dei Dati",
-        step_3: "📝 Generazione Report"
+        step_3: "📝 Generazione Report",
+        saved_reports_nav: "Report Salvati",
+        profile_nav: "Profilo",
+        logout_nav: "Esci"
     }
 };
 

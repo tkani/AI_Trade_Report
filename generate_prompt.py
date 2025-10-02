@@ -15,6 +15,7 @@ class InputSpec:
     product: str
     budget: str
     enterprise_size: str
+    other_info: str = ""
 
 def validate_input(spec: InputSpec):
     if not spec.brand or not spec.product or not spec.enterprise_size:
@@ -25,6 +26,8 @@ def validate_input(spec: InputSpec):
         raise ValueError("budget string too long")
     if spec.enterprise_size not in ["small", "medium", "large"]:
         raise ValueError("enterprise_size must be small, medium, or large")
+    if spec.other_info and len(spec.other_info) > 500:
+        raise ValueError("other_info too long (max 500 characters)")
 
 def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language: str = "en") -> str:
     # Language-specific prompts
@@ -146,6 +149,7 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "- Raccomandazioni di allocazione del budget tra mercati europei e non-europei\n\n"
             "Fornisci insights azionabili e raccomandazioni strategiche per un ingresso di successo nei mercati europei e non-europei.\n"
         )
+    
     else:
         # Map enterprise size to English
         enterprise_size_map = {
@@ -215,6 +219,28 @@ def build_prompt(spec: InputSpec, analysis_date: Optional[str] = None, language:
             "- Other regions: Relevant distribution channels and market entry approaches\n\n"
             "Provide actionable insights and strategic recommendations for successful market entry in both European and non-European markets.\n"
         )
+    
+    # Add other information if provided (for both languages)
+    if spec.other_info and spec.other_info.strip():
+        if language == "it":
+            other_info_section = f"""
+**REQUISITI AGGIUNTIVI DEL CLIENTE:**
+Il cliente ha fornito le seguenti domande specifiche o requisiti che devono essere affrontati nell'analisi:
+
+{spec.other_info.strip()}
+
+IMPORTANTE: Devi includere OBBLIGATORIAMENTE una sezione dedicata nel tuo report intitolata "Requisiti Aggiuntivi del Cliente" o "Altre Informazioni" che affronti specificamente questi requisiti. Questa sezione deve apparire verso la fine del tuo report, prima della conclusione.
+"""
+        else:
+            other_info_section = f"""
+**ADDITIONAL CLIENT REQUIREMENTS:**
+The client has provided the following specific questions or requirements that should be addressed in the analysis:
+
+{spec.other_info.strip()}
+
+IMPORTANT: You MUST include a dedicated section in your report titled "Additional Client Requirements" or "Other Information" that specifically addresses these requirements. This section should appear near the end of your report, before the conclusion.
+"""
+        user_instruction += other_info_section
 
     if analysis_date:
         user_instruction += f"\nAnalysis Date: {analysis_date}\n"
