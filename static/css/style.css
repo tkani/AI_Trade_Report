@@ -867,7 +867,7 @@ h1.hero-title {
 /* Form Section */
 .form-section {
   position: relative;
-  padding: var(--space-3xl) 0;
+  padding: var(--space-2xl) 0;
   background: var(--gray-50);
 }
 
@@ -880,7 +880,7 @@ h1.hero-title {
 .form-card {
   background: white;
   border-radius: var(--radius-2xl);
-  padding: var(--space-3xl);
+  padding: var(--space-2xl);
   box-shadow: var(--shadow-2xl);
   border: 1px solid var(--gray-200);
   position: relative;
@@ -899,7 +899,7 @@ h1.hero-title {
 
 .form-header {
   text-align: center;
-  margin-bottom: var(--space-3xl);
+  margin-bottom: var(--space-2xl);
 }
 
 .form-title {
@@ -926,7 +926,7 @@ h1.hero-title {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--space-xl);
-  margin-bottom: var(--space-3xl);
+  margin-bottom: var(--space-lg);
   align-items: start;
 }
 
