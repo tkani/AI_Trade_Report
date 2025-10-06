@@ -1,11 +1,10 @@
 # AI Trade Report Generator
 
-A professional, multilingual AI-powered market analysis generator that creates comprehensive trade reports using OpenAI's GPT-5. Built with FastAPI and featuring a modern, mobile-responsive web interface.
+A professional, multilingual AI-powered market analysis generator that creates comprehensive trade reports using OpenAI's GPT-5. Built with FastAPI and featuring a modern, mobile-responsive web interface with user authentication and report management.
 
 ## 🚀 Features
 
 ### Core Functionality
-
 - **AI-Powered Analysis**: Uses OpenAI GPT-5 for intelligent market analysis
 - **Multilingual Support**: English and Italian language options
 - **Professional Reports**: Generates comprehensive HTML reports with market insights
@@ -13,548 +12,358 @@ A professional, multilingual AI-powered market analysis generator that creates c
 - **Print Support**: Print-friendly report layouts
 - **Mobile Responsive**: Fully optimized for desktop, tablet, and mobile devices
 
-### User Experience 
+### User Management
+- **User Authentication**: Secure registration and login system
+- **Password Recovery**: Email-based password reset functionality
+- **Profile Management**: User profile editing and management
+- **Report History**: Save and manage generated reports
+- **Session Management**: Secure JWT-based authentication
 
-- **Language Selection Modal**: Choose language on first visit (no cookies stored)
+### User Experience
+- **Language Selection Modal**: Choose language on first visit
 - **Modern UI/UX**: Professional design with gradient backgrounds and animations
 - **Loading Animation**: Engaging splash screen during report generation
 - **Touch-Friendly**: Optimized for mobile and touch devices
 - **Real-time Translation**: Dynamic UI translation based on language selection
+- **Product Search**: Advanced Select2-powered product search with autocomplete
 
 ## 📋 Prerequisites
 
-- Python 3.8 or higher
-- OpenAI API key
-- Modern web browser
+- **Python 3.8+** installed on your system
+- **OpenAI API key** for AI report generation
+- **Email account** (Gmail recommended) for password recovery
+- **Modern web browser** (Chrome, Firefox, Safari, Edge)
 
-## 🛠️ Installation
+## 🛠️ Quick Installation
 
-### Option 1: Docker (Recommended)
+### Option 1: Automated Setup (Recommended)
+
+#### Windows:
+```bash
+git clone https://github.com/tkani/AI_Trade_Report.git
+cd AI_Trade_Report
+setup.bat
+```
+
+#### Unix/Linux/macOS:
+```bash
+git clone https://github.com/tkani/AI_Trade_Report.git
+cd AI_Trade_Report
+chmod +x setup.sh
+./setup.sh
+```
+
+#### Cross-platform:
+```bash
+git clone https://github.com/tkani/AI_Trade_Report.git
+cd AI_Trade_Report
+python setup.py
+```
+
+### Option 2: Manual Installation
 
 1. **Clone the repository**
-
    ```bash
    git clone https://github.com/tkani/AI_Trade_Report.git
    cd AI_Trade_Report
    ```
 
-2. **Set up environment variables**
-   Copy the example environment file and add your API keys:
-
+2. **Create virtual environment**
    ```bash
-   cp .env_example .env
-   # Edit .env with your actual API keys
+   python -m venv venv
+   # Windows:
+   venv\Scripts\activate
+   # macOS/Linux:
+   source venv/bin/activate
    ```
 
-3. **Run with Docker**
-
-   ```bash
-   # Make setup script executable
-   chmod +x docker-setup.sh
-   
-   # Run setup (builds and starts the application)
-   ./docker-setup.sh
-   ```
-
-4. **Test the application**
-
-   ```bash
-   # Make test script executable
-   chmod +x docker-test.sh
-   
-   # Run tests
-   ./docker-test.sh
-   ```
-
-### Option 2: Local Python Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/tkani/AI_Trade_Report.git
-   cd AI_Trade_Report
-   ```
-
-2. **Install dependencies**
-
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Set up environment variables**
-   Copy the example environment file and add your OpenAI API key:
-
+4. **Configure environment**
    ```bash
    cp .env_example .env
+   # Edit .env with your API keys and settings
    ```
 
-   Then edit `.env` and add your actual OpenAI API key:
-
-   ```env
-   OPENAI_API_KEY=sk-proj-your-actual-openai-api-key-here
-   ```
-
-4. **Run the application**
-
+5. **Start the application**
    ```bash
-   uvicorn app:app --reload
+   python run_server.py
    ```
 
-5. **Access the application**
-   Open your browser and navigate to `http://127.0.0.1:8000`
+## ⚙️ Configuration
 
-6. **View FastAPI Documentation**
-   - **Interactive API Docs (Swagger UI)**: `http://127.0.0.1:8000/docs`
-   - **Alternative API Docs (ReDoc)**: `http://127.0.0.1:8000/redoc`
-   - **OpenAPI Schema**: `http://127.0.0.1:8000/openapi.json`
+### Required Environment Variables
+
+Create a `.env` file with the following configuration:
+
+```env
+# Database Configuration
+DATABASE_URL=sqlite:///./ai_trade_report.db
+
+# Security Configuration
+SECRET_KEY=your-super-secret-key-here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# OpenAI API Configuration
+OPENAI_API_KEY=sk-your-openai-api-key-here
+
+# Email Configuration (for password recovery)
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-email@gmail.com
+SMTP_PASSWORD=your-app-password-here
+EMAIL_FROM=your-email@gmail.com
+EMAIL_FROM_NAME=AI Trade Report
+
+# Application Settings
+APP_NAME=AI Trade Report
+APP_VERSION=1.0.0
+DEBUG=False
+
+# Host and Port Configuration
+HOST=127.0.0.1
+PORT=8000
+```
+
+### API Keys Setup
+
+#### OpenAI API Key
+1. Go to [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Create an account and generate an API key
+3. Add billing information to your account
+4. Add the key to your `.env` file
+
+#### Email Configuration (Gmail)
+1. Enable 2-Factor Authentication on your Google account
+2. Generate an App Password for "Mail"
+3. Use the 16-character app password in your `.env` file
+
+## 🎯 Usage
+
+### 1. First Time Setup
+1. **Register an Account**: Create your user account
+2. **Login**: Access the main dashboard
+3. **Configure Settings**: Set up your preferences
+
+### 2. Generate Reports
+1. **Fill the Form**: Enter your business details
+   - Brand name
+   - Products/services (with advanced search)
+   - Investment budget
+   - Enterprise size
+   - Additional information
+2. **Select Options**: Choose AI model and language
+3. **Generate**: Click "Generate Report" and wait for processing
+4. **View Report**: Review the generated analysis
+5. **Save/Export**: Save to your account or export as PDF
+
+### 3. Manage Reports
+- **View Saved Reports**: Access your report history
+- **Download PDFs**: Export reports for offline use
+- **Delete Reports**: Remove unwanted reports
+- **Search Reports**: Find specific reports quickly
 
 ## 📁 Project Structure
 
 ```
 AI_Trade_Report/
-├── app.py                      # FastAPI backend application
-├── generate_prompt.py          # AI prompt generation and OpenAI integration
+├── app.py                      # Main FastAPI application
+├── run_server.py               # Server runner script
+├── generate_prompt.py          # AI prompt generation
 ├── requirements.txt            # Python dependencies
 ├── .env                        # Environment variables (create this)
-├── templates/
-│   └── index.html              # Main frontend page
-├── static/
+├── .env_example               # Environment template
+├── INSTALLATION.md            # Detailed installation guide
+├── setup.py                   # Cross-platform setup script
+├── setup.bat                  # Windows setup script
+├── setup.sh                   # Unix/Linux setup script
+├── run.bat                    # Windows run script
+├── run.sh                     # Unix/Linux run script
+├── auth/                      # Authentication module
+│   ├── __init__.py
+│   ├── auth.py               # JWT and password utilities
+│   └── auth_routes.py        # Authentication routes
+├── database/                  # Database models
+│   ├── __init__.py
+│   └── models.py             # SQLAlchemy models
+├── schemas/                   # Pydantic schemas
+│   ├── __init__.py
+│   └── schemas.py            # Data validation schemas
+├── services/                  # Business logic services
+│   └── email_service.py      # Email sending service
+├── static/                    # Static assets
 │   ├── css/
-│   │   └── style.css           # Styling and responsive design
-│   └── js/
-│       └── main.js             # Frontend JavaScript functionality
-└── reports/                    # Generated report storage directory
+│   │   └── style.css         # Main stylesheet
+│   ├── js/
+│   │   └── main.js           # Frontend JavaScript
+│   └── logo_trade_on_chain.png # Application logo
+├── templates/                 # HTML templates
+│   ├── index.html            # Main dashboard
+│   ├── login.html            # Login page
+│   ├── register.html         # Registration page
+│   ├── profile.html          # User profile
+│   ├── forgot_password.html  # Password recovery
+│   └── reset_password.html   # Password reset
+└── reports/                   # Generated reports (auto-created)
 ```
 
-## 🎯 Usage
-
-### Docker Usage (Recommended)
-
-1. **Start the application**
-
-   ```bash
-   # Using Docker Compose
-   docker-compose up -d
-   
-   # Or using the setup script
-   ./docker-setup.sh
-   ```
-
-2. **Open your browser**
-
-   Navigate to `http://localhost:8000`
-
-3. **Useful Docker Commands**
-
-   ```bash
-   # View logs
-   docker-compose logs -f
-   
-   # Stop application
-   docker-compose down
-   
-   # Restart application
-   docker-compose restart
-   
-   # Test email functionality
-   docker-compose exec ai-trade-report python test_hosted_email.py
-   
-   # Test OpenAI API
-   docker-compose exec ai-trade-report python test_openai_api.py
-   
-   # Run all tests
-   ./docker-test.sh
-   ```
-
-### Local Python Usage
-
-1. **Start the application**
-
-   ```bash
-   python run_server.py
-   ```
-
-2. **Open your browser**
-
-   Navigate to `http://127.0.0.1:8000`
-
-### Application Usage
-
-### 1. Language Selection
-
-- On first visit, select your preferred language (English/Italian)
-- Language preference is not stored (no cookies)
-- UI and generated reports will be in the selected language
-
-### 2. Generate Report
-
-1. Enter your **Brand Name**
-2. Describe your **Product/Service**
-3. Specify your **Investment Budget**
-4. Select **AI Model** (GPT-5 by default)
-5. Click **Generate Report**
-
-### 3. View and Download
-
-- Report opens in a new page with professional formatting
-- Use **Print** button to print the report
-- Use **Download PDF** button to save as PDF
-- Reports are fully mobile-responsive
-
-## 🔧 Technical Details
-
-### Backend (FastAPI)
-
-- **Framework**: FastAPI with Jinja2Templates
-- **AI Integration**: OpenAI GPT-5 API
-- **Report Generation**: HTML with embedded CSS and JavaScript
-- **File Handling**: Static file serving and report storage
-
-### Frontend
-
-- **HTML5**: Semantic markup with accessibility features
-- **CSS3**: Modern styling with Flexbox and Grid
-- **JavaScript**: jQuery for AJAX and DOM manipulation
-- **Responsive Design**: Mobile-first approach with media queries
-
-### AI Integration
-
-- **Model**: OpenAI GPT-5 (latest generation)
-- **API Pattern**: Uses `client.responses.create` for research tasks
-- **Prompt Engineering**: Structured prompts for professional reports
-- **Error Handling**: Robust fallback mechanisms
-
-## 🤖 OpenAI Integration Details
-
-### How It Works
-
-#### 1. **API Configuration**
-
-The application uses OpenAI's latest GPT-5 model through the Research API pattern:
-
-```python
-# Uses client.responses.create for research tasks
-response = client.responses.create(
-    model="gpt-5",
-    input=user_input,
-    instructions=system_instructions
-)
-```
-
-#### 2. **Prompt Engineering Strategy**
-
-The system uses a sophisticated two-part prompt structure:
-
-**System Preamble** (English/Italian):
-
-- Establishes the AI as a senior strategy consultant with 30+ years experience
-- Sets professional tone and expertise level
-- Defines output format requirements (headings, tables, bullet points)
-- Emphasizes data integrity and transparency
-
-**User Instruction** (Dynamic):
-
-- Incorporates user's brand, product, and budget information
-- Requests specific report structure and analysis
-- Includes current date for temporal context
-- Asks for JSON metadata with market recommendations
-
-#### 3. **Output Processing**
-
-The AI generates comprehensive reports that include:
-
-- **Executive Summary**: Key findings and strategic recommendations
-- **Market Analysis**: TAM, SAM, SOM estimates with clear labeling
-- **Competitive Landscape**: Industry analysis and positioning
-- **Strategic Recommendations**: Actionable business advice
-- **Investment Breakdown**: Budget allocation suggestions
-- **Risk Assessment**: Potential challenges and mitigation strategies
-- **90-Day Action Plan**: Immediate next steps
-- **Sources & Appendix**: Data sources and assumptions
-
-#### 4. **Content Transformation**
-
-The raw AI output is processed through a markdown-to-HTML converter that:
-
-- Converts markdown headers to HTML headings
-- Transforms tables to responsive HTML tables
-- Converts lists to properly formatted HTML lists
-- Applies professional styling and mobile responsiveness
-- Adds interactive elements (print, PDF download)
-
-#### 5. **Multilingual Support**
-
-- **English**: Full professional business language
-- **Italian**: Complete translation of UI and report content
-- **Dynamic Translation**: Language selection affects both UI and AI prompts
-- **Cultural Adaptation**: Prompts adapted for different business cultures
-
-### API Key Setup
-
-1. **Get OpenAI API Key**:
-
-   - Visit [OpenAI Platform](https://platform.openai.com/api-keys)
-   - Sign up or log in to your account
-   - Create a new API key
-   - Copy the key (starts with `sk-proj-`)
-
-2. **Configure Environment**:
-
-   ```bash
-   # Copy the example file
-   cp .env_example .env
-
-   # Edit .env and add your key
-   OPENAI_API_KEY=sk-proj-your-actual-key-here
-   ```
-
-3. **Verify Setup**:
-   - Start the application: `uvicorn app:app --reload`
-   - Generate a test report to verify API connectivity
-
-### Cost Considerations
-
-- **GPT-5 Pricing**: Check current pricing at [OpenAI Pricing](https://openai.com/pricing)
-- **Token Usage**: Reports typically use 2000-4000 tokens
-- **Rate Limits**: Respect OpenAI's rate limits for your plan
-- **Monitoring**: Check your usage in the OpenAI dashboard
-
-### Error Handling
-
-The system includes robust error handling:
-
-- **API Failures**: Graceful fallback with user-friendly messages
-- **Rate Limits**: Automatic retry with exponential backoff
-- **Invalid Keys**: Clear error messages for configuration issues
-- **Network Issues**: Timeout handling and retry logic
-
-## 📱 Mobile Responsiveness
-
-### Breakpoints
-
-- **Desktop**: 1200px and above
-- **Tablet**: 768px - 1199px
-- **Mobile**: 480px - 767px
-- **Small Mobile**: Below 480px
-
-### Mobile Features
-
-- Touch-friendly button sizes (minimum 44px)
-- Horizontal scrolling for tables
-- Optimized typography and spacing
-- Landscape orientation support
-- Swipe-friendly navigation
-
-## 🌐 Multilingual Support
-
-### Supported Languages
-
-- **English** (default)
-- **Italian** (Italiano)
-
-### Translation Coverage
-
-- Complete UI translation
-- Report content generation
-- Form labels and placeholders
-- Error messages and notifications
-- Print and download buttons
-
-## 📊 Report Features
-
-### Report Structure
-
-- **Executive Summary**: Key findings and recommendations
-- **Market Analysis**: Comprehensive market insights
-- **Competitive Landscape**: Industry analysis
-- **Strategic Recommendations**: Actionable business advice
-- **Investment Breakdown**: Budget allocation suggestions
-- **Risk Assessment**: Potential challenges and mitigations
-
-### Report Formatting
-
-- Professional typography with Inter font family
-- Responsive tables with horizontal scrolling
-- Color-coded sections and highlights
-- Print-optimized layouts
-- PDF generation with proper page breaks
-
-## 🔒 Security & Privacy
-
-- **No Data Storage**: Reports are generated on-demand
-- **No Cookies**: Language preference not persisted
-- **API Security**: OpenAI API key stored in environment variables
-- **Input Validation**: Server-side validation of all inputs
-
-## 🚀 Deployment
-
-### Local Development
-
-```bash
-uvicorn app:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Production Deployment
-
-1. Set up a production WSGI server (e.g., Gunicorn)
-2. Configure reverse proxy (e.g., Nginx)
-3. Set up SSL certificates
-4. Configure environment variables
-5. Set up monitoring and logging
-
-## 📝 API Endpoints
-
-### Main Routes
-
-- `GET /` - Main application page
+## 🔧 API Endpoints
+
+### Authentication
+- `POST /register` - User registration
+- `POST /login` - User login
+- `GET /logout` - User logout
+- `GET /profile` - User profile
+- `POST /profile/update` - Update profile
+- `POST /forgot-password` - Request password reset
+- `POST /reset-password` - Reset password
+
+### Report Generation
 - `POST /generate` - Generate AI report
-- `GET /download/{filename}` - Download generated report
+- `GET /report/{filename}` - View generated report
+- `GET /download/{filename}` - Download report
+- `POST /save-report` - Save report to account
+- `GET /my-reports` - Get user's saved reports
+- `DELETE /delete-report/{id}` - Delete saved report
 
-## 📚 FastAPI Documentation
+### Search & Data
+- `GET /api/search-terms` - Search product terms
+- `GET /api/select2-terms` - Select2 search endpoint
 
-### Interactive API Documentation
+### System
+- `GET /health` - Health check
+- `GET /status` - System status
 
-FastAPI automatically generates interactive API documentation:
+## 🚀 Running the Application
 
-#### 1. **Swagger UI** (Recommended)
-
-- **URL**: `http://127.0.0.1:8000/docs`
-- **Features**:
-  - Interactive API testing
-  - Request/response examples
-  - Schema validation
-  - Try-it-out functionality
-  - Authentication testing
-
-#### 2. **ReDoc** (Alternative)
-
-- **URL**: `http://127.0.0.1:8000/redoc`
-- **Features**:
-  - Clean, readable documentation
-  - Better for reading and understanding
-  - Schema-focused view
-  - Print-friendly format
-
-#### 3. **OpenAPI Schema**
-
-- **URL**: `http://127.0.0.1:8000/openapi.json`
-- **Features**:
-  - Raw OpenAPI 3.0 specification
-  - Machine-readable format
-  - Integration with other tools
-  - API client generation
-
-### Using the Interactive Docs
-
-1. **Start the application**:
-
-   ```bash
-   uvicorn app:app --reload
-   ```
-
-2. **Open Swagger UI**:
-
-   - Navigate to `http://127.0.0.1:8000/docs`
-   - You'll see all available endpoints
-
-3. **Test the API**:
-
-   - Click on any endpoint to expand it
-   - Click "Try it out" button
-   - Fill in the required parameters
-   - Click "Execute" to test the endpoint
-   - View the response in real-time
-
-4. **Example API Test**:
-   - **Endpoint**: `POST /generate`
-   - **Parameters**:
-     ```json
-     {
-       "brand": "Test Brand",
-       "product": "Test Product",
-       "budget": "€100,000",
-       "ai_model": "gpt-5",
-       "language": "en"
-     }
-     ```
-
-### API Response Examples
-
-#### Successful Report Generation
-
-```json
-{
-  "status": "success",
-  "redirect_url": "/reports/report_20241204_143022.html"
-}
+### Development Mode
+```bash
+python run_server.py
 ```
 
-#### Error Response
+### Production Mode
+```bash
+# Using Gunicorn
+pip install gunicorn
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 app:app
 
-```json
-{
-  "status": "error",
-  "message": "OpenAI API key not configured"
-}
+# Using PM2
+npm install -g pm2
+pm2 start run_server.py --name "ai-trade-report"
 ```
 
-### Request Format
+### Access Points
+- **Main Application**: http://127.0.0.1:8000
+- **API Documentation**: http://127.0.0.1:8000/docs
+- **Alternative Docs**: http://127.0.0.1:8000/redoc
 
-```json
-{
-  "brand": "Your Brand Name",
-  "product": "Product/Service Description",
-  "budget": "Investment Budget",
-  "ai_model": "gpt-5",
-  "language": "en"
-}
-```
+## 🔒 Security Features
 
-### Response Format
+- **JWT Authentication**: Secure token-based authentication
+- **Password Hashing**: Bcrypt password hashing
+- **CORS Protection**: Configurable cross-origin resource sharing
+- **Input Validation**: Pydantic schema validation
+- **SQL Injection Protection**: SQLAlchemy ORM protection
+- **Rate Limiting**: Built-in request rate limiting
+- **Secure Headers**: Security headers middleware
 
-```json
-{
-  "status": "success",
-  "redirect_url": "/reports/report_filename.html"
-}
-```
+## 📱 Mobile Support
+
+- **Responsive Design**: Optimized for all screen sizes
+- **Touch-Friendly**: Mobile-optimized interface
+- **Progressive Web App**: Installable on mobile devices
+- **Offline Support**: Basic offline functionality
+- **Fast Loading**: Optimized for mobile networks
+
+## 🌐 Internationalization
+
+- **Multi-language Support**: English and Italian
+- **Dynamic Translation**: Real-time language switching
+- **Localized Content**: Region-specific content
+- **RTL Support**: Right-to-left language support ready
 
 ## 🛠️ Development
 
-### Adding New Languages
+### Prerequisites
+- Python 3.8+
+- Node.js (for frontend development)
+- Git
 
-1. Update `translations` object in `static/js/main.js`
-2. Add language options to `templates/index.html`
-3. Update `build_prompt` function in `generate_prompt.py`
-4. Add translations to `create_html_document` in `app.py`
+### Setup Development Environment
+```bash
+# Clone repository
+git clone https://github.com/tkani/AI_Trade_Report.git
+cd AI_Trade_Report
 
-### Customizing Report Format
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # or venv\Scripts\activate on Windows
 
-1. Modify `create_html_document` function in `app.py`
-2. Update CSS styles in the embedded `<style>` block
-3. Adjust mobile responsive breakpoints as needed
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up environment
+cp .env_example .env
+# Edit .env with your configuration
+
+# Run development server
+python run_server.py
+```
+
+### Code Structure
+- **Backend**: FastAPI with SQLAlchemy ORM
+- **Frontend**: Vanilla JavaScript with modern ES6+
+- **Styling**: Custom CSS with CSS Grid and Flexbox
+- **Database**: SQLite (development) / PostgreSQL (production)
+- **Authentication**: JWT with bcrypt password hashing
+
+## 📊 Performance
+
+- **Fast Loading**: Optimized static assets
+- **Efficient Queries**: Database query optimization
+- **Caching**: Built-in response caching
+- **Compression**: Gzip compression enabled
+- **CDN Ready**: Static asset CDN support
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **OpenAI API Key Error**: Ensure `.env` file exists with valid API key
-2. **PDF Generation Issues**: Check browser console for JavaScript errors
-3. **Mobile Display Problems**: Clear browser cache and test on different devices
-4. **Language Not Changing**: Hard refresh the page (Ctrl+F5)
+1. **"Module not found" errors**
+   - Ensure virtual environment is activated
+   - Run `pip install -r requirements.txt`
 
-### Debug Mode
+2. **"OpenAI API key not found"**
+   - Check `.env` file has correct API key
+   - Restart application after adding key
 
-Enable debug logging by setting environment variable:
+3. **"Email sending failed"**
+   - Verify SMTP credentials in `.env`
+   - Check 2FA is enabled and app password is used
 
-```bash
-export DEBUG=1
-uvicorn app:app --reload
-```
+4. **"Database locked" error**
+   - Stop application
+   - Delete `ai_trade_report.db`
+   - Restart application
+
+5. **"Port already in use"**
+   - Change PORT in `.env` file
+   - Or kill process using the port
+
+### Getting Help
+
+- Check the [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions
+- Review the application logs for error details
+- Verify all environment variables are correctly set
+- Test individual components (email, API, database)
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
@@ -566,14 +375,18 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support
 
-For support, email support@example.com or create an issue in the GitHub repository.
+For support and questions:
+- Create an issue on GitHub
+- Check the documentation
+- Review the troubleshooting guide
 
-## 🙏 Acknowledgments
+## 🎉 Acknowledgments
 
 - OpenAI for providing the GPT-5 API
-- FastAPI team for the excellent web framework
-- The open-source community for various libraries and tools
+- FastAPI for the excellent web framework
+- SQLAlchemy for database ORM
+- All contributors and users
 
 ---
 
-**Built with ❤️ for professional market analysis**
+**Made with ❤️ for professional market analysis**
