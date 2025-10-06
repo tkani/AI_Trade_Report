@@ -1504,7 +1504,8 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
     html += """        <div class="footer">
             <div style="margin-bottom: 20px;">
                 <div style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 15px;">
-                    <img src="/static/logo2.png" alt="AI Trade Report" style="height: 30px; width: auto; opacity: 0.8; border-radius: 9px;">
+                    <img src="/static/logo_trade_on_chain.png" alt="TradeOnChain" style="height: 30px; width: auto; opacity: 0.8; border-radius: 9px;">
+                    <span style="font-size: 1.1em; color: #1e293b; font-weight: 600;">TradeOnChain</span>
                 </div>
                 <div style="font-size: 0.85em; color: #94a3b8; font-weight: 500; margin-bottom: 10px;">
                     AI Trade Report • Professional Market Analysis

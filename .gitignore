@@ -58,6 +58,7 @@ logs/
 reports/
 
 # Database
+ai_trade_report.db
 # *.db
 # *.sqlite3
 
