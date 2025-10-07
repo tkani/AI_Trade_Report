@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Stable server runner for AI Trade Report application.
 This script provides better error handling and stability.
@@ -28,12 +28,19 @@ def main():
         asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
     
     # Server configuration
+    # Use 0.0.0.0 for cloud deployment, 127.0.0.1 for local development
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8000))
+    
+    # Disable reload in production (cloud deployment)
+    reload = os.getenv("ENVIRONMENT", "development") == "development"
+    
     config = {
         "app": "app:app",
-        "host": "127.0.0.1",
-        "port": 8000,
-        "reload": True,
-        "reload_dirs": [str(Path(__file__).parent)],
+        "host": host,
+        "port": port,
+        "reload": reload,
+        "reload_dirs": [str(Path(__file__).parent)] if reload else None,
         "reload_excludes": ["*.pyc", "__pycache__", ".git", "*.log"],
         "log_level": "info",
         "access_log": True,
@@ -47,9 +54,12 @@ def main():
         "limit_max_requests": 10000,
     }
     
+    # Remove None values from config
+    config = {k: v for k, v in config.items() if v is not None}
+    
     try:
         print("Starting AI Trade Report server...")
-        print(f"Server will be available at: http://{config['host']}:{config['port']}")
+        print(f"Server will be available at: http://{host}:{port}")
         print("Press Ctrl+C to stop the server")
         
         uvicorn.run(**config)
