@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  ai-trade-report:
+    build: .
+    container_name: ai-trade-report
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount reports directory for persistence
+      - ./reports:/app/reports
+      # Mount database for persistence
+      - ./ai_trade_report.db:/app/ai_trade_report.db
+      # Mount static files for development
+      - ./static:/app/static
+      - ./templates:/app/templates
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - ai-trade-network
+
+networks:
+  ai-trade-network:
+    driver: bridge
