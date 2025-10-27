@@ -370,12 +370,10 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
             margin-left: 20px;
         }
         ul ul li {
-            list-style-type: "•";
-            margin-left: 20px;
+            list-style-type: circle;
         }
         ul ul ul li {
-            list-style-type: "◦";
-            margin-left: 20px;
+            list-style-type: square;
         }
         table {
             width: 100%;
@@ -586,7 +584,7 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
              body { 
                  background-color: white !important; 
                  color: black !important;
-                 font-size: 12pt !important;
+                 font-size: 12pt;
                  line-height: 1.4;
                  margin: 0 !important;
                  padding: 0 !important;
@@ -610,20 +608,10 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                  color: black !important; 
                  page-break-after: avoid;
                  page-break-inside: avoid;
-                 margin-top: 0.5em !important;
-                 margin-bottom: 0.3em !important;
              }
              table { 
-                 page-break-inside: auto; 
+                 page-break-inside: avoid; 
                  border-collapse: collapse !important;
-                 margin: 10px 0 !important;
-             }
-             table thead {
-                 display: table-header-group !important;
-             }
-             table tbody tr {
-                 page-break-inside: avoid;
-                 page-break-after: auto;
              }
              .summary-box, .highlight, .warning-box {
                  background: #f8f9fa !important;
@@ -633,54 +621,11 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
              }
              p, li {
                  page-break-inside: avoid;
-                 orphans: 2;
-                 widows: 2;
-                 font-size: 12pt !important;
-                 margin-bottom: 0.5em !important;
-             }
-             ul, ol {
-                 page-break-inside: auto;
-                 margin-bottom: 1em !important;
-             }
-             ul li, ol li {
-                 page-break-inside: avoid;
-                 margin-bottom: 0.3em !important;
+                 orphans: 3;
+                 widows: 3;
              }
              .footer {
                  page-break-inside: avoid;
-                 page-break-before: always;
-                 margin-top: 2em !important;
-             }
-             /* Better page break controls for content sections */
-             .report-content > div {
-                 page-break-inside: auto;
-             }
-             .report-content > div:last-child {
-                 page-break-after: avoid;
-             }
-             /* Ensure proper spacing between sections */
-             .report-content h1 + *,
-             .report-content h2 + *,
-             .report-content h3 + * {
-                 margin-top: 0.5em !important;
-             }
-             /* Page break control classes */
-             .page-break-before {
-                 page-break-before: always !important;
-             }
-             .page-break-after {
-                 page-break-after: always !important;
-             }
-             .page-break-avoid {
-                 page-break-inside: avoid !important;
-             }
-             /* Better content flow */
-             .report-section {
-                 page-break-inside: auto;
-                 margin-bottom: 1em !important;
-             }
-             .report-section:last-child {
-                 page-break-after: avoid;
              }
              .report-logos {
                  page-break-inside: avoid;
@@ -1615,11 +1560,11 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                setTimeout(function() {
                
                const opt = {
-                   margin: [0.75, 0.5, 0.75, 0.5],
+                   margin: [0.5, 0.5, 0.5, 0.5],
                    filename: 'AI_Trade_Report.pdf',
-                   image: { type: 'jpeg', quality: 0.95 },
+                   image: { type: 'jpeg', quality: 0.98 },
                    html2canvas: { 
-                       scale: 1.5,
+                       scale: 1.2,
                        useCORS: true,
                        allowTaint: true,
                        backgroundColor: '#ffffff',
@@ -1630,24 +1575,15 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                        scrollX: 0,
                        scrollY: 0,
                        windowWidth: element.scrollWidth,
-                       windowHeight: element.scrollHeight,
-                       dpi: 300,
-                       foreignObjectRendering: true
+                       windowHeight: element.scrollHeight
                    },
                    jsPDF: { 
                        unit: 'in', 
                        format: 'a4', 
                        orientation: 'portrait',
-                       compress: true,
-                       putOnlyUsedFonts: true,
-                       floatPrecision: 16
+                       compress: true
                    },
-                   pagebreak: { 
-                       mode: ['css', 'legacy'],
-                       before: '.page-break-before',
-                       after: '.page-break-after',
-                       avoid: '.page-break-avoid'
-                   }
+                   pagebreak: { mode: ['css', 'legacy'] }
                };
               
               // Debug: Log element dimensions
@@ -1668,26 +1604,19 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                   
                   // Fallback: Try with simpler options
                   const simpleOpt = {
-                      margin: [0.75, 0.5, 0.75, 0.5],
+                      margin: 0.5,
                       filename: 'AI_Trade_Report.pdf',
-                      image: { type: 'jpeg', quality: 0.9 },
+                      image: { type: 'jpeg', quality: 0.8 },
                       html2canvas: { 
-                          scale: 1.2,
+                          scale: 1,
                           backgroundColor: '#ffffff',
                           width: element.scrollWidth,
                           height: element.scrollHeight,
                           useCORS: true,
                           scrollX: 0,
-                          scrollY: 0,
-                          dpi: 200
+                          scrollY: 0
                       },
-                      jsPDF: { 
-                          unit: 'in', 
-                          format: 'a4', 
-                          orientation: 'portrait',
-                          compress: true
-                      },
-                      pagebreak: { mode: ['css'] }
+                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
                   };
                   
                   html2pdf().set(simpleOpt).from(element).save().then(function() {
