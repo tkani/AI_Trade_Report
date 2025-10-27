@@ -16,6 +16,13 @@ RUN apt-get update && apt-get install -y \
     g++ \
     libffi-dev \
     libssl-dev \
+    pkg-config \
+    python3-dev \
+    libcairo2-dev \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf2.0-dev \
+    libffi-dev \
+    shared-mime-info \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
