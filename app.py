@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
+from xhtml2pdf import pisa
+import io
 import os
 from datetime import datetime
 from dotenv import load_dotenv
@@ -295,7 +297,6 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         html, body {
             font-family: 'Times New Roman', serif;
@@ -569,14 +570,14 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
             gap: 0.25rem;
         }
         .item-label {
-            font-size: 0.875rem;
+            font-size: 12pt;
             font-weight: 500;
             color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         .item-value {
-            font-size: 1rem;
+            font-size: 12pt;
             font-weight: 600;
             color: #1e293b;
         }
@@ -631,12 +632,15 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                  page-break-inside: avoid;
                  margin: 15px 0 !important;
                  padding: 10px !important;
-                 background: #f8f9fa !important;
+                 background: #f0f8ff !important;
                  border: 1px solid #dee2e6 !important;
+                 text-align: center !important;
              }
              .report-logos img {
-                 height: 35px !important;
-                 opacity: 0.9 !important;
+                 height: 50px !important;
+                 opacity: 1 !important;
+                 display: block !important;
+                 margin: 0 auto 8px !important;
              }
          }
         /* ===== MOBILE RESPONSIVE DESIGN ===== */
@@ -710,14 +714,14 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 margin-bottom: 8px;
             }
             p {
-                font-size: 0.9375rem;
+                font-size: 12pt;
                 line-height: 1.6;
                 margin-bottom: 12px;
             }
             
             /* Mobile Tables */
             table {
-                font-size: 0.875rem;
+                font-size: 12pt;
                 margin: 15px 0;
                 display: block;
                 overflow-x: auto;
@@ -729,7 +733,7 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 min-width: 80px;
             }
             th {
-                font-size: 0.8125rem;
+                font-size: 12pt;
             }
             
             /* Mobile Lists */
@@ -738,7 +742,7 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 margin-bottom: 12px;
             }
             li {
-                font-size: 0.9375rem;
+                font-size: 12pt;
                 margin-bottom: 6px;
                 line-height: 1.5;
             }
@@ -757,16 +761,16 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 padding: 8px 0;
             }
             .item-label {
-                font-size: 0.8125rem;
+                font-size: 12pt;
             }
             .item-value {
-                font-size: 0.9375rem;
+                font-size: 12pt;
             }
             
             /* Mobile Code Blocks */
             .code-block {
                 padding: 12px;
-                font-size: 0.8125rem;
+                font-size: 12pt;
                 margin: 12px 0;
                 border-radius: 6px;
             }
@@ -816,7 +820,7 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
             }
             
             table {
-                font-size: 0.8125rem;
+                font-size: 12pt;
             }
             th, td {
                 padding: 6px 4px;
@@ -830,7 +834,7 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
             
             .code-block {
                 padding: 10px;
-                font-size: 0.75rem;
+                font-size: 12pt;
             }
         }
         
@@ -846,7 +850,7 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 font-size: 1.2em;
             }
             table {
-                font-size: 0.8em;
+                font-size: 1em;
                 page-break-inside: avoid;
             }
             .summary-box, .highlight, .warning-box {
@@ -1296,11 +1300,12 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
                 <span class="summary-icon">📋</span>
                 <span class="summary-title">""" + t['report_overview'] + """</span>
             </div>
-            <div class="report-logos" style="text-align: center; margin: 20px 0; padding: 15px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 8px; border: 1px solid #e2e8f0;">
-                <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;">
-                    <img src="/static/logo2.png" alt="AI Trade Report" style="height: 40px; width: auto; border-radius: 9px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+
+            <div class="report-logos" style="text-align: center; margin: 25px 0 30px 0; padding: 20px; background: #f0f8ff; border-radius: 12px; border: 1px solid #e0e8f0;">
+                <div style="font-size: 1.5em; color: #1e293b; font-weight: 600; margin-bottom: 8px;">
+                    AI Trade Report
                 </div>
-                <div style="margin-top: 10px; font-size: 0.9em; color: #64748b; font-weight: 500;">
+                <div style="font-size: 0.95em; color: #64748b; font-weight: 500;">
                     Professional Market Analysis • Powered by AI Technology
                 </div>
             </div>
@@ -1517,121 +1522,49 @@ def create_html_document(content: str, language: str = "en", form_data: dict = N
     </div>
     
     <script>
-        // Define the function immediately when script loads
+        // Server-side PDF download function
         function downloadPDF() {
-            const element = document.getElementById('report-content');
-            
-            // Show loading state
             const btn = event.target;
             const originalText = btn.innerHTML;
+            
+            // Show loading state
             btn.innerHTML = '⏳ Generating PDF...';
             btn.disabled = true;
-           
-           // Wait for fonts and images to load
-           setTimeout(function() {
-               // First, ensure the element is visible and has content
-               if (!element || element.offsetHeight === 0 || element.offsetWidth === 0) {
-                   alert('Report content not found. Please refresh the page and try again.');
-                   btn.innerHTML = originalText;
-                   btn.disabled = false;
-                   return;
-               }
-               
-               // Ensure the element is visible and has content
-               const rect = element.getBoundingClientRect();
-               if (rect.width === 0 || rect.height === 0) {
-                   alert('Report content is not visible. Please scroll to the report and try again.');
-                   btn.innerHTML = originalText;
-                   btn.disabled = false;
-                   return;
-               }
-               
-               // Force a reflow to ensure content is rendered
-               element.style.display = 'none';
-               element.offsetHeight; // Trigger reflow
-               element.style.display = 'block';
-               
-               // Ensure all content is visible and expanded
-               element.style.height = 'auto';
-               element.style.minHeight = '100vh';
-               element.style.overflow = 'visible';
-               
-               // Wait a bit more for any dynamic content to render
-               setTimeout(function() {
-               
-               const opt = {
-                   margin: [0.5, 0.5, 0.5, 0.5],
-                   filename: 'AI_Trade_Report.pdf',
-                   image: { type: 'jpeg', quality: 0.98 },
-                   html2canvas: { 
-                       scale: 1.2,
-                       useCORS: true,
-                       allowTaint: true,
-                       backgroundColor: '#ffffff',
-                       logging: false,
-                       letterRendering: true,
-                       width: element.scrollWidth,
-                       height: element.scrollHeight,
-                       scrollX: 0,
-                       scrollY: 0,
-                       windowWidth: element.scrollWidth,
-                       windowHeight: element.scrollHeight
-                   },
-                   jsPDF: { 
-                       unit: 'in', 
-                       format: 'a4', 
-                       orientation: 'portrait',
-                       compress: true
-                   },
-                   pagebreak: { mode: ['css', 'legacy'] }
-               };
-              
-              // Debug: Log element dimensions
-              console.log('Element dimensions:', {
-                  width: element.offsetWidth,
-                  height: element.offsetHeight,
-                  scrollWidth: element.scrollWidth,
-                  scrollHeight: element.scrollHeight,
-                  rect: element.getBoundingClientRect()
-              });
-              
-              // Try the main PDF generation
-              html2pdf().set(opt).from(element).save().then(function() {
-                  btn.innerHTML = originalText;
-                  btn.disabled = false;
-              }).catch(function(error) {
-                  console.error('PDF generation failed:', error);
-                  
-                  // Fallback: Try with simpler options
-                  const simpleOpt = {
-                      margin: 0.5,
-                      filename: 'AI_Trade_Report.pdf',
-                      image: { type: 'jpeg', quality: 0.8 },
-                      html2canvas: { 
-                          scale: 1,
-                          backgroundColor: '#ffffff',
-                          width: element.scrollWidth,
-                          height: element.scrollHeight,
-                          useCORS: true,
-                          scrollX: 0,
-                          scrollY: 0
-                      },
-                      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                  };
-                  
-                  html2pdf().set(simpleOpt).from(element).save().then(function() {
-                      btn.innerHTML = originalText;
-                      btn.disabled = false;
-                  }).catch(function(fallbackError) {
-                      console.error('Fallback PDF generation also failed:', fallbackError);
-                      alert('PDF generation failed. Please use the Print button and save as PDF from your browser instead.');
-                      btn.innerHTML = originalText;
-                      btn.disabled = false;
-                  });
-              });
-          }, 500);
-      }, 1000);
-  }
+            
+            // Get the current page filename
+            const currentUrl = window.location.pathname;
+            const filename = currentUrl.split('/').pop() || 'unknown_report.html';
+            
+            // Call the server-side PDF generation endpoint
+            fetch(`/download-pdf/${filename}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to generate PDF');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    // Create a download link
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename.replace('.html', '.pdf');
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    
+                    // Reset button
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                })
+                .catch(error => {
+                    console.error('PDF generation error:', error);
+                    alert('PDF generation failed. Please try again or use the Print button.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+        }
   
   // Also make it available on window object
   window.downloadPDF = downloadPDF;
@@ -2153,6 +2086,44 @@ def download_report(filename: str):
         
         return FileResponse(filepath, media_type=media_type, filename=filename)
     return {"status": "error", "message": "File not found"}
+
+@app.get("/download-pdf/{filename}")
+def download_pdf(filename: str):
+    """Generate and download PDF from HTML report"""
+    html_filepath = os.path.join("reports", filename)
+    
+    if not os.path.exists(html_filepath):
+        return JSONResponse({"status": "error", "message": "Report not found"}, status_code=404)
+    
+    try:
+        # Read the HTML file
+        with open(html_filepath, 'r', encoding='utf-8') as f:
+            html_content = f.read()
+        
+        # Create PDF in memory
+        result = io.BytesIO()
+        pdf = pisa.pisaDocument(io.BytesIO(html_content.encode('utf-8')), result)
+        
+        if not pdf.err:
+            # Save PDF temporarily and return it
+            pdf_filename = os.path.basename(filename).replace('.html', '.pdf')
+            pdf_filepath = os.path.join("reports", pdf_filename)
+            
+            with open(pdf_filepath, 'wb') as f:
+                f.write(result.getvalue())
+            
+            # Return the PDF file
+            return FileResponse(
+                pdf_filepath, 
+                media_type="application/pdf", 
+                filename=pdf_filename
+            )
+        else:
+            return JSONResponse({"status": "error", "message": f"PDF generation failed: {pdf.err}"}, status_code=500)
+            
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        return JSONResponse({"status": "error", "message": f"Failed to generate PDF: {str(e)}"}, status_code=500)
 
 @app.post("/save-report")
 async def save_report_to_db(

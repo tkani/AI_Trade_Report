@@ -27,3 +27,6 @@ requests==2.31.0
 # Additional dependencies for production
 starlette==0.41.3
 pydantic==2.8.2
+
+# PDF generation
+xhtml2pdf==0.2.17

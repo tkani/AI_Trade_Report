@@ -469,7 +469,7 @@ h1.hero-title {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 1rem;
+  font-size: 12pt;
   color: #374151;
   font-weight: 500;
   min-width: 200px !important;
@@ -668,7 +668,7 @@ h1.hero-title {
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
   color: var(--gray-700);
-  font-size: 1rem;
+  font-size: 12pt;
   font-weight: 500;
   padding: 0;
   line-height: 1.5;
@@ -716,7 +716,7 @@ h1.hero-title {
   border-radius: 0.75rem !important;
   background: #f9fafb !important;
   padding: 18px 20px !important;
-  font-size: 1.1rem !important;
+  font-size: 12pt !important;
   font-weight: 500 !important;
   color: #374151 !important;
   transition: all 0.2s ease !important;
@@ -969,7 +969,7 @@ h1.hero-title {
   padding: var(--space-lg);
   border: 2px solid var(--gray-200);
   border-radius: var(--radius-lg);
-  font-size: 1rem;
+  font-size: 12pt;
   font-family: var(--font-primary);
   background: white;
   transition: var(--transition-normal);
